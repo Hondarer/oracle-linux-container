@@ -57,7 +57,7 @@
 - **説明**: ソースコードドキュメント生成ツール
 
 ### doxybook2
-- **バージョン**: 1.6.1 (Custom build for el8/el10)
+- **バージョン**: Custom build for el8/el10
 - **ライセンス**: MIT License
 - **URL**: https://github.com/matusnovak/doxybook2
 - **Custom build (OL8)**: https://github.com/Hondarer/doxybook2.el8.x86_64
