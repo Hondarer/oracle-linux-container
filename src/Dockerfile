@@ -102,6 +102,7 @@ RUN dnf install -y \
         mesa-vulkan-drivers \
         nkf \
         nodejs \
+        openssl-devel \
         npm \
         perl-Env \
         rsync \

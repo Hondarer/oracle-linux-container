@@ -105,6 +105,7 @@ ssh-keygen -R "[127.0.0.1]:40822"
 
 - **言語ランタイム**: Node.js 22、Java 17(OL8)/21(OL10)、.NET 10、Python 3.11(OL8)/3.12(OL10)
 - **ビルドツール**: GCC、Make、CMake、automake、libtool
+- **開発ライブラリ**: openssl-devel、libssh-devel、libcurl-devel、binutils-devel
 - **ドキュメント**: Doxygen、doxybook2、PlantUML、Pandoc
 - **ユーティリティ**: jq、tree、rsync、expect
 
