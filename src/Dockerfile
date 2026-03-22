@@ -101,6 +101,7 @@ RUN dnf install -y \
         mesa-libgbm \
         mesa-vulkan-drivers \
         nkf \
+        nmap-ncat \
         nodejs \
         openssl-devel \
         npm \
