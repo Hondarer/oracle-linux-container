@@ -110,7 +110,7 @@
 - **説明**: Unicode カバレッジの高いフォント
 
 ### UDEV Gothic HSRF
-- **バージョン**: 2.1.0
+- **バージョン**: 2.2.0
 - **ライセンス**: SIL Open Font License 1.1
 - **URL**: https://github.com/Hondarer/udev-gothic-rf
 - **Original**: https://github.com/yuru7/udev-gothic

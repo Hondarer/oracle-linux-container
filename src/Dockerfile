@@ -235,21 +235,21 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     chmod 0644 /etc/profile.d/plantuml.sh && \
     # UDEVGothic font
     cd /tmp && \
-    if [ ! -f packages/UDEVGothic_HSRF_v2.1.0.zip ]; then \
-        curl -fsSL -o /tmp/UDEVGothic_HSRF_v2.1.0.zip https://github.com/Hondarer/udev-gothic-rf/releases/download/v2.1.0/UDEVGothic_HSRF_v2.1.0.zip; \
+    if [ ! -f packages/UDEVGothic_HSRF_v2.2.0.zip ]; then \
+        curl -fsSL -o /tmp/UDEVGothic_HSRF_v2.2.0.zip https://github.com/Hondarer/udev-gothic-rf/releases/download/v2.2.0/UDEVGothic_HSRF_v2.2.0.zip; \
     else \
-        cp packages/UDEVGothic_HSRF_v2.1.0.zip /tmp/; \
+        cp packages/UDEVGothic_HSRF_v2.2.0.zip /tmp/; \
     fi && \
-    unzip -q UDEVGothic_HSRF_v2.1.0.zip && \
+    unzip -q UDEVGothic_HSRF_v2.2.0.zip && \
     mkdir -p /usr/share/fonts/udev-gothic && \
-    cp UDEVGothic_HSRF_v2.1.0/UDEVGothicHSRFJPDOC-Bold.ttf /usr/share/fonts/udev-gothic/ && \
-    cp UDEVGothic_HSRF_v2.1.0/UDEVGothicHSRFJPDOC-BoldItalic.ttf /usr/share/fonts/udev-gothic/ && \
-    cp UDEVGothic_HSRF_v2.1.0/UDEVGothicHSRFJPDOC-Italic.ttf /usr/share/fonts/udev-gothic/ && \
-    cp UDEVGothic_HSRF_v2.1.0/UDEVGothicHSRFJPDOC-Regular.ttf /usr/share/fonts/udev-gothic/ && \
+    cp UDEVGothic_HSRF_v2.2.0/UDEVGothicHSRFJPDOC-Bold.ttf /usr/share/fonts/udev-gothic/ && \
+    cp UDEVGothic_HSRF_v2.2.0/UDEVGothicHSRFJPDOC-BoldItalic.ttf /usr/share/fonts/udev-gothic/ && \
+    cp UDEVGothic_HSRF_v2.2.0/UDEVGothicHSRFJPDOC-Italic.ttf /usr/share/fonts/udev-gothic/ && \
+    cp UDEVGothic_HSRF_v2.2.0/UDEVGothicHSRFJPDOC-Regular.ttf /usr/share/fonts/udev-gothic/ && \
     chown root:root /usr/share/fonts/udev-gothic/*.ttf && \
     chmod 0644 /usr/share/fonts/udev-gothic/*.ttf && \
     fc-cache -fv > /dev/null 2>&1 && \
-    rm -rf UDEVGothic_HSRF_v2.1.0 && \
+    rm -rf UDEVGothic_HSRF_v2.2.0 && \
     # doxygen
     cd /tmp && \
     if [ ! -f packages/doxygen-1.14.0.src.tar.gz ]; then \
