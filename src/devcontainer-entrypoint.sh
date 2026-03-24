@@ -46,6 +46,20 @@ else
         echo "Renamed user ${EXISTING_USER} to ${HOST_USER}"
     fi
 
+    # ホームディレクトリが正しくない場合は更新
+    CURRENT_HOME=$(getent passwd "${HOST_USER}" | cut -d: -f6)
+    if [ "${CURRENT_HOME}" != "/home/${HOST_USER}" ]; then
+        usermod -d "/home/${HOST_USER}" -m "${HOST_USER}" 2>/dev/null || usermod -d "/home/${HOST_USER}" "${HOST_USER}"
+        echo "Updated home directory from ${CURRENT_HOME} to /home/${HOST_USER}"
+    fi
+
+    # シェルが /bin/bash でない場合は更新 (/bin/false 等のサービスアカウントを想定)
+    CURRENT_SHELL=$(getent passwd "${HOST_USER}" | cut -d: -f7)
+    if [ "${CURRENT_SHELL}" != "/bin/bash" ]; then
+        usermod -s /bin/bash "${HOST_USER}"
+        echo "Updated shell from ${CURRENT_SHELL} to /bin/bash"
+    fi
+
     # wheel グループ所属チェックと追加
     if ! id -nG "${HOST_USER}" | grep -qw wheel; then
         usermod -aG wheel "${HOST_USER}"
@@ -95,6 +109,8 @@ if [ -z "$(find /home/${HOST_USER} -mindepth 1 -not -path "/home/${HOST_USER}/.s
     chown -R "${HOST_UID}:${HOST_GID}" temp_home
     chmod 700 temp_home
 
+    mkdir -p /home/${HOST_USER}
+    chown "${HOST_UID}:${HOST_GID}" /home/${HOST_USER}
     cp -rp /tmp/temp_home/. /home/${HOST_USER}/.
     rm -rf /tmp/temp_home
 fi
