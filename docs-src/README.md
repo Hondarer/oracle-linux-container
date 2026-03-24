@@ -22,8 +22,9 @@
 
 ### コンテナイメージの公開
 
-- [GitHub Container Registry への公開ガイド](./publishing-to-github.md)
+- [コンテナイメージ公開ガイド (GitHub Container Registry / Docker Hub)](./publishing-to-github.md)
   - GitHub Container Registry (ghcr.io) へのイメージ公開方法
+  - Docker Hub への公開設定 (オプション: Secrets 設定時に自動 push)
   - GitHub Actions による自動ビルド・公開
   - イメージの利用方法
   - トラブルシューティング

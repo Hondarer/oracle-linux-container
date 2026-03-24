@@ -18,8 +18,12 @@
 # GitHub Container Registry から取得
 podman pull ghcr.io/<user>/<repo>/oracle-linux-8-dev:latest
 
+# Docker Hub から取得 (Docker Hub 公開時)
+podman pull <dockerhub-user>/oracle-linux-8-dev:latest
+
 # Docker を使用する場合
 docker pull ghcr.io/<user>/<repo>/oracle-linux-8-dev:latest
+docker pull <dockerhub-user>/oracle-linux-8-dev:latest
 ```
 
 ### プライベートイメージの取得

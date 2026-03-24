@@ -14,7 +14,7 @@
 
 ## 概要
 
-公開されているコンテナイメージ `ghcr.io/hondarer/oracle-linux-container/oracle-linux-8-dev` (OL8) や `oracle-linux-10-dev` (OL10) を VS Code の Dev Container として使用することで、以下の利点が得られます：
+公開されているコンテナイメージ (`ghcr.io/hondarer/oracle-linux-container/oracle-linux-8-dev` または Docker Hub の `<dockerhub-user>/oracle-linux-8-dev`、OL10 は `-10-dev`) を VS Code の Dev Container として使用することで、以下の利点が得られます：
 
 - **一貫した開発環境**: 開発ツールとライブラリが事前設定済み
 - **簡単なセットアップ**: 設定ファイルをコピーするだけ

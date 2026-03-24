@@ -18,6 +18,10 @@
 ghcr.io/<user>/<repo>/oracle-linux-8-dev:latest
 ghcr.io/<user>/<repo>/oracle-linux-8-dev:v1.0.0
 
+# 公開イメージ (Docker Hub) - DOCKERHUB_USERNAME / DOCKERHUB_TOKEN Secrets 設定時
+<dockerhub-user>/oracle-linux-8-dev:latest
+<dockerhub-user>/oracle-linux-8-dev:v1.0.0
+
 # ローカルビルドイメージ
 oracle-linux-8-dev:latest
 ```
@@ -192,6 +196,6 @@ C++、Node.js、Python など複数の言語が混在するプロジェクト。
 
 ## 関連ドキュメント
 
-- [GitHub Container Registry への公開ガイド](../publishing-to-github.md) - イメージの公開方法
+- [コンテナイメージ公開ガイド (GitHub / Docker Hub)](../publishing-to-github.md) - イメージの公開方法
 - [CLAUDE.md](../../CLAUDE.md) - プロジェクトの詳細仕様
 - [README.md](../../README.md) - プロジェクト概要とクイックスタート

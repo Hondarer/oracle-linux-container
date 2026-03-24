@@ -45,6 +45,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Log in to Docker Hub
+        if: ${{ secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_TOKEN != '' }}
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -157,6 +164,18 @@ jobs:
             echo "Tagging and pushing: $tag"
             podman tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} $tag
             podman push $tag
+          done
+
+      - name: Push container image to Docker Hub
+        if: ${{ github.event_name != 'pull_request' && secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_TOKEN != '' }}
+        run: |
+          DOCKERHUB_IMAGE="${{ secrets.DOCKERHUB_USERNAME }}/oracle-linux-${{ matrix.ol_version }}-dev"
+          TAGS="${{ steps.meta.outputs.tags }}"
+          for tag in $TAGS; do
+            DH_TAG="${DOCKERHUB_IMAGE}:${tag##*:}"
+            echo "Tagging and pushing to Docker Hub: $DH_TAG"
+            podman tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} $DH_TAG
+            podman push $DH_TAG
           done
 
       - name: Export and push WSL rootfs as OCI artifact

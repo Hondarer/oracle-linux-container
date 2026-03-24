@@ -1,12 +1,15 @@
-# GitHub Container Registry へのコンテナイメージ公開ガイド
+# コンテナイメージ公開ガイド (GitHub Container Registry / Docker Hub)
 
-このドキュメントでは、Oracle Linux 開発用コンテナイメージを GitHub Container Registry (ghcr.io) に公開する方法を説明します。
+このドキュメントでは、Oracle Linux 開発用コンテナイメージを GitHub Container Registry (ghcr.io) および Docker Hub に公開する方法を説明します。
+
+GitHub Actions ワークフロー (`.github/workflows/build-and-publish.yml`) は、ghcr.io への公開を標準で行います。GitHub Secrets に `DOCKERHUB_USERNAME` と `DOCKERHUB_TOKEN` を設定すると、Docker Hub にも同時に push されます。
 
 ## 目次
 
 - [前提条件](#前提条件)
 - [手動公開](#手動公開)
 - [GitHub Actions による自動公開](#github-actions-による自動公開)
+- [Docker Hub への公開設定](#docker-hub-への公開設定)
 - [イメージの利用方法](#イメージの利用方法)
 - [トラブルシューティング](#トラブルシューティング)
 
@@ -211,13 +214,48 @@ git push origin v1.0.0
 - `ghcr.io/<user>/<repo>/oracle-linux-8-dev:1`
 - `ghcr.io/<user>/<repo>/oracle-linux-8-dev:sha-<commit-hash>`
 
+## Docker Hub への公開設定
+
+### 1. Docker Hub アカウントと Access Token の準備
+
+1. [Docker Hub](https://hub.docker.com/) でアカウントを作成
+2. **Account settings** → **Personal access tokens** → **Generate new token**
+   - Access permissions: `Read & Write`
+   - 生成されたトークンをコピー (一度しか表示されない)
+3. Docker Hub でリポジトリを作成 (名前: `oracle-linux-8-dev`、`oracle-linux-10-dev`)
+
+### 2. GitHub Secrets への登録
+
+GitHub リポジトリの **Settings** → **Secrets and variables** → **Actions** で以下を追加:
+
+| Secret 名 | 値 |
+|-----------|-----|
+| `DOCKERHUB_USERNAME` | Docker Hub の Username |
+| `DOCKERHUB_TOKEN` | 手順 1 で生成した Access Token |
+
+### 3. 動作確認
+
+Secrets 登録後に main ブランチへ push すると、`Push container image to Docker Hub` ステップが実行され、以下のイメージが公開されます。
+
+```text
+<dockerhub-user>/oracle-linux-8-dev:main
+<dockerhub-user>/oracle-linux-10-dev:main
+```
+
+バージョンタグ (`v*`) を push した場合は `latest` を含む全タグが Docker Hub にも push されます。
+
+Secrets が未定義の場合は Docker Hub 関連ステップが自動的にスキップされ、ghcr.io への公開には影響しません。
+
 ## イメージの利用方法
 
 ### Podman での利用
 
 ```bash
-# イメージの取得
+# GitHub Container Registry から取得
 podman pull ghcr.io/${GITHUB_USER}/${GITHUB_REPO}/oracle-linux-8-dev:latest
+
+# Docker Hub から取得 (Docker Hub 公開時)
+podman pull <dockerhub-user>/oracle-linux-8-dev:latest
 
 # コンテナの起動
 podman run -it --rm ghcr.io/${GITHUB_USER}/${GITHUB_REPO}/oracle-linux-8-dev:latest
@@ -226,8 +264,11 @@ podman run -it --rm ghcr.io/${GITHUB_USER}/${GITHUB_REPO}/oracle-linux-8-dev:lat
 ### Docker での利用
 
 ```bash
-# イメージの取得
+# GitHub Container Registry から取得
 docker pull ghcr.io/${GITHUB_USER}/${GITHUB_REPO}/oracle-linux-8-dev:latest
+
+# Docker Hub から取得 (Docker Hub 公開時)
+docker pull <dockerhub-user>/oracle-linux-8-dev:latest
 
 # コンテナの起動
 docker run -it --rm ghcr.io/${GITHUB_USER}/${GITHUB_REPO}/oracle-linux-8-dev:latest
@@ -413,6 +454,8 @@ podman push --all-tags ghcr.io/${GITHUB_USER}/${GITHUB_REPO}/oracle-linux-8-dev
 ## 関連リンク
 
 - [GitHub Container Registry ドキュメント](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)
+- [Docker Hub](https://hub.docker.com/)
+- [Docker Hub Access Token の管理](https://docs.docker.com/security/for-developers/access-tokens/)
 - [Podman 公式ドキュメント](https://podman.io/docs)
 - [GitHub Actions ドキュメント](https://docs.github.com/en/actions)
 - [OCI Image Format Specification](https://github.com/opencontainers/image-spec)
