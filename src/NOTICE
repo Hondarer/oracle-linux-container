@@ -173,20 +173,33 @@ Copyright: JM Project (Japanese Manual Project)
 URL: https://github.com/linux-jm/manual
 
 ================================================================================
+SSH SERVER
+================================================================================
+
+OpenSSH
+License: BSD-2-Clause
+Copyright: Tatu Ylonen, Markus Friedl, Aaron Campbell, Theo de Raadt,
+           Niels Provos, Dug Song, Damien Miller, and others
+URL: https://www.openssh.com/
+Note: The primary access mechanism of this container. Provided as part of
+      Oracle Linux.
+
+================================================================================
 ADDITIONAL NOTICES
 ================================================================================
 
 This container image is built from multiple open-source components. The licenses
-listed above apply to the respective components. The overall container image is
-distributed under the GNU General Public License v2.0 (GPL-2.0) as specified in
-the LICENSE-IMAGE file.
+listed above apply to the respective components. The overall container image
+contains software distributed under GPL-2.0, GPL-3.0-or-later, Apache-2.0,
+LGPL-2.1-or-later, MIT, BSD-3-Clause, PSF-2.0, OFL-1.1, and other licenses
+as indicated per component.
 
 For complete license texts and source code, please refer to:
 - Oracle Linux sources: https://oss.oracle.com/sources/
 - Individual component project URLs listed above
 
 If you distribute this container image, you must comply with the license terms
-of all included components, particularly the GPL-2.0 requirements for providing
+of all included components, particularly the GPL requirements for providing
 source code access.
 
 ================================================================================
@@ -224,5 +237,5 @@ For a comprehensive and detailed list of all third-party components and their
 licenses, please refer to the THIRD_PARTY_LICENSES.md file in the project root.
 
 ================================================================================
-Last Updated: 2025-11-15
+Last Updated: 2026-03-25
 ================================================================================

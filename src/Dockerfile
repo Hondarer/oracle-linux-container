@@ -5,8 +5,8 @@ ARG OL_VERSION
 # メタデータラベル
 LABEL org.opencontainers.image.title="Oracle Linux ${OL_VERSION} Development Container"
 LABEL org.opencontainers.image.description="Oracle Linux ${OL_VERSION} based development container with Node.js, Java, .NET, Python, Doxygen, PlantUML, and other development tools"
-LABEL org.opencontainers.image.licenses="GPL-2.0 AND MIT AND BSD-3-Clause AND PSF-2.0 AND OFL-1.1"
-LABEL org.opencontainers.image.vendor="Oracle America, Inc."
+LABEL org.opencontainers.image.licenses="GPL-2.0 AND GPL-3.0-or-later AND Apache-2.0 AND LGPL-2.1-or-later AND MIT AND BSD-3-Clause AND PSF-2.0 AND OFL-1.1"
+LABEL org.opencontainers.image.vendor="hondarer"
 LABEL org.opencontainers.image.base.name="oraclelinux:${OL_VERSION}"
 
 # ポート 22 を公開する宣言

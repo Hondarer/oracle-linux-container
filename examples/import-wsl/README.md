@@ -291,4 +291,4 @@ Remove-Item -Recurse -Force "$env:TEMP\wsl-import-*"
 
 このスクリプトは MIT License で提供されています。詳細は [LICENSE](../../LICENSE) を参照してください。
 
-インポートされるコンテナイメージは GPL-2.0 でライセンスされています。詳細は [src/LICENSE-IMAGE](../../src/LICENSE-IMAGE) を参照してください。
+インポートされるコンテナイメージは GPL-2.0、GPL-3.0-or-later、Apache-2.0、LGPL-2.1-or-later、MIT 等の複合ライセンスのコンポーネントから構成されています。詳細は [src/LICENSE-IMAGE](../../src/LICENSE-IMAGE)（Oracle Linux ライセンス条項）および [src/NOTICE](../../src/NOTICE) を参照してください。

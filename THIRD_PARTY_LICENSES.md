@@ -131,6 +131,11 @@
 
 ## 開発ツールとユーティリティ
 
+### OpenSSH
+- **ライセンス**: BSD-2-Clause
+- **URL**: https://www.openssh.com/
+- **説明**: SSH サーバー。このコンテナの主要アクセス手段（Oracle Linux に同梱）
+
 ### GNU Development Tools
 - **パッケージ**: gcc, make, automake, autoconf, libtool, binutils
 - **バージョン**: GCC 8 (OL8) / GCC 14 (OL10)
@@ -199,7 +204,7 @@
 
 ## ライセンスに関する注意事項
 
-1. **このプロジェクト自体のライセンス**: MIT License (LICENSE ファイルを参照)
+1. **プロジェクトスクリプトおよびドキュメントのライセンス**: MIT License (LICENSE ファイルを参照)
 2. **コンテナイメージのライセンス**: このコンテナイメージには、GPLv2、GPLv3、MIT、BSD などの複数のライセンスを持つソフトウェアが含まれています
 3. **GPL ライセンスの影響**: GPL ライセンスのソフトウェア（Oracle Linux、Doxygen、PlantUML など）は、そのソースコードの入手可能性と再配布時の条件に従う必要があります
 4. **Oracle Linux の使用**: Oracle Linux の使用には、Oracle の配布条件が適用される場合があります

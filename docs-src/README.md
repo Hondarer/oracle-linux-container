@@ -64,5 +64,5 @@
 - [README.md (プロジェクトルート)](../README.md) - プロジェクトの概要とクイックスタート
 - [CLAUDE.md](../CLAUDE.md) - Claude Code を使用する際の詳細ガイド
 - [LICENSE](../LICENSE) - プロジェクトスクリプトのライセンス (MIT)
-- [src/LICENSE-IMAGE](../src/LICENSE-IMAGE) - コンテナイメージのライセンス (GPL-2.0)
+- [src/LICENSE-IMAGE](../src/LICENSE-IMAGE) - Oracle Linux ライセンス条項（ベースOS）
 - [src/NOTICE](../src/NOTICE) - 含まれるコンポーネントのライセンス情報
