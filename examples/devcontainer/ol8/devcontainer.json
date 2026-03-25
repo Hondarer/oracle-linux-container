@@ -5,7 +5,9 @@
   "image": "ghcr.io/hondarer/oracle-linux-container/oracle-linux-8-dev:latest",
 
   // コンテナ作成後にユーザーセットアップを実行
-  "postCreateCommand": "bash -c 'export HOST_USER=${localEnv:USER:vscode} HOST_UID=${localEnv:UID:1000} HOST_GID=${localEnv:GID:1000} && sudo /usr/local/bin/devcontainer-entrypoint.sh'",
+  // containerUser: root で既に root 権限のため sudo は不要。
+  // インライン環境変数渡しにより sudo の env_reset によるストリッピングを回避する。
+  "postCreateCommand": "HOST_USER=${localEnv:USER:vscode} HOST_UID=${localEnv:UID:1000} HOST_GID=${localEnv:GID:1000} /usr/local/bin/devcontainer-entrypoint.sh",
 
   // コンテナ内で使用するユーザー
   // postCreateCommand でこのユーザーが作成される
@@ -15,8 +17,13 @@
   "containerUser": "root",
 
   // 環境変数
+  // HOST_USER/HOST_UID/HOST_GID を設定することで、コンテナ起動時の entrypoint.sh も
+  // 正しいユーザーを最初から作成できる。
   "containerEnv": {
-    "LANG": "ja_JP.UTF-8"
+    "LANG": "ja_JP.UTF-8",
+    "HOST_USER": "${localEnv:USER:vscode}",
+    "HOST_UID": "${localEnv:UID:1000}",
+    "HOST_GID": "${localEnv:GID:1000}"
   },
 
   // マウント設定
