@@ -133,6 +133,11 @@ License: BSD-like License
 Copyright: Itaru Ichikawa
 URL: https://osdn.net/projects/nkf/
 
+cloc (Count Lines of Code) 2.04
+License: GNU General Public License v2.0 (GPL-2.0)
+Copyright: Al Danial
+URL: https://github.com/AlDanial/cloc
+
 ================================================================================
 FONTS
 ================================================================================

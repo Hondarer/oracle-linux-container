@@ -107,7 +107,7 @@ ssh-keygen -R "[127.0.0.1]:40822"
 - **ビルドツール**: GCC、Make、CMake、automake、libtool
 - **開発ライブラリ**: openssl-devel、libssh-devel、libcurl-devel、binutils-devel
 - **ドキュメント**: Doxygen、doxybook2、PlantUML、Pandoc
-- **ユーティリティ**: jq、tree、rsync、expect
+- **ユーティリティ**: jq、tree、rsync、expect、cloc
 
 ### パッケージ管理
 

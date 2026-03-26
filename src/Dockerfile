@@ -250,6 +250,14 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     chmod 0644 /usr/share/fonts/udev-gothic/*.ttf && \
     fc-cache -fv > /dev/null 2>&1 && \
     rm -rf UDEVGothic_HSRF_v2.2.0 && \
+    # cloc
+    cd /tmp && \
+    if [ ! -f packages/cloc-2.04.pl ]; then \
+        curl -fsSL -o /usr/local/bin/cloc https://github.com/AlDanial/cloc/releases/download/v2.04/cloc-2.04.pl; \
+    else \
+        cp packages/cloc-2.04.pl /usr/local/bin/cloc; \
+    fi && \
+    chmod +x /usr/local/bin/cloc && \
     # doxygen
     cd /tmp && \
     if [ ! -f packages/doxygen-1.14.0.src.tar.gz ]; then \

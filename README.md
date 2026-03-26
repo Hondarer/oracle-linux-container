@@ -122,7 +122,7 @@ podman pull hondarer/oracle-linux-10-dev:latest
 ### ユーティリティ
 
 - **jq**、**tree**、**rsync**
-- **expect**、**nkf**
+- **expect**、**nkf**、**cloc**
 - **git**、**curl**、**wget**
 
 ## クイックスタート

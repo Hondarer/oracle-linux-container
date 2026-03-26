@@ -178,6 +178,12 @@
 - **URL**: http://www.info-zip.org/
 - **説明**: ZIP アーカイブ展開ツール
 
+### cloc (Count Lines of Code)
+- **バージョン**: 2.04
+- **ライセンス**: GPLv2
+- **URL**: https://github.com/AlDanial/cloc
+- **説明**: ソースコードの行数計測ツール
+
 ## グラフィックスとデスクトップライブラリ
 
 これらのライブラリは、PlantUML や Doxygen などのグラフィカルツールの依存関係として含まれています。
