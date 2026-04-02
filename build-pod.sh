@@ -55,6 +55,27 @@ fi
     printf "%-18s = %s\n" "BUILDER" "${USER}"
 } > ./src/container-release
 
+# GitHub リポジトリ URL を git remote から取得してリンク変換用に使用
+GITHUB_REPOSITORY=$(git remote get-url origin 2>/dev/null \
+    | sed 's|.*github\.com[:/]\(.*\)\.git$|\1|;s|.*github\.com[:/]\(.*\)$|\1|' || echo "")
+BASE_BLOB="https://github.com/${GITHUB_REPOSITORY}/blob/main"
+BASE_TREE="https://github.com/${GITHUB_REPOSITORY}/tree/main"
+
+# README の相対リンクを GitHub 絶対 URL に変換して src/ へ配置
+sed \
+    -e "s|](\./\([^)]*\)/)|](${BASE_TREE}/\1/)|g" \
+    -e "s|](\./\([^)]*\))|](${BASE_BLOB}/\1)|g" \
+    -e "s|](docs-src/\([^)]*\)/)|](${BASE_TREE}/docs-src/\1/)|g" \
+    -e "s|](docs-src/)|](${BASE_TREE}/docs-src/)|g" \
+    -e "s|](docs-src/\([^)]*\))|](${BASE_BLOB}/docs-src/\1)|g" \
+    -e "s|](examples/\([^)]*\)/)|](${BASE_TREE}/examples/\1/)|g" \
+    -e "s|](examples/\([^)]*\))|](${BASE_BLOB}/examples/\1)|g" \
+    -e "s|](CLAUDE\.md)|](${BASE_BLOB}/CLAUDE.md)|g" \
+    README.md > ./src/README.md
+
+# LICENSE をビルドコンテキストにコピー
+cp LICENSE ./src/LICENSE
+
 echo "Building container image: ${CONTAINER_NAME} (OL${OL_VERSION})..."
 
 # 既存のコンテナを停止

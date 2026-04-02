@@ -80,6 +80,25 @@ jobs:
             type=semver,pattern={{major}}
             type=sha,format=short
 
+      - name: Prepare build context (docs)
+        run: |
+          # README の相対リンクを GitHub 絶対 URL に変換して src/ へ配置
+          BASE_BLOB="https://github.com/${{ github.repository }}/blob/main"
+          BASE_TREE="https://github.com/${{ github.repository }}/tree/main"
+          sed \
+            -e "s|](\./\([^)]*\)/)|](${BASE_TREE}/\1/)|g" \
+            -e "s|](\./\([^)]*\))|](${BASE_BLOB}/\1)|g" \
+            -e "s|](docs-src/\([^)]*\)/)|](${BASE_TREE}/docs-src/\1/)|g" \
+            -e "s|](docs-src/)|](${BASE_TREE}/docs-src/)|g" \
+            -e "s|](docs-src/\([^)]*\))|](${BASE_BLOB}/docs-src/\1)|g" \
+            -e "s|](examples/\([^)]*\)/)|](${BASE_TREE}/examples/\1/)|g" \
+            -e "s|](examples/\([^)]*\))|](${BASE_BLOB}/examples/\1)|g" \
+            -e "s|](CLAUDE\.md)|](${BASE_BLOB}/CLAUDE.md)|g" \
+            README.md > src/README.md
+
+          # LICENSE をビルドコンテキストにコピー
+          cp LICENSE src/LICENSE
+
       - name: Build container image
         run: |
           # 必要なディレクトリを作成
@@ -193,19 +212,8 @@ jobs:
       - name: Update Docker Hub description
         if: github.event_name != 'pull_request' && steps.dockerhub-check.outputs.available == 'true'
         run: |
-          # README.md の相対リンクを GitHub 絶対 URL に変換
-          BASE_BLOB="https://github.com/${{ github.repository }}/blob/main"
-          BASE_TREE="https://github.com/${{ github.repository }}/tree/main"
-          sed \
-            -e "s|](\./\([^)]*\)/)|](${BASE_TREE}/\1/)|g" \
-            -e "s|](\./\([^)]*\))|](${BASE_BLOB}/\1)|g" \
-            -e "s|](docs-src/\([^)]*\)/)|](${BASE_TREE}/docs-src/\1/)|g" \
-            -e "s|](docs-src/)|](${BASE_TREE}/docs-src/)|g" \
-            -e "s|](docs-src/\([^)]*\))|](${BASE_BLOB}/docs-src/\1)|g" \
-            -e "s|](examples/\([^)]*\)/)|](${BASE_TREE}/examples/\1/)|g" \
-            -e "s|](examples/\([^)]*\))|](${BASE_BLOB}/examples/\1)|g" \
-            -e "s|](CLAUDE\.md)|](${BASE_BLOB}/CLAUDE.md)|g" \
-            README.md > /tmp/dockerhub-readme.md
+          # src/README.md (リンク変換済み) を Docker Hub description 用にコピー
+          cp src/README.md /tmp/dockerhub-readme.md
 
       - name: Push Docker Hub description
         if: github.event_name != 'pull_request' && steps.dockerhub-check.outputs.available == 'true'

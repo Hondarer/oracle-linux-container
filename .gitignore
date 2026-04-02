@@ -1,6 +1,8 @@
 /.claude
 
 /src/container-release
+/src/README.md
+/src/LICENSE
 /src/fonts
 /src/keys
 /src/packages/*

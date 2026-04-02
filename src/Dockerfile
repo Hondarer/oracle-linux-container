@@ -321,6 +321,13 @@ RUN echo "%wheel ALL=(ALL) NOPASSWD: ALL" >/etc/sudoers.d/wheel
 # container-release の配置
 ADD container-release /etc
 
+# ドキュメントの配置 (ビルド時に src/ に提供される)
+RUN mkdir -p /usr/share/doc/oracle-linux-dev-container
+ADD README.md /usr/share/doc/oracle-linux-dev-container/README.md
+ADD LICENSE /usr/share/doc/oracle-linux-dev-container/LICENSE
+RUN chmod 0644 /usr/share/doc/oracle-linux-dev-container/README.md \
+               /usr/share/doc/oracle-linux-dev-container/LICENSE
+
 # 作業用ディレクトリの作成
 WORKDIR /workspace
 
