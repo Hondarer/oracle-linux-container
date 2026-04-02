@@ -173,6 +173,11 @@
 - **URL**: https://github.com/lsof-org/lsof
 - **説明**: オープンファイル一覧表示ツール
 
+### bubblewrap
+- **ライセンス**: LGPL-2.0+
+- **URL**: https://github.com/containers/bubblewrap
+- **説明**: 軽量サンドボックスツール（setuid なし）。Flatpak 等でも利用される非特権コンテナ実行ツール
+
 ### unzip
 - **ライセンス**: Info-ZIP License (BSD-like)
 - **URL**: http://www.info-zip.org/

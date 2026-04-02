@@ -56,6 +56,7 @@ RUN dnf install -y \
         at-spi2-core \
         bc \
         binutils-devel \
+        bubblewrap \
         cairo-gobject \
         cmake \
         colord-libs \
