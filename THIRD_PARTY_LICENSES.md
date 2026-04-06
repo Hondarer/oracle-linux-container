@@ -13,7 +13,7 @@
 ## プログラミング言語とランタイム
 
 ### Node.js
-- **バージョン**: 22
+- **バージョン**: 24 (OL8) / 22 (OL10)
 - **ライセンス**: MIT License
 - **URL**: https://nodejs.org/
 - **説明**: JavaScript/TypeScript ランタイム環境

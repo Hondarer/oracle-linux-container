@@ -16,7 +16,7 @@ License File: See LICENSE-IMAGE in this directory
 DEVELOPMENT TOOLS AND RUNTIME ENVIRONMENTS
 ================================================================================
 
-Node.js 22
+Node.js 24 (OL8) / 22 (OL10)
 License: MIT License
 Copyright: OpenJS Foundation and contributors
 URL: https://github.com/nodejs/node

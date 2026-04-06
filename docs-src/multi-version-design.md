@@ -65,7 +65,7 @@ ARG OL_VERSION
 |------|-----|------|
 | EPEL | `oracle-epel-release-el8` | `oracle-epel-release-el10` |
 | リポジトリ | `ol8_codeready_builder`, `ol8_developer_EPEL` | `ol10_codeready_builder`, `ol10_developer_EPEL` |
-| Node.js | `dnf module enable nodejs:22` + install | `dnf install nodejs` (AppStream) |
+| Node.js | `dnf module enable nodejs:24` + install | `dnf install nodejs` (AppStream) |
 | Java | `java-17-openjdk*` | `java-21-openjdk*` |
 | Python pip | `python3.11-pip` | `python3-pip` (3.12 が標準) |
 | フォント | DejaVu + VLGothic | Google Noto Sans CJK |
@@ -163,7 +163,7 @@ examples/devcontainer/
 |-----------|-----|------|------|
 | EPEL | `oracle-epel-release-el8` | `oracle-epel-release-el10` | 条件分岐 |
 | リポジトリ | `ol8_codeready_builder`, `ol8_developer_EPEL` | `ol10_codeready_builder`, `ol10_developer_EPEL` | 条件分岐 |
-| Node.js | `dnf module enable nodejs:22` + install | `dnf install nodejs` (AppStream) | 条件分岐 |
+| Node.js | `dnf module enable nodejs:24` + install | `dnf install nodejs` (AppStream) | 条件分岐 |
 | Java | `java-17-openjdk*` | `java-21-openjdk*` | 条件分岐 |
 | Python pip | `python3.11-pip` | `python3-pip` | 条件分岐 |
 | llvm-compat-libs | あり | 不要 | 条件分岐 |
