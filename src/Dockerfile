@@ -122,6 +122,8 @@ RUN dnf install -y \
         $(if [ "${OL_VERSION}" = "8" ]; then echo \
             "java-11-openjdk-headless" \
             "java-17-openjdk java-17-openjdk-devel" \
+            "platform-python" \
+            "python3-libs" \
             "python3.11-pip" \
             "llvm-compat-libs" \
             "libmodman" \
