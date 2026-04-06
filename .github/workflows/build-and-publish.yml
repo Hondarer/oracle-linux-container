@@ -243,7 +243,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: ${{ secrets.DOCKERHUB_USERNAME }}/oracle-linux-${{ matrix.ol_version }}-dev
-          short-description: Oracle Linux ${{ matrix.ol_version }} dev container with Node.js 24(OL8)/22(OL10), Java, .NET 10, Python, docs tools, Japanese support
+          short-description: Oracle Linux ${{ matrix.ol_version }} dev container with Node.js 24, Java, .NET 10, Python, docs tools, Japanese support
           readme-filepath: /tmp/dockerhub-readme.md
 
       - name: Export and push WSL rootfs as OCI artifact

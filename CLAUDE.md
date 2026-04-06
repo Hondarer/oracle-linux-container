@@ -27,7 +27,7 @@
 Dockerfile は `ARG OL_VERSION` により、OL8/OL10 の両方をサポートします。
 
 1. Oracle Linux パッケージの更新と開発ツールの導入
-2. 開発環境 (Node.js 24(OL8)/22(OL10)、Java 17/21、.NET 10、Python 3.11/3.12)
+2. 開発環境 (Node.js 24、Java 17/21、.NET 10、Python 3.11/3.12)
 3. ドキュメント生成ツール (Doxygen、PlantUML、Pandoc 系)
 4. 日本語環境とフォント設定
 5. SSH サーバーと認証キー設定
@@ -103,7 +103,7 @@ ssh-keygen -R "[127.0.0.1]:40822"
 
 ### インストール済みツール
 
-- **言語ランタイム**: Node.js 24(OL8)/22(OL10)、Java 17(OL8)/21(OL10)、.NET 10、Python 3.11(OL8)/3.12(OL10)
+- **言語ランタイム**: Node.js 24、Java 17(OL8)/21(OL10)、.NET 10、Python 3.11(OL8)/3.12(OL10)
 - **ビルドツール**: GCC、Make、CMake、automake、libtool
 - **開発ライブラリ**: openssl-devel、libssh-devel、libcurl-devel、binutils-devel
 - **ドキュメント**: Doxygen、doxybook2、PlantUML、Pandoc

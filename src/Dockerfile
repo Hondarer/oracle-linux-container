@@ -45,9 +45,12 @@ RUN dnf install -y \
         dnf config-manager --enable ol8_developer_EPEL; \
     fi && \
     dnf group install -y 'Development Tools' && \
-    # OL8: Node.js はモジュールで有効化が必要
+    # Node.js 24: OL8 はモジュール有効化、OL10 は NodeSource リポジトリを使用
+    # (OL10 は RHEL 10 ベースのため DNF モジュールシステムが廃止されており使用不可)
     if [ "${OL_VERSION}" = "8" ]; then \
         dnf module -y enable nodejs:24; \
+    else \
+        curl -fsSL https://rpm.nodesource.com/setup_24.x | bash -; \
     fi && \
     dnf install -y \
         adwaita-cursor-theme \
