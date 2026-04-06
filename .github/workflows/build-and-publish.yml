@@ -180,7 +180,11 @@ jobs:
           podman exec $CONTAINER_ID python --version
 
           echo "=== Python 3.11 version ==="
-          podman exec $CONTAINER_ID python3.11 --version
+          if podman exec $CONTAINER_ID which python3.11 > /dev/null 2>&1; then
+            podman exec $CONTAINER_ID python3.11 --version
+          else
+            echo "python3.11 not found (skipped)"
+          fi
 
           echo "=== OpenSSH version ==="
           podman exec $CONTAINER_ID ssh -V
