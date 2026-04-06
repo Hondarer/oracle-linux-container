@@ -162,11 +162,28 @@ jobs:
           echo "=== Node.js version ==="
           podman exec $CONTAINER_ID node --version
 
+          echo "=== npm version ==="
+          podman exec $CONTAINER_ID npm --version
+
           echo "=== Java version ==="
           podman exec $CONTAINER_ID java --version
 
+          echo "=== Java 11 version ==="
+          JAVA11=$(podman exec $CONTAINER_ID find /usr/lib/jvm -name 'java' -path '*/java-11*' -type f | head -1)
+          if [ -n "$JAVA11" ]; then
+            podman exec $CONTAINER_ID $JAVA11 --version
+          else
+            echo "Java 11 not found (skipped)"
+          fi
+
           echo "=== Python version ==="
           podman exec $CONTAINER_ID python --version
+
+          echo "=== Python 3.11 version ==="
+          podman exec $CONTAINER_ID python3.11 --version
+
+          echo "=== OpenSSH version ==="
+          podman exec $CONTAINER_ID ssh -V
 
           echo "=== .NET version ==="
           podman exec $CONTAINER_ID dotnet --version

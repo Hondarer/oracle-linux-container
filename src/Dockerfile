@@ -47,7 +47,7 @@ RUN dnf install -y \
     dnf group install -y 'Development Tools' && \
     # OL8: Node.js はモジュールで有効化が必要
     if [ "${OL_VERSION}" = "8" ]; then \
-        dnf module -y enable nodejs:22; \
+        dnf module -y enable nodejs:24; \
     fi && \
     dnf install -y \
         adwaita-cursor-theme \
@@ -104,8 +104,11 @@ RUN dnf install -y \
         nkf \
         nmap-ncat \
         nodejs \
-        openssl-devel \
         npm \
+        openssh \
+        openssh-clients \
+        openssh-server \
+        openssl-devel \
         perl-Env \
         rsync \
         sudo \
@@ -117,6 +120,7 @@ RUN dnf install -y \
         xkeyboard-config \
         # バージョン依存パッケージ
         $(if [ "${OL_VERSION}" = "8" ]; then echo \
+            "java-11-openjdk-headless" \
             "java-17-openjdk java-17-openjdk-devel" \
             "python3.11-pip" \
             "llvm-compat-libs" \
