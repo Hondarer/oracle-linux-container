@@ -103,7 +103,7 @@ VS Code が起動したら：
 
 ```bash
 # バージョン確認
-node --version    # Node.js 22
+node --version    # Node.js 24(OL8)/22(OL10)
 java -version     # OpenJDK 17
 dotnet --version  # .NET 10.0
 python --version  # Python 3.11

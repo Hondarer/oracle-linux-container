@@ -96,7 +96,7 @@ podman pull hondarer/oracle-linux-10-dev:latest
 
 | ツール | OL8 | OL10 |
 |--------|-----|------|
-| Node.js | 22 | 22 |
+| Node.js | 24 | 22 |
 | Java (OpenJDK) | 17 | 21 |
 | .NET SDK | 10 | 10 |
 | Python | 3.11 | 3.12 |
@@ -369,7 +369,7 @@ wsl -d OracleLinux8-Dev
 
 - **Oracle Linux 8/10**: GPL-2.0
 - **OpenJDK 17/21**: GPL-2.0 with Classpath Exception
-- **Node.js 22**: MIT License
+- **Node.js 24 (OL8) / 22 (OL10)**: MIT License
 - **.NET 10**: MIT License
 - **Python 3.11/3.12**: PSF License
 - **GCC 8/14**: GPL-3.0-or-later
