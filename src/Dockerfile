@@ -227,15 +227,15 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     rm -f pandoc-crossref pandoc-crossref.1.gz && \
     # plantuml
     cd /tmp && \
-    if [ ! -f packages/plantuml-1.2025.4.jar ]; then \
-        curl -fsSL -o /tmp/plantuml-1.2025.4.jar https://github.com/plantuml/plantuml/releases/download/v1.2025.4/plantuml-1.2025.4.jar; \
+    if [ ! -f packages/plantuml-1.2026.2.jar ]; then \
+        curl -fsSL -o /tmp/plantuml-1.2026.2.jar https://github.com/plantuml/plantuml/releases/download/v1.2026.2/plantuml-1.2026.2.jar; \
     else \
-        cp packages/plantuml-1.2025.4.jar /tmp/; \
+        cp packages/plantuml-1.2026.2.jar /tmp/; \
     fi && \
-    chown root:root plantuml-1.2025.4.jar && \
-    chmod 0755 plantuml-1.2025.4.jar && \
-    cp plantuml-1.2025.4.jar /usr/local/bin/ && \
-    cd /usr/local/bin && ln -s plantuml-1.2025.4.jar plantuml.jar && \
+    chown root:root plantuml-1.2026.2.jar && \
+    chmod 0755 plantuml-1.2026.2.jar && \
+    cp plantuml-1.2026.2.jar /usr/local/bin/ && \
+    cd /usr/local/bin && ln -s plantuml-1.2026.2.jar plantuml.jar && \
     echo '#!/bin/bash' > /usr/local/bin/plantuml && \
     echo 'export LANG=ja_JP.UTF-8' >> /usr/local/bin/plantuml && \
     echo '/usr/bin/java -Djava.io.tmpdir=/var/tmp -Djava.awt.headless=true -jar /usr/local/bin/plantuml.jar -charset UTF-8 "$@"' >> /usr/local/bin/plantuml && \

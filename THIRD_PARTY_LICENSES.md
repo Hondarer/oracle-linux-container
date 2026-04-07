@@ -65,7 +65,7 @@
 - **説明**: Doxygen XML を Markdown に変換するツール
 
 ### PlantUML
-- **バージョン**: 1.2025.4
+- **バージョン**: 1.2026.2
 - **ライセンス**: GPLv3 or later
 - **URL**: https://plantuml.com/
 - **説明**: UML 図作成ツール
