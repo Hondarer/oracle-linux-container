@@ -268,7 +268,7 @@ function Main {
 
     # ImageUrl が指定されていない場合、Tag パラメータを使用して構築
     if ([string]::IsNullOrEmpty($ImageUrl)) {
-        $script:ImageUrl = "ghcr.io/hondarer/oracle-linux-container/oracle-linux-${OLVersion}-dev:$Tag"
+        $ImageUrl = "ghcr.io/hondarer/oracle-linux-container/oracle-linux-${OLVersion}-dev:$Tag"
     }
 
     # パラメータ表示
