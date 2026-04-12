@@ -223,6 +223,21 @@ wsl --version
 wsl --install
 ```
 
+> **Hyper-V ゲストの Windows で WSL2 を使用する場合**
+>
+> Hyper-V 上の仮想マシンで Windows を実行している場合、WSL2 を有効にするにはホスト側でネスト仮想化 (ExposeVirtualizationExtensions) を有効にする必要があります。
+> 対象の仮想マシンをシャットダウンした後、**ホスト** の PowerShell で以下を実行してください。
+>
+> ```powershell
+> # 現在の設定を確認 (ホストで実行)
+> Get-VMProcessor -VMName * | ft VMName,ExposeVirtualizationExtensions
+>
+> # ネスト仮想化を有効化 (ホストで実行、<VMName> は対象 VM 名に変更)
+> Set-VMProcessor -VMName <VMName> -ExposeVirtualizationExtensions $true
+> ```
+>
+> 設定後、仮想マシンを起動して再度 WSL2 のインストールをお試しください。
+
 ### ダウンロードが失敗する
 
 - インターネット接続を確認してください
