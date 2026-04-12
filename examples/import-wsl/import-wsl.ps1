@@ -29,6 +29,9 @@ if ([string]::IsNullOrEmpty($WslDistroName)) {
 if ([string]::IsNullOrEmpty($InstallLocation)) {
     $InstallLocation = "$env:LOCALAPPDATA\WSL\$WslDistroName"
 }
+if ([string]::IsNullOrEmpty($ImageUrl)) {
+    $ImageUrl = "ghcr.io/hondarer/oracle-linux-container/oracle-linux-${OLVersion}-dev:$Tag"
+}
 
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"  # 進捗表示を無効化して高速化
@@ -265,11 +268,6 @@ function Main {
     Write-ColorOutput "  Oracle Linux $OLVersion 開発環境" "Cyan"
     Write-ColorOutput "========================================" "Cyan"
     Write-Host ""
-
-    # ImageUrl が指定されていない場合、Tag パラメータを使用して構築
-    if ([string]::IsNullOrEmpty($ImageUrl)) {
-        $ImageUrl = "ghcr.io/hondarer/oracle-linux-container/oracle-linux-${OLVersion}-dev:$Tag"
-    }
 
     # パラメータ表示
     Write-Host "設定:"
