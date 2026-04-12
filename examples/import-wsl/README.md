@@ -26,7 +26,7 @@ wsl --install
 
 ```powershell
 # スクリプトをダウンロードして実行
-irm https://raw.githubusercontent.com/hondarer/oracle-linux-container/main/examples/import-wsl/import-wsl.ps1 | iex
+& ([scriptblock]::Create((irm https://raw.githubusercontent.com/hondarer/oracle-linux-container/main/examples/import-wsl/import-wsl.ps1)))
 
 # インポートされたディストリビューションを起動
 wsl -d OracleLinux8-Dev
