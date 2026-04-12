@@ -1,4 +1,4 @@
-﻿# Oracle Linux 開発環境を WSL2 にインポートする PowerShell スクリプト
+# Oracle Linux 開発環境を WSL2 にインポートする PowerShell スクリプト
 #
 # このスクリプトは、GitHub Container Registry (ghcr.io) から
 # OCI Artifact として公開されている WSL2 rootfs をダウンロードし、
