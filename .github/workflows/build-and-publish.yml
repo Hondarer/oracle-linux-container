@@ -207,6 +207,19 @@ jobs:
           podman stop $CONTAINER_ID
           podman rm $CONTAINER_ID
 
+      - name: Build WSL derivative image
+        run: |
+          WSL_BUILD_IMAGE="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}-wsl-build"
+
+          cd src
+          podman build \
+            --build-arg BASE_IMAGE=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            -f Containerfile.wsl \
+            -t "$WSL_BUILD_IMAGE" \
+            .
+
+          echo "WSL_BUILD_IMAGE=$WSL_BUILD_IMAGE" >> $GITHUB_ENV
+
       - name: Push container image
         if: github.event_name != 'pull_request'
         run: |
@@ -251,7 +264,7 @@ jobs:
         run: |
           # WSL 用 rootfs のエクスポート
           echo "==> Exporting WSL rootfs..."
-          CONTAINER_ID=$(podman create ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }})
+          CONTAINER_ID=$(podman create "$WSL_BUILD_IMAGE")
           podman export $CONTAINER_ID | gzip > wsl-rootfs.tar.gz
           podman rm $CONTAINER_ID
 
