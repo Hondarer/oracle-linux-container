@@ -37,32 +37,45 @@ $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"  # 進捗表示を無効化して高速化
 
 # =============================================================================
-# カラー出力関数
+# 出力関数
 # =============================================================================
 
-function Write-ColorOutput {
-    param([string]$Message, [string]$Color = "Green")
-    Write-Host $Message -ForegroundColor $Color
+function Write-Output {
+    param(
+        [string]$Message,
+        [string]$Color = ""
+    )
+
+    if ([string]::IsNullOrEmpty($Color)) {
+        Write-Host $Message
+    } else {
+        Write-Host $Message -ForegroundColor $Color
+    }
 }
 
 function Write-Step {
     param([string]$Message)
-    Write-ColorOutput "`n==> $Message" "Cyan"
+    Write-Output "`n==> $Message"
 }
 
 function Write-Success {
     param([string]$Message)
-    Write-ColorOutput "[OK] $Message" "Green"
+    Write-Output "[OK] $Message"
+}
+
+function Write-WarningMsg {
+    param([string]$Message)
+    Write-Output $Message "Yellow"
 }
 
 function Write-ErrorMsg {
     param([string]$Message)
-    Write-ColorOutput "[ERROR] $Message" "Red"
+    Write-Output "[ERROR] $Message" "Red"
 }
 
 function Write-Info {
     param([string]$Message)
-    Write-Host "    $Message" -ForegroundColor Gray
+    Write-Host "    $Message"
 }
 
 # =============================================================================
@@ -201,9 +214,9 @@ function Import-ToWSL2 {
     $existingDistros = wsl --list --quiet 2>$null
     if ($existingDistros -contains $DistroName) {
         Write-Host ""
-        Write-ColorOutput "警告: 既存のディストリビューション '$DistroName' が見つかりました" "Yellow"
+        Write-WarningMsg "警告: 既存のディストリビューション '$DistroName' が見つかりました"
         Write-Host ""
-        Write-ColorOutput "  このディストリビューションを削除すると、以下のデータがすべて失われます:" "Red"
+        Write-WarningMsg "  このディストリビューションを削除すると、以下のデータがすべて失われます:"
         Write-Host "  - ホームディレクトリ内のすべてのファイル"
         Write-Host "  - インストールされたパッケージと設定"
         Write-Host "  - ユーザーデータとカスタマイズ"
@@ -263,10 +276,10 @@ function Test-WslDistro {
 
 function Main {
     Write-Host ""
-    Write-ColorOutput "========================================" "Cyan"
-    Write-ColorOutput "  WSL2 インポートツール" "Cyan"
-    Write-ColorOutput "  Oracle Linux $OLVersion 開発環境" "Cyan"
-    Write-ColorOutput "========================================" "Cyan"
+    Write-Output "========================================"
+    Write-Output "  WSL2 インポートツール"
+    Write-Output "  Oracle Linux $OLVersion 開発環境"
+    Write-Output "========================================"
     Write-Host ""
 
     # パラメータ表示
@@ -341,19 +354,19 @@ function Main {
 
             # 完了メッセージ
             Write-Host ""
-            Write-ColorOutput "========================================" "Green"
-            Write-ColorOutput "  インポートが完了しました！" "Green"
-            Write-ColorOutput "========================================" "Green"
+            Write-Output "========================================"
+            Write-Output "  インポートが完了しました！"
+            Write-Output "========================================"
             Write-Host ""
             Write-Host "次のコマンドでディストリビューションを起動できます:"
-            Write-ColorOutput "  wsl -d $WslDistroName" "Yellow"
+            Write-Output "  wsl -d $WslDistroName"
             Write-Host ""
             Write-Host "デフォルトのディストリビューションに設定する場合:"
-            Write-ColorOutput "  wsl --set-default $WslDistroName" "Yellow"
+            Write-Output "  wsl --set-default $WslDistroName"
             Write-Host ""
             Write-Host "初回起動時はユーザーが作成されます。"
             Write-Host "環境変数で制御する場合:"
-            Write-ColorOutput "  wsl -d $WslDistroName -e bash -c 'HOST_USER=myuser HOST_UID=1000 HOST_GID=1000 /entrypoint.sh'" "Gray"
+            Write-Output "  wsl -d $WslDistroName -e bash -c 'HOST_USER=myuser HOST_UID=1000 HOST_GID=1000 /entrypoint.sh'"
             Write-Host ""
 
         } else {
@@ -375,7 +388,7 @@ function Main {
         if (Test-Path $TempDir) {
             Write-Host ""
             Write-Host "一時ファイルをクリーンアップする場合:"
-            Write-ColorOutput "  Remove-Item -Recurse -Force '$TempDir'" "Gray"
+            Write-Output "  Remove-Item -Recurse -Force '$TempDir'"
             Write-Host ""
         }
     }
