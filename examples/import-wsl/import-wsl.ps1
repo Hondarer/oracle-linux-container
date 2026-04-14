@@ -1,13 +1,14 @@
 ﻿# Oracle Linux 開発環境を WSL2 にインポートする PowerShell スクリプト
 #
 # このスクリプトは、GitHub Container Registry (ghcr.io) から
-# OCI Artifact として公開されている WSL2 rootfs をダウンロードし、
+# OCI Artifact として公開されている WSL2 rootfs をダウンロードするか、
+# 事前に取得したローカルの WSL rootfs (tar.gz) を使用して、
 # WSL2 ディストリビューションとしてインポートします。
 #
 # 前提条件:
 # - Windows 10 (1803以降) または Windows 11
 # - WSL2 がインストール済み
-# - インターネット接続
+# - インターネット接続 (レジストリから取得する場合)
 #
 # 使用する Windows 標準機能:
 # - PowerShell (Invoke-RestMethod, Invoke-WebRequest)
@@ -17,19 +18,24 @@ param(
     [string]$OLVersion = "8",
     [string]$Tag = "latest-wsl",
     [string]$ImageUrl = "",
+    [string]$RootFsPath = "",
+    [switch]$DownloadOnly,
+    [string]$RootFsOutputPath = "",
     [string]$WslDistroName = "",
     [string]$InstallLocation = "",
     [string]$TempDir = "$env:TEMP\wsl-import-$(Get-Date -Format 'yyyyMMddHHmmss')"
 )
 
+$hasExplicitWslDistroName = $PSBoundParameters.ContainsKey('WslDistroName')
+
 # デフォルト値の設定
-if ([string]::IsNullOrEmpty($WslDistroName)) {
+if ([string]::IsNullOrEmpty($WslDistroName) -and [string]::IsNullOrEmpty($RootFsPath)) {
     $WslDistroName = "OracleLinux${OLVersion}-Dev"
 }
-if ([string]::IsNullOrEmpty($InstallLocation)) {
+if ([string]::IsNullOrEmpty($InstallLocation) -and -not [string]::IsNullOrEmpty($WslDistroName)) {
     $InstallLocation = "$env:LOCALAPPDATA\WSL\$WslDistroName"
 }
-if ([string]::IsNullOrEmpty($ImageUrl)) {
+if ([string]::IsNullOrEmpty($ImageUrl) -and [string]::IsNullOrEmpty($RootFsPath)) {
     $ImageUrl = "ghcr.io/hondarer/oracle-linux-container/oracle-linux-${OLVersion}-dev:$Tag"
 }
 
@@ -93,6 +99,41 @@ function Convert-WindowsPathToWslPath {
     }
 
     throw "WSL から参照できない Windows パスです: $fullPath"
+}
+
+function Resolve-RootFsPath {
+    param([string]$Path)
+
+    $fullPath = [System.IO.Path]::GetFullPath($Path)
+    if (-not (Test-Path -LiteralPath $fullPath -PathType Leaf)) {
+        throw "指定された rootfs ファイルが見つかりません: $fullPath"
+    }
+
+    return $fullPath
+}
+
+function Resolve-RootFsOutputPath {
+    param(
+        [string]$Path,
+        [string]$TempDir
+    )
+
+    $fullPath = if ([string]::IsNullOrEmpty($Path)) {
+        Join-Path $TempDir "wsl-rootfs.tar.gz"
+    } else {
+        [System.IO.Path]::GetFullPath($Path)
+    }
+
+    $parentDir = Split-Path -Path $fullPath -Parent
+    if (-not [string]::IsNullOrEmpty($parentDir) -and -not (Test-Path -LiteralPath $parentDir -PathType Container)) {
+        New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
+    }
+
+    if (Test-Path -LiteralPath $fullPath) {
+        throw "rootfs の出力先ファイルが既に存在します: $fullPath"
+    }
+
+    return $fullPath
 }
 
 # イメージ URL 解析
@@ -211,6 +252,71 @@ function Download-Blob {
         Write-ErrorMsg "ダウンロード失敗: $_"
         throw
     }
+}
+
+function Get-RootFsFromLocalFile {
+    param([string]$Path)
+
+    Write-Step "ローカル rootfs を確認中"
+
+    $resolvedPath = Resolve-RootFsPath -Path $Path
+    $size = (Get-Item -LiteralPath $resolvedPath).Length / 1MB
+
+    Write-Info "ローカル rootfs: $resolvedPath"
+    Write-Info "ファイルサイズ: $($size.ToString('F2')) MB"
+    Write-Success "ローカル rootfs を使用します"
+
+    return $resolvedPath
+}
+
+function Get-RootFsFromRegistry {
+    param(
+        [string]$ImageUrl,
+        [string]$TempDir,
+        [string]$RootFsOutputPath
+    )
+
+    # イメージ URL の解析
+    Write-Step "イメージ情報を解析中"
+    $imageInfo = Parse-ImageUrl -Url $ImageUrl
+    Write-Host "  レジストリ: $($imageInfo.Registry)"
+    Write-Host "  イメージ  : $($imageInfo.Image)"
+    Write-Host "  タグ      : $($imageInfo.Tag)"
+
+    # 認証トークンの取得
+    Write-Step "レジストリに接続中"
+    $token = Get-RegistryToken -Registry $imageInfo.Registry -Image $imageInfo.Image
+
+    # マニフェストの取得
+    Write-Step "OCI Artifact マニフェストを取得中"
+    $manifest = Get-ArtifactManifest `
+        -Registry $imageInfo.Registry `
+        -Image $imageInfo.Image `
+        -Tag $imageInfo.Tag `
+        -Token $token
+
+    # レイヤー (WSL rootfs) の取得
+    if (-not ($manifest.layers -and $manifest.layers.Count -gt 0)) {
+        throw "マニフェストにレイヤーが含まれていません"
+    }
+
+    $layer = $manifest.layers[0]
+    Write-Info "Rootfs サイズ: $([math]::Round($layer.size / 1MB, 2)) MB"
+    Write-Info "Media Type: $($layer.mediaType)"
+
+    $outputPath = Resolve-RootFsOutputPath -Path $RootFsOutputPath -TempDir $TempDir
+    Write-Info "rootfs 保存先: $outputPath"
+
+    # Rootfs のダウンロード
+    Write-Step "WSL rootfs をダウンロード中"
+    Download-Blob `
+        -Registry $imageInfo.Registry `
+        -Image $imageInfo.Image `
+        -Token $token `
+        -Digest $layer.digest `
+        -OutputPath $outputPath
+
+    return $outputPath
 }
 
 # =============================================================================
@@ -393,7 +499,17 @@ function Main {
 
     # パラメータ表示
     Write-Host "設定:"
-    Write-Host "  イメージ URL     : $ImageUrl"
+    if ([string]::IsNullOrEmpty($RootFsPath)) {
+        Write-Host "  イメージ URL     : $ImageUrl"
+    } else {
+        Write-Host "  ローカル rootfs  : $RootFsPath"
+    }
+    if (-not [string]::IsNullOrEmpty($RootFsOutputPath)) {
+        Write-Host "  rootfs 出力先    : $RootFsOutputPath"
+    }
+    if ($DownloadOnly) {
+        Write-Host "  ダウンロードのみ : 有効"
+    }
     Write-Host "  WSL ディストリ名 : $WslDistroName"
     Write-Host "  インストール先   : $InstallLocation"
     Write-Host "  一時ディレクトリ : $TempDir"
@@ -417,79 +533,98 @@ function Main {
         }
         Write-Success "一時ディレクトリを作成しました: $TempDir"
 
-        # イメージ URL の解析
-        Write-Step "イメージ情報を解析中"
-        $imageInfo = Parse-ImageUrl -Url $ImageUrl
-        Write-Host "  レジストリ: $($imageInfo.Registry)"
-        Write-Host "  イメージ  : $($imageInfo.Image)"
-        Write-Host "  タグ      : $($imageInfo.Tag)"
-
-        # 認証トークンの取得
-        Write-Step "レジストリに接続中"
-        $token = Get-RegistryToken -Registry $imageInfo.Registry -Image $imageInfo.Image
-
-        # マニフェストの取得
-        Write-Step "OCI Artifact マニフェストを取得中"
-        $manifest = Get-ArtifactManifest `
-            -Registry $imageInfo.Registry `
-            -Image $imageInfo.Image `
-            -Tag $imageInfo.Tag `
-            -Token $token
-
-        # レイヤー (WSL rootfs) の取得
-        if ($manifest.layers -and $manifest.layers.Count -gt 0) {
-            $layer = $manifest.layers[0]
-            Write-Info "Rootfs サイズ: $([math]::Round($layer.size / 1MB, 2)) MB"
-            Write-Info "Media Type: $($layer.mediaType)"
-
-            # Rootfs のダウンロード
-            Write-Step "WSL rootfs をダウンロード中"
-            $rootfsTarGz = Join-Path $TempDir "wsl-rootfs.tar.gz"
-            Download-Blob `
-                -Registry $imageInfo.Registry `
-                -Image $imageInfo.Image `
-                -Token $token `
-                -Digest $layer.digest `
-                -OutputPath $rootfsTarGz
-
-            # WSL2 へのインポート
-            Import-ToWSL2 `
-                -DistroName $WslDistroName `
-                -InstallLocation $InstallLocation `
-                -RootFsTarGz $rootfsTarGz `
-                -TempDir $TempDir
-
-            # テスト実行
-            Test-WslDistro -DistroName $WslDistroName
-
-            # 完了メッセージ
-            Write-Host ""
-            Write-Output "========================================"
-            Write-Output "  インポートが完了しました！"
-            Write-Output "========================================"
-            Write-Host ""
-            Write-Host "次のコマンドでディストリビューションを起動できます:"
-            Write-Output "  wsl -d $WslDistroName"
-            Write-Host ""
-            Write-Host "デフォルトのディストリビューションに設定する場合:"
-            Write-Output "  wsl --set-default $WslDistroName"
-            Write-Host ""
-            Write-Host "初回起動時はユーザーが作成されます。"
-            Write-Host "環境変数で制御する場合:"
-            Write-Output "  wsl -d $WslDistroName -e bash -c 'HOST_USER=myuser HOST_UID=1000 HOST_GID=1000 /entrypoint.sh'"
-            Write-Host ""
-
-        } else {
-            throw "マニフェストにレイヤーが含まれていません"
+        if ($DownloadOnly -and -not [string]::IsNullOrEmpty($RootFsPath)) {
+            throw "DownloadOnly と RootFsPath は同時に指定できません"
         }
+        if (-not [string]::IsNullOrEmpty($RootFsPath) -and -not [string]::IsNullOrEmpty($RootFsOutputPath)) {
+            throw "RootFsPath と RootFsOutputPath は同時に指定できません"
+        }
+        if (-not [string]::IsNullOrEmpty($RootFsPath) -and -not $hasExplicitWslDistroName) {
+            throw "RootFsPath を使ってインストールする場合は -WslDistroName を指定してください"
+        }
+        if ([string]::IsNullOrEmpty($InstallLocation) -and -not [string]::IsNullOrEmpty($WslDistroName)) {
+            $InstallLocation = "$env:LOCALAPPDATA\WSL\$WslDistroName"
+        }
+
+        $rootfsTarGz = $null
+        if ([string]::IsNullOrEmpty($RootFsPath)) {
+            $rootfsTarGz = Get-RootFsFromRegistry `
+                -ImageUrl $ImageUrl `
+                -TempDir $TempDir `
+                -RootFsOutputPath $RootFsOutputPath
+        } else {
+            if (-not [string]::IsNullOrEmpty($ImageUrl)) {
+                Write-Info "RootFsPath が指定されているため ImageUrl は使用しません"
+            }
+            if ($Tag -ne "latest-wsl") {
+                Write-Info "RootFsPath が指定されているため Tag は使用しません"
+            }
+
+            $rootfsTarGz = Get-RootFsFromLocalFile -Path $RootFsPath
+        }
+
+        if ($DownloadOnly) {
+            Write-Host ""
+            Write-Output "========================================"
+            Write-Output "  WSL rootfs のダウンロードが完了しました"
+            Write-Output "========================================"
+            Write-Host ""
+            Write-Host "保存した rootfs:"
+            Write-Output "  $rootfsTarGz"
+            Write-Host ""
+            Write-Host "後でこの rootfs からインストールする場合:"
+            Write-Output "  .\import-wsl.ps1 -RootFsPath `"$rootfsTarGz`" -WslDistroName `"OracleLinux${OLVersion}-Dev`""
+            if ([System.IO.Path]::GetFullPath($rootfsTarGz).StartsWith([System.IO.Path]::GetFullPath($TempDir), [System.StringComparison]::OrdinalIgnoreCase)) {
+                Write-Host ""
+                Write-WarningMsg "  rootfs は一時ディレクトリ配下に保存されています。必要なら削除前に別の場所へ移動してください。"
+            }
+            Write-Host ""
+            return
+        }
+
+        # WSL2 へのインポート
+        Import-ToWSL2 `
+            -DistroName $WslDistroName `
+            -InstallLocation $InstallLocation `
+            -RootFsTarGz $rootfsTarGz `
+            -TempDir $TempDir
+
+        # テスト実行
+        Test-WslDistro -DistroName $WslDistroName
+
+        # 完了メッセージ
+        Write-Host ""
+        Write-Output "========================================"
+        Write-Output "  インポートが完了しました！"
+        Write-Output "========================================"
+        Write-Host ""
+        Write-Host "次のコマンドでディストリビューションを起動できます:"
+        Write-Output "  wsl -d $WslDistroName"
+        Write-Host ""
+        Write-Host "デフォルトのディストリビューションに設定する場合:"
+        Write-Output "  wsl --set-default $WslDistroName"
+        Write-Host ""
+        Write-Host "初回起動時はユーザーが作成されます。"
+        Write-Host "環境変数で制御する場合:"
+        Write-Output "  wsl -d $WslDistroName -e bash -c 'HOST_USER=myuser HOST_UID=1000 HOST_GID=1000 /entrypoint.sh'"
+        Write-Host ""
 
     } catch {
         Write-Host ""
         Write-ErrorMsg "エラーが発生しました: $_"
         Write-Host ""
         Write-Host "トラブルシューティング:"
-        Write-Host "  - インターネット接続を確認してください"
-        Write-Host "  - イメージ URL が正しいか確認してください"
+        if ([string]::IsNullOrEmpty($RootFsPath)) {
+            Write-Host "  - インターネット接続を確認してください"
+            Write-Host "  - イメージ URL が正しいか確認してください"
+            if (-not [string]::IsNullOrEmpty($RootFsOutputPath)) {
+                Write-Host "  - RootFsOutputPath の保存先が有効で、同名ファイルが存在しないか確認してください"
+            }
+        } else {
+            Write-Host "  - RootFsPath で指定した rootfs ファイルが存在するか確認してください"
+            Write-Host "  - 持ち込んだ rootfs が WSL 用 tar.gz であることを確認してください"
+            Write-Host "  - RootFsPath を使う場合は -WslDistroName を指定してください"
+        }
         Write-Host "  - WSL2 が正しくインストールされているか確認してください"
         Write-Host ""
         exit 1
