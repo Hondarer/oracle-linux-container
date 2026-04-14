@@ -79,6 +79,22 @@ function Write-Info {
 }
 
 # =============================================================================
+# パス・シェル補助関数
+# =============================================================================
+
+function Convert-WindowsPathToWslPath {
+    param([string]$Path)
+
+    $fullPath = [System.IO.Path]::GetFullPath($Path)
+    if ($fullPath -match '^([A-Za-z]):\\(.*)$') {
+        $driveLetter = $matches[1].ToLowerInvariant()
+        $pathSuffix = $matches[2] -replace '\\', '/'
+        return "/mnt/$driveLetter/$pathSuffix"
+    }
+
+    throw "WSL から参照できない Windows パスです: $fullPath"
+}
+
 # イメージ URL 解析
 # =============================================================================
 
@@ -201,34 +217,123 @@ function Download-Blob {
 # WSL2 インポート
 # =============================================================================
 
+function Prompt-ReimportMode {
+    param([string]$DistroName)
+
+    Write-Host ""
+    Write-WarningMsg "警告: 既存のディストリビューション '$DistroName' が見つかりました"
+    Write-Host ""
+    Write-WarningMsg "  このディストリビューションを削除すると、現在の登録は置き換えられます:"
+    Write-Host "  - クリーン再作成を選ぶと、既存のホームディレクトリ内データは失われます"
+    Write-Host "  - 移行を選ぶと、/home 配下を tar.gz で圧縮退避してから復元します"
+    Write-Host "  - /home ディレクトリ自体は置き換えず、配下のファイルとディレクトリを移行します"
+    Write-Host ""
+    Write-Host "再作成方法を選択してください:"
+    Write-Host "  [Enter] M : /home 配下を移行する"
+    Write-Host "          C : クリーンな環境で再作成する"
+    Write-Host "          N : キャンセルする"
+
+    while ($true) {
+        $response = ([string](Read-Host "選択してください [M/c/n]")).Trim().ToLowerInvariant()
+        switch ($response) {
+            "" { return "migrate" }
+            "m" { return "migrate" }
+            "c" { return "clean" }
+            "n" { return "cancel" }
+            default {
+                Write-WarningMsg "M、C、N のいずれかを入力してください。"
+            }
+        }
+    }
+}
+
+function Backup-WslHomeContents {
+    param(
+        [string]$DistroName,
+        [string]$BackupArchivePath
+    )
+
+    Write-Step "既存の /home 配下を退避中"
+
+    $backupDir = Split-Path -Path $BackupArchivePath -Parent
+    if (-not (Test-Path $backupDir)) {
+        New-Item -ItemType Directory -Path $backupDir -Force | Out-Null
+    }
+    if (Test-Path $BackupArchivePath) {
+        Remove-Item -Path $BackupArchivePath -Force
+    }
+
+    $backupArchiveWslPath = Convert-WindowsPathToWslPath -Path $BackupArchivePath
+    wsl -d $DistroName -- tar -czf $backupArchiveWslPath -C /home .
+    if ($LASTEXITCODE -ne 0) {
+        throw "/home 配下の圧縮退避に失敗しました (終了コード: $LASTEXITCODE)"
+    }
+
+    if (-not (Test-Path $BackupArchivePath)) {
+        throw "退避アーカイブが作成されませんでした: $BackupArchivePath"
+    }
+
+    $size = (Get-Item $BackupArchivePath).Length / 1MB
+    Write-Success "/home 配下を退避しました: $($size.ToString('F2')) MB"
+    Write-Info "退避アーカイブ: $BackupArchivePath"
+}
+
+function Restore-WslHomeContents {
+    param(
+        [string]$DistroName,
+        [string]$BackupArchivePath
+    )
+
+    Write-Step "退避した /home 配下を復元中"
+
+    if (-not (Test-Path $BackupArchivePath)) {
+        throw "復元に必要な退避アーカイブが見つかりません: $BackupArchivePath"
+    }
+
+    $backupArchiveWslPath = Convert-WindowsPathToWslPath -Path $BackupArchivePath
+    wsl -d $DistroName -- tar -xzf $backupArchiveWslPath -C /home
+    if ($LASTEXITCODE -ne 0) {
+        throw "/home 配下の復元に失敗しました (終了コード: $LASTEXITCODE)"
+    }
+
+    Write-Success "/home 配下を復元しました"
+}
+
 function Import-ToWSL2 {
     param(
         [string]$DistroName,
         [string]$InstallLocation,
-        [string]$RootFsTarGz
+        [string]$RootFsTarGz,
+        [string]$TempDir
     )
 
     Write-Step "WSL2 にインポート中"
 
+    $backupArchivePath = $null
+
     # 既存のディストリビューションを確認
     $existingDistros = wsl --list --quiet 2>$null
     if ($existingDistros -contains $DistroName) {
-        Write-Host ""
-        Write-WarningMsg "警告: 既存のディストリビューション '$DistroName' が見つかりました"
-        Write-Host ""
-        Write-WarningMsg "  このディストリビューションを削除すると、以下のデータがすべて失われます:"
-        Write-Host "  - ホームディレクトリ内のすべてのファイル"
-        Write-Host "  - インストールされたパッケージと設定"
-        Write-Host "  - ユーザーデータとカスタマイズ"
-        Write-Host ""
-        $response = Read-Host "削除して再インポートしますか? (y/N)"
-        if ($response -eq 'y' -or $response -eq 'Y') {
-            Write-Info "既存のディストリビューションを削除中..."
-            wsl --unregister $DistroName
-            Write-Success "削除しました"
-        } else {
-            throw "インポートがキャンセルされました"
+        $reimportMode = Prompt-ReimportMode -DistroName $DistroName
+        switch ($reimportMode) {
+            "migrate" {
+                $backupArchivePath = Join-Path $TempDir "home-contents-backup.tar.gz"
+                Backup-WslHomeContents -DistroName $DistroName -BackupArchivePath $backupArchivePath
+            }
+            "clean" {
+                Write-Info "クリーンな環境で再作成します"
+            }
+            default {
+                throw "インポートがキャンセルされました"
+            }
         }
+
+        Write-Info "既存のディストリビューションを削除中..."
+        wsl --unregister $DistroName
+        if ($LASTEXITCODE -ne 0) {
+            throw "既存のディストリビューションの削除に失敗しました (終了コード: $LASTEXITCODE)"
+        }
+        Write-Success "削除しました"
     }
 
     # インストール先ディレクトリの作成
@@ -244,6 +349,10 @@ function Import-ToWSL2 {
 
     if ($LASTEXITCODE -eq 0) {
         Write-Success "WSL2 へのインポートが完了しました"
+
+        if ($backupArchivePath) {
+            Restore-WslHomeContents -DistroName $DistroName -BackupArchivePath $backupArchivePath
+        }
     } else {
         throw "WSL2 へのインポートに失敗しました (終了コード: $LASTEXITCODE)"
     }
@@ -347,7 +456,8 @@ function Main {
             Import-ToWSL2 `
                 -DistroName $WslDistroName `
                 -InstallLocation $InstallLocation `
-                -RootFsTarGz $rootfsTarGz
+                -RootFsTarGz $rootfsTarGz `
+                -TempDir $TempDir
 
             # テスト実行
             Test-WslDistro -DistroName $WslDistroName
