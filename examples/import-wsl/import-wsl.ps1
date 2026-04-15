@@ -370,7 +370,7 @@ function Backup-WslHomeContents {
     }
 
     $backupArchiveWslPath = Convert-WindowsPathToWslPath -Path $BackupArchivePath
-    wsl -d $DistroName -- tar -czf $backupArchiveWslPath -C /home .
+    wsl -d $DistroName -u root -- tar -czf $backupArchiveWslPath -C /home .
     if ($LASTEXITCODE -ne 0) {
         throw "/home 配下の圧縮退避に失敗しました (終了コード: $LASTEXITCODE)"
     }
@@ -397,7 +397,7 @@ function Restore-WslHomeContents {
     }
 
     $backupArchiveWslPath = Convert-WindowsPathToWslPath -Path $BackupArchivePath
-    wsl -d $DistroName -- tar -xzf $backupArchiveWslPath -C /home
+    wsl -d $DistroName -u root -- tar -xzf $backupArchiveWslPath -C /home
     if ($LASTEXITCODE -ne 0) {
         throw "/home 配下の復元に失敗しました (終了コード: $LASTEXITCODE)"
     }
