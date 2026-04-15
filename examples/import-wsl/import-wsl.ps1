@@ -474,13 +474,16 @@ function Test-WslDistro {
     Write-Step "ディストリビューションをテスト中"
 
     Write-Info "OS 情報を取得中..."
-    wsl -d $DistroName cat /etc/os-release | Select-String "PRETTY_NAME"
+    $osInfo = @(wsl -d $DistroName grep "^PRETTY_NAME=" /etc/os-release 2>&1)
+    Write-Host $osInfo[0]
 
     Write-Info "Node.js バージョンを確認中..."
-    wsl -d $DistroName node --version
+    $nodeVersion = @(wsl -d $DistroName node --version 2>&1)
+    Write-Host $nodeVersion[0]
 
     Write-Info "Java バージョンを確認中..."
-    wsl -d $DistroName java --version | Select-Object -First 1
+    $javaVersion = @(wsl -d $DistroName java --version 2>&1)
+    Write-Host $javaVersion[0]
 
     Write-Success "ディストリビューションが正常に動作しています"
 }
