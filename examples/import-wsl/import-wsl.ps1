@@ -604,9 +604,7 @@ function Main {
         Write-Host "デフォルトのディストリビューションに設定する場合:"
         Write-Output "  wsl --set-default $WslDistroName"
         Write-Host ""
-        Write-Host "初回起動時はユーザーが作成されます。"
-        Write-Host "環境変数で制御する場合:"
-        Write-Output "  wsl -d $WslDistroName -e bash -c 'HOST_USER=myuser HOST_UID=1000 HOST_GID=1000 /entrypoint.sh'"
+        Write-Host "WSL 用 rootfs には既定ユーザー 'user' が事前作成されています。"
         Write-Host ""
 
     } catch {

@@ -255,14 +255,9 @@ wsl
 
 ### 初回起動時の設定
 
-初回起動時、entrypoint.sh により自動的にユーザーが作成されます。
+WSL 用 rootfs には `user` ユーザーが事前作成されており、`/etc/wsl.conf` で既定ユーザーとして設定済みです。
 
-デフォルトでは Windows ユーザー名と同じユーザーが作成されますが、環境変数で制御することもできます。
-
-```powershell
-# カスタムユーザーで起動 (初回のみ)
-wsl -d OracleLinux8-Dev -e bash -c 'HOST_USER=myuser HOST_UID=1000 HOST_GID=1000 /entrypoint.sh'
-```
+そのため、インポート後は追加の初期化なしでそのまま利用できます。
 
 ### インストール済みツールの確認
 
