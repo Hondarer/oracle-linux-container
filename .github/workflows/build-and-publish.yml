@@ -32,7 +32,8 @@ jobs:
         id: repo
         run: |
           echo "IMAGE_NAME=$(echo '${{ github.repository }}/oracle-linux-${{ matrix.ol_version }}-dev' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-          echo "WSL_ROOTFS_FILE=OracleLinux${{ matrix.ol_version }}-Dev.tar.gz" >> $GITHUB_ENV
+          SAFE_REF_NAME=$(printf '%s' '${{ github.ref_name }}' | sed 's#[/[:space:]]#-#g')
+          echo "WSL_ROOTFS_FILE=oracle-linux-${{ matrix.ol_version }}-dev-${SAFE_REF_NAME}-wsl-rootfs.tar.gz" >> $GITHUB_ENV
 
       - name: Set up Podman
         run: |
@@ -291,6 +292,17 @@ jobs:
                 --repo "${{ github.repository }}" \
                 --title "${{ github.ref_name }}" \
                 --generate-notes || true
+            fi
+
+            LEGACY_WSL_ROOTFS_FILE="OracleLinux${{ matrix.ol_version }}-Dev.tar.gz"
+            if gh release view "${{ github.ref_name }}" \
+              --repo "${{ github.repository }}" \
+              --json assets \
+              --jq '.assets[].name' | grep -Fx "$LEGACY_WSL_ROOTFS_FILE" > /dev/null; then
+              echo "==> Removing legacy GitHub Release asset: $LEGACY_WSL_ROOTFS_FILE"
+              gh release delete-asset "${{ github.ref_name }}" "$LEGACY_WSL_ROOTFS_FILE" \
+                --repo "${{ github.repository }}" \
+                --yes
             fi
 
             echo "==> Uploading GitHub Release asset: $WSL_ROOTFS_FILE"

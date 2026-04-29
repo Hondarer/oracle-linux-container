@@ -319,7 +319,7 @@ wsl --install
 
 # 1. GitHub Releases から OL8 用 rootfs をダウンロード
 #    https://github.com/hondarer/oracle-linux-container/releases/latest
-#    例: OracleLinux8-Dev.tar.gz を Downloads に保存
+#    例: oracle-linux-8-dev-vYYYYMMDD.x.x-wsl-rootfs.tar.gz を Downloads に保存
 
 # 2. import-wsl.ps1 をダウンロード
 Invoke-WebRequest `
@@ -327,13 +327,15 @@ Invoke-WebRequest `
   -OutFile ".\import-wsl.ps1"
 
 # 3. OL8 をインポート
+$RootFs8 = "$env:USERPROFILE\Downloads\oracle-linux-8-dev-vYYYYMMDD.x.x-wsl-rootfs.tar.gz"
 .\import-wsl.ps1 `
-  -RootFsPath "$env:USERPROFILE\Downloads\OracleLinux8-Dev.tar.gz" `
+  -RootFsPath $RootFs8 `
   -WslDistroName "OracleLinux8-Dev"
 
 # OL10 の場合
+$RootFs10 = "$env:USERPROFILE\Downloads\oracle-linux-10-dev-vYYYYMMDD.x.x-wsl-rootfs.tar.gz"
 .\import-wsl.ps1 `
-  -RootFsPath "$env:USERPROFILE\Downloads\OracleLinux10-Dev.tar.gz" `
+  -RootFsPath $RootFs10 `
   -WslDistroName "OracleLinux10-Dev"
 
 # インポートされたディストリビューションを起動

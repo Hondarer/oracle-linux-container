@@ -126,6 +126,7 @@ GitHub リポジトリ (`Hondarer/doxybook2-bin`) から `linux-el${OL_VERSION}-
 - **テスト項目**: Node.js、Java、Python、.NET、Doxygen、PlantUML、sshd
 - **公開先**: `ghcr.io/hondarer/oracle-linux-container/oracle-linux-{8|10}-dev:TAG`
 - **WSL rootfs**: WSL インポート用 `tar.gz` を release 配布の主導線とし、補助経路として OCI アーティファクト `oracle-linux-{8|10}-dev-wsl:TAG` も扱う
+- **Release asset 名**: `oracle-linux-{8|10}-dev-{tag}-wsl-rootfs.tar.gz`
 - **プッシュ条件**: PR イベント以外の場合のみレジストリにプッシュ
 
 ### Dev Container 設定 — バージョン別構成
