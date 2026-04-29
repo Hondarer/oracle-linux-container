@@ -21,7 +21,7 @@ jobs:
       matrix:
         ol_version: ["8", "10"]
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
@@ -32,6 +32,7 @@ jobs:
         id: repo
         run: |
           echo "IMAGE_NAME=$(echo '${{ github.repository }}/oracle-linux-${{ matrix.ol_version }}-dev' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+          echo "WSL_ROOTFS_FILE=OracleLinux${{ matrix.ol_version }}-Dev.tar.gz" >> $GITHUB_ENV
 
       - name: Set up Podman
         run: |
@@ -259,17 +260,44 @@ jobs:
           short-description: Oracle Linux ${{ matrix.ol_version }} dev container with Node.js 24, Java, .NET 10, Python, docs tools, Japanese support
           readme-filepath: /tmp/dockerhub-readme.md
 
-      - name: Export and push WSL rootfs as OCI artifact
+      - name: Export WSL rootfs, upload release asset, and push OCI artifact
         if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # WSL 用 rootfs のエクスポート
           echo "==> Exporting WSL rootfs..."
           CONTAINER_ID=$(podman create "$WSL_BUILD_IMAGE")
-          podman export $CONTAINER_ID | gzip > wsl-rootfs.tar.gz
+          podman export $CONTAINER_ID | gzip > "$WSL_ROOTFS_FILE"
           podman rm $CONTAINER_ID
 
           # ファイルサイズを記録
-          ls -lh wsl-rootfs.tar.gz
+          ls -lh "$WSL_ROOTFS_FILE"
+
+          ROOTFS_SIZE_BYTES=$(stat -c%s "$WSL_ROOTFS_FILE")
+          ROOTFS_SIZE_MIB=$((ROOTFS_SIZE_BYTES / 1024 / 1024))
+          echo "WSL_ROOTFS_SIZE_BYTES=$ROOTFS_SIZE_BYTES" >> $GITHUB_ENV
+
+          # GitHub Release asset は 1 ファイル 2 GiB 未満が上限
+          if [ "$ROOTFS_SIZE_BYTES" -ge 2147483648 ]; then
+            echo "WSL rootfs exceeds GitHub Release asset limit: ${ROOTFS_SIZE_BYTES} bytes"
+            exit 1
+          fi
+
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            echo "==> Ensuring GitHub Release exists for tag ${{ github.ref_name }}..."
+            if ! gh release view "${{ github.ref_name }}" --repo "${{ github.repository }}" > /dev/null 2>&1; then
+              gh release create "${{ github.ref_name }}" \
+                --repo "${{ github.repository }}" \
+                --title "${{ github.ref_name }}" \
+                --generate-notes || true
+            fi
+
+            echo "==> Uploading GitHub Release asset: $WSL_ROOTFS_FILE"
+            gh release upload "${{ github.ref_name }}" "$WSL_ROOTFS_FILE" \
+              --repo "${{ github.repository }}" \
+              --clobber
+          fi
 
           # ORAS のインストール
           echo "==> Installing ORAS..."
@@ -288,7 +316,7 @@ jobs:
 
             # OCI アノテーション: GitHub Packages のパッケージ説明として表示される
             ./oras push "$WSL_TAG" \
-              wsl-rootfs.tar.gz:application/vnd.wsl.rootfs.v1.tar+gzip \
+              "$WSL_ROOTFS_FILE":application/vnd.wsl.rootfs.v1.tar+gzip \
               --annotation "org.opencontainers.image.title=WSL2 Rootfs for Oracle Linux ${{ matrix.ol_version }} Development" \
               --annotation "org.opencontainers.image.description=Oracle Linux ${{ matrix.ol_version }} development environment as WSL2-importable rootfs" \
               --annotation "org.opencontainers.image.source=https://github.com/${{ github.repository }}" \
@@ -316,6 +344,12 @@ jobs:
           echo "${{ steps.meta.outputs.tags }}" | sed 's/$/-wsl/' >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### WSL2 Rootfs File" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "$WSL_ROOTFS_FILE" >> $GITHUB_STEP_SUMMARY
+          echo "size: ${WSL_ROOTFS_SIZE_BYTES:-unknown} bytes" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Pull command (Container)" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
           echo "podman pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest" >> $GITHUB_STEP_SUMMARY
@@ -323,6 +357,14 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Import to WSL2" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`powershell" >> $GITHUB_STEP_SUMMARY
-          echo "# Download and run the import script" >> $GITHUB_STEP_SUMMARY
-          echo "irm https://raw.githubusercontent.com/${{ github.repository }}/main/examples/import-wsl/import-wsl.ps1 | iex" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            echo "# 1. Download $WSL_ROOTFS_FILE from the GitHub Release assets" >> $GITHUB_STEP_SUMMARY
+            echo "# 2. Download and run the import script" >> $GITHUB_STEP_SUMMARY
+            echo "Invoke-WebRequest -Uri https://raw.githubusercontent.com/${{ github.repository }}/main/examples/import-wsl/import-wsl.ps1 -OutFile .\\import-wsl.ps1" >> $GITHUB_STEP_SUMMARY
+            echo ".\\import-wsl.ps1 -RootFsPath \"$WSL_ROOTFS_FILE\" -WslDistroName \"OracleLinux${{ matrix.ol_version }}-Dev\"" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "# Optional: import the development build directly from ghcr.io" >> $GITHUB_STEP_SUMMARY
+            echo "Invoke-WebRequest -Uri https://raw.githubusercontent.com/${{ github.repository }}/main/examples/import-wsl/import-wsl.ps1 -OutFile .\\import-wsl.ps1" >> $GITHUB_STEP_SUMMARY
+            echo ".\\import-wsl.ps1 -OLVersion ${{ matrix.ol_version }} -Tag \"main-wsl\"" >> $GITHUB_STEP_SUMMARY
+          fi
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

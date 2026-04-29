@@ -2,7 +2,9 @@
 
 `podman` が使える Linux 環境で、公開済みの Oracle Linux 開発用コンテナイメージを `pull` し、`wsl --import` で使える WSL 用 rootfs (`tar.gz`) を生成する手順です。
 
-ここでは WSL へインポートするための `tar.gz` を作成します。インポートの詳細手順は、[examples/import-wsl/README.md](../import-wsl/README.md) に従ってください。
+通常の利用では、まず GitHub Releases に添付された WSL 用 rootfs (`tar.gz`) を使うことを推奨します。このドキュメントは、独自に rootfs を再生成したい場合や、任意のコンテナレジストリ上のイメージから WSL 用 rootfs を作りたい場合の補助手順です。
+
+ここでは WSL へインポートするための `tar.gz` を作成します。release asset を使った標準的なインポート手順は、[examples/import-wsl/README.md](../import-wsl/README.md) に従ってください。
 
 ## WSL 向け調整について
 
@@ -25,7 +27,7 @@
 
 ## クイックスタート
 
-### GHCR の公式イメージを使う
+### GHCR の公式イメージから独自に rootfs を生成する
 
 ```bash
 cd examples/export-wsl
@@ -41,7 +43,7 @@ cd examples/export-wsl
   --output ./OracleLinux10-Dev.tar.gz
 ```
 
-### Docker Hub の公式イメージを使う
+### Docker Hub の公式イメージから独自に rootfs を生成する
 
 ```bash
 cd examples/export-wsl
@@ -51,7 +53,7 @@ cd examples/export-wsl
   --output ./OracleLinux8-Dev.tar.gz
 ```
 
-### 任意のコンテナレジストリを使う
+### 任意のコンテナレジストリから独自に rootfs を生成する
 
 ```bash
 cd examples/export-wsl
@@ -72,7 +74,7 @@ ls -lh ./OracleLinux8-Dev.tar.gz
 tar -tzf ./OracleLinux8-Dev.tar.gz | head
 ```
 
-この `tar.gz` を Windows に持ち込み、既存のインポート手順で `RootFsPath` として指定します。
+この `tar.gz` を Windows に持ち込み、標準のインポート手順と同様に `RootFsPath` として指定します。
 
 ```powershell
 .\import-wsl.ps1 -RootFsPath "D:\staging\OracleLinux8-Dev.tar.gz" -WslDistroName "OracleLinux8-Dev"
@@ -107,4 +109,5 @@ cd examples/export-wsl
 - rootless `podman` 前提の手順です
 - `podman pull` に失敗する場合は、レジストリ URL、タグ、認証状態を確認してください
 - 生成される `tar.gz` は `podman load` 用アーカイブではありません。用途は `wsl --import` 向け rootfs です
-- 出力した rootfs をインポートする Windows 側の詳細は、既存の [examples/import-wsl/README.md](../import-wsl/README.md) を参照してください
+- 標準利用では GitHub Releases の配布物を使い、この手順は独自生成が必要な場合のみ使用してください
+- 出力した rootfs をインポートする Windows 側の詳細は、[examples/import-wsl/README.md](../import-wsl/README.md) を参照してください
