@@ -174,17 +174,17 @@ RUN --mount=type=bind,source=fonts,target=/tmp/fonts,readonly \
 RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     cd /tmp && \
     # man-pages-ja
-    if [ ! -f packages/man-pages-ja-20251115.tar.gz ]; then \
-        curl -fsSL -o /tmp/man-pages-ja-20251115.tar.gz https://github.com/linux-jm/manual/releases/download/v20251115/man-pages-ja-20251115.tar.gz; \
+    if [ ! -f packages/man-pages-ja-20260115.tar.gz ]; then \
+        curl -fsSL -o /tmp/man-pages-ja-20260115.tar.gz https://github.com/linux-jm/manual/releases/download/v20260115/man-pages-ja-20260115.tar.gz; \
     else \
-        cp packages/man-pages-ja-20251115.tar.gz /tmp/; \
+        cp packages/man-pages-ja-20260115.tar.gz /tmp/; \
     fi && \
-    tar xzf man-pages-ja-20251115.tar.gz && \
-    cd man-pages-ja-20251115 && \
+    tar xzf man-pages-ja-20260115.tar.gz && \
+    cd man-pages-ja-20260115 && \
     if [ -f /tmp/packages/man-pages-ja-auto-installer.sh ]; then \
         sh /tmp/packages/man-pages-ja-auto-installer.sh; \
     fi && \
-    cd /tmp && rm -rf man-pages-ja-20251115 && \
+    cd /tmp && rm -rf man-pages-ja-20260115 && \
     # doxybook2 (バージョン依存バイナリ)
     DOXYBOOK2_URL="https://github.com/Hondarer/doxybook2-bin/raw/main/bin/linux-el${OL_VERSION}-x64/doxybook2" && \
     if [ ! -f "packages/doxybook2" ]; then \
@@ -198,13 +198,13 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
         rm -f /tmp/doxybook2; \
     fi && \
     # pandoc
-    if [ ! -f packages/pandoc-3.7.0.2-linux-amd64.tar.gz ]; then \
-        curl -fsSL -o /tmp/pandoc-3.7.0.2-linux-amd64.tar.gz https://github.com/jgm/pandoc/releases/download/3.7.0.2/pandoc-3.7.0.2-linux-amd64.tar.gz; \
+    if [ ! -f packages/pandoc-3.9-linux-amd64.tar.gz ]; then \
+        curl -fsSL -o /tmp/pandoc-3.9-linux-amd64.tar.gz https://github.com/jgm/pandoc/releases/download/3.9/pandoc-3.9-linux-amd64.tar.gz; \
     else \
-        cp packages/pandoc-3.7.0.2-linux-amd64.tar.gz /tmp/; \
+        cp packages/pandoc-3.9-linux-amd64.tar.gz /tmp/; \
     fi && \
-    tar xfz pandoc-3.7.0.2-linux-amd64.tar.gz && \
-    BASE="pandoc-3.7.0.2" && \
+    tar xfz pandoc-3.9-linux-amd64.tar.gz && \
+    BASE="pandoc-3.9" && \
     install -d /usr/local/bin /usr/local/share/man/man1 && \
     install -m 0755 "$BASE/bin/pandoc" /usr/local/bin/pandoc && \
     ln -s /usr/local/bin/pandoc /usr/local/bin/pandoc-server && \
@@ -215,7 +215,7 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     rm -rf "$BASE" && \
     # pandoc-crossref
     if [ ! -f packages/pandoc-crossref-Linux-X64.tar.xz ]; then \
-        curl -fsSL -o /tmp/pandoc-crossref-Linux-X64.tar.xz https://github.com/lierdakil/pandoc-crossref/releases/download/v0.3.20/pandoc-crossref-Linux-X64.tar.xz; \
+        curl -fsSL -o /tmp/pandoc-crossref-Linux-X64.tar.xz https://github.com/lierdakil/pandoc-crossref/releases/download/v0.3.23a/pandoc-crossref-Linux-X64.tar.xz; \
     else \
         cp packages/pandoc-crossref-Linux-X64.tar.xz /tmp/; \
     fi && \
@@ -262,21 +262,21 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     rm -rf UDEVGothic_HSRF_v2.2.0 && \
     # cloc
     cd /tmp && \
-    if [ ! -f packages/cloc-2.04.pl ]; then \
-        curl -fsSL -o /usr/local/bin/cloc https://github.com/AlDanial/cloc/releases/download/v2.04/cloc-2.04.pl; \
+    if [ ! -f packages/cloc-2.08.pl ]; then \
+        curl -fsSL -o /usr/local/bin/cloc https://github.com/AlDanial/cloc/releases/download/v2.08/cloc-2.08.pl; \
     else \
-        cp packages/cloc-2.04.pl /usr/local/bin/cloc; \
+        cp packages/cloc-2.08.pl /usr/local/bin/cloc; \
     fi && \
     chmod +x /usr/local/bin/cloc && \
     # doxygen
     cd /tmp && \
-    if [ ! -f packages/doxygen-1.14.0.src.tar.gz ]; then \
-        curl -fsSL -o /tmp/doxygen-1.14.0.src.tar.gz https://doxygen.nl/files/doxygen-1.14.0.src.tar.gz; \
+    if [ ! -f packages/doxygen-1.15.0.src.tar.gz ]; then \
+        curl -fsSL -o /tmp/doxygen-1.15.0.src.tar.gz https://doxygen.nl/files/doxygen-1.15.0.src.tar.gz; \
     else \
-        cp packages/doxygen-1.14.0.src.tar.gz /tmp/; \
+        cp packages/doxygen-1.15.0.src.tar.gz /tmp/; \
     fi && \
-    tar xfz doxygen-1.14.0.src.tar.gz && \
-    cd doxygen-1.14.0 && \
+    tar xfz doxygen-1.15.0.src.tar.gz && \
+    cd doxygen-1.15.0 && \
     mkdir build && \
     cd build && \
     cmake -G "Unix Makefiles" \
@@ -287,7 +287,7 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     make -j"$(nproc)" && \
     make install && \
     cd /tmp && \
-    rm -rf doxygen-1.14.0 && \
+    rm -rf doxygen-1.15.0 && \
     # clean up
     rm -f /tmp/*.tar.* /tmp/*.jar /tmp/*.zip
 
