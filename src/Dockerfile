@@ -104,6 +104,7 @@ RUN dnf install -y \
         man-pages \
         mesa-libgbm \
         mesa-vulkan-drivers \
+        ninja-build \
         nkf \
         nmap-ncat \
         nodejs \
@@ -288,6 +289,30 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     make install && \
     cd /tmp && \
     rm -rf doxygen-1.15.0 && \
+    # clang-format (LLVM 18.1.8 ソースビルド)
+    LLVM_VER="22.1.4" && \
+    LLVM_TARBALL="llvm-project-${LLVM_VER}.src.tar.xz" && \
+    cd /tmp && \
+    if [ ! -f "packages/${LLVM_TARBALL}" ]; then \
+        curl -fsSL -o "/tmp/${LLVM_TARBALL}" \
+            "https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VER}/${LLVM_TARBALL}"; \
+    else \
+        cp "packages/${LLVM_TARBALL}" /tmp/; \
+    fi && \
+    tar xfJ "${LLVM_TARBALL}" && \
+    cd "llvm-project-${LLVM_VER}.src" && \
+    cmake -S llvm -B build -G Ninja \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
+        -DLLVM_TARGETS_TO_BUILD="X86" \
+        -DLLVM_INCLUDE_TESTS=OFF \
+        -DLLVM_INCLUDE_EXAMPLES=OFF \
+        -DLLVM_INCLUDE_BENCHMARKS=OFF \
+        -DLLVM_ENABLE_TERMINFO=OFF && \
+    cmake --build build --target clang-format -j"$(nproc)" && \
+    install -m 0755 build/bin/clang-format /usr/local/bin/ && \
+    install -m 0755 clang/tools/clang-format/git-clang-format /usr/local/bin/ && \
+    cd /tmp && rm -rf "llvm-project-${LLVM_VER}.src" && \
     # clean up
     rm -f /tmp/*.tar.* /tmp/*.jar /tmp/*.zip
 

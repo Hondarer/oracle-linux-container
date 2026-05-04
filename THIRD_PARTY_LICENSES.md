@@ -148,6 +148,12 @@
 - **URL**: https://cmake.org/
 - **説明**: クロスプラットフォームビルドシステム
 
+### clang-format / LLVM
+- **バージョン**: 22.1.4
+- **ライセンス**: Apache License 2.0 with LLVM Exceptions
+- **URL**: https://github.com/llvm/llvm-project
+- **説明**: C/C++/Java/JavaScript などのコードフォーマットツール (git-clang-format を含む)
+
 ### jq
 - **ライセンス**: MIT License
 - **URL**: https://jqlang.github.io/jq/

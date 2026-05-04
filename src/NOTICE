@@ -133,6 +133,12 @@ License: BSD-like License
 Copyright: Itaru Ichikawa
 URL: https://osdn.net/projects/nkf/
 
+clang-format / LLVM 22.1.4
+License: Apache License 2.0 with LLVM Exceptions
+Copyright: LLVM Contributors
+URL: https://github.com/llvm/llvm-project
+Source: https://github.com/llvm/llvm-project/releases/tag/llvmorg-22.1.4
+
 cloc (Count Lines of Code) 2.04
 License: GNU General Public License v2.0 (GPL-2.0)
 Copyright: Al Danial

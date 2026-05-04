@@ -122,6 +122,7 @@ podman pull hondarer/oracle-linux-10-dev:latest
 ### ユーティリティ
 
 - **jq**、**tree**、**rsync**
+- **clang-format**、**git-clang-format** (LLVM 22.1.4)
 - **expect**、**nkf**、**cloc**
 - **bubblewrap** (bwrap)
 - **git**、**curl**、**wget**
