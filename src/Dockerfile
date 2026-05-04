@@ -289,7 +289,7 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     make install && \
     cd /tmp && \
     rm -rf doxygen-1.15.0 && \
-    # clang-format (LLVM 18.1.8 ソースビルド)
+    # clang-format (LLVM 22.1.4 ソースビルド)
     LLVM_VER="22.1.4" && \
     LLVM_TARBALL="llvm-project-${LLVM_VER}.src.tar.xz" && \
     cd /tmp && \
@@ -303,7 +303,7 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     cd "llvm-project-${LLVM_VER}.src" && \
     cmake -S llvm -B build -G Ninja \
         -DCMAKE_BUILD_TYPE=Release \
-        -DLLVM_ENABLE_PROJECTS="clang;clang-tools-extra" \
+        -DLLVM_ENABLE_PROJECTS="clang" \
         -DLLVM_TARGETS_TO_BUILD="X86" \
         -DLLVM_INCLUDE_TESTS=OFF \
         -DLLVM_INCLUDE_EXAMPLES=OFF \
