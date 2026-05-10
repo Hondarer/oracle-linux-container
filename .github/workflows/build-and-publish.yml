@@ -261,7 +261,7 @@ jobs:
           short-description: Oracle Linux ${{ matrix.ol_version }} dev container with Node.js 24, Java, .NET 10, Python, docs tools, Japanese support
           readme-filepath: /tmp/dockerhub-readme.md
 
-      - name: Export WSL rootfs, upload release asset, and push OCI artifact
+      - name: Export WSL rootfs and upload release asset
         if: github.event_name != 'pull_request'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -311,32 +311,7 @@ jobs:
               --clobber
           fi
 
-          # ORAS のインストール
-          echo "==> Installing ORAS..."
-          ORAS_VERSION="1.1.0"
-          curl -sLO "https://github.com/oras-project/oras/releases/download/v${ORAS_VERSION}/oras_${ORAS_VERSION}_linux_amd64.tar.gz"
-          tar -xzf "oras_${ORAS_VERSION}_linux_amd64.tar.gz"
-          chmod +x oras
-
-          # OCI Artifact として push (タグごと)
-          echo "==> Pushing WSL rootfs as OCI artifact..."
-          TAGS="${{ steps.meta.outputs.tags }}"
-          for tag in $TAGS; do
-            # コンテナイメージのタグから WSL rootfs のタグを生成
-            WSL_TAG="${tag}-wsl"
-            echo "Pushing WSL rootfs: $WSL_TAG"
-
-            # OCI アノテーション: GitHub Packages のパッケージ説明として表示される
-            ./oras push "$WSL_TAG" \
-              "$WSL_ROOTFS_FILE":application/vnd.wsl.rootfs.v1.tar+gzip \
-              --annotation "org.opencontainers.image.title=WSL2 Rootfs for Oracle Linux ${{ matrix.ol_version }} Development" \
-              --annotation "org.opencontainers.image.description=Oracle Linux ${{ matrix.ol_version }} development environment as WSL2-importable rootfs" \
-              --annotation "org.opencontainers.image.source=https://github.com/${{ github.repository }}" \
-              --annotation "org.opencontainers.image.revision=${{ github.sha }}" \
-              --annotation "org.opencontainers.image.created=$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
-          done
-
-          echo "==> WSL rootfs published successfully"
+          echo "==> WSL rootfs export completed"
 
       - name: Output image information
         if: github.event_name != 'pull_request'
@@ -349,11 +324,6 @@ jobs:
           echo "### Container Image Tags" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           echo "${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### WSL2 Rootfs Tags" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          echo "${{ steps.meta.outputs.tags }}" | sed 's/$/-wsl/' >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### WSL2 Rootfs File" >> $GITHUB_STEP_SUMMARY
@@ -375,8 +345,7 @@ jobs:
             echo "Invoke-WebRequest -Uri https://raw.githubusercontent.com/${{ github.repository }}/main/examples/import-wsl/import-wsl.ps1 -OutFile .\\import-wsl.ps1" >> $GITHUB_STEP_SUMMARY
             echo ".\\import-wsl.ps1 -RootFsPath \"$WSL_ROOTFS_FILE\" -WslDistroName \"OracleLinux${{ matrix.ol_version }}-Dev\"" >> $GITHUB_STEP_SUMMARY
           else
-            echo "# Optional: import the development build directly from ghcr.io" >> $GITHUB_STEP_SUMMARY
-            echo "Invoke-WebRequest -Uri https://raw.githubusercontent.com/${{ github.repository }}/main/examples/import-wsl/import-wsl.ps1 -OutFile .\\import-wsl.ps1" >> $GITHUB_STEP_SUMMARY
-            echo ".\\import-wsl.ps1 -OLVersion ${{ matrix.ol_version }} -Tag \"main-wsl\"" >> $GITHUB_STEP_SUMMARY
+            echo "# WSL rootfs was exported but is not published for development builds." >> $GITHUB_STEP_SUMMARY
+            echo "# WSL rootfs is published as a GitHub Release asset on tagged releases only." >> $GITHUB_STEP_SUMMARY
           fi
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

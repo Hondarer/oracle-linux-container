@@ -125,7 +125,7 @@ GitHub リポジトリ (`Hondarer/doxybook2-bin`) から `linux-el${OL_VERSION}-
 - **ビルド引数**: `--build-arg OL_VERSION=${{ matrix.ol_version }}`
 - **テスト項目**: Node.js、Java、Python、.NET、Doxygen、PlantUML、sshd
 - **公開先**: `ghcr.io/hondarer/oracle-linux-container/oracle-linux-{8|10}-dev:TAG`
-- **WSL rootfs**: WSL インポート用 `tar.gz` を release 配布の主導線とし、補助経路として OCI アーティファクト `oracle-linux-{8|10}-dev-wsl:TAG` も扱う
+- **WSL rootfs**: WSL インポート用 `tar.gz` を release asset として配布
 - **Release asset 名**: `oracle-linux-{8|10}-dev-{tag}-wsl-rootfs.tar.gz`
 - **プッシュ条件**: PR イベント以外の場合のみレジストリにプッシュ
 
@@ -151,12 +151,11 @@ examples/devcontainer/
 
 ### WSL インポートスクリプト — バージョンパラメータ対応
 
-`examples/import-wsl/import-wsl.ps1` は `-OLVersion` パラメータ (デフォルト: "8") でバージョンを指定する。
+`examples/import-wsl/import-wsl.ps1` は GitHub Releases から取得した WSL rootfs を WSL2 にインポートする。
 
-- **ディストリビューション名**: `OracleLinux{OLVersion}-Dev`
 - **標準入力**: GitHub Releases から取得した `tar.gz` を `-RootFsPath` で指定
-- **オプション経路**: `ghcr.io/hondarer/oracle-linux-container/oracle-linux-{OLVersion}-dev:{Tag}` を直接指定して取得
-- **処理フロー**: 標準はローカル rootfs 指定 → WSL インポート → 動作テスト。`ghcr` を使う場合のみ OCI Registry v2 認証 → マニフェスト取得 → rootfs ダウンロードを先行
+- **ディストリビューション名**: `-WslDistroName` で指定 (必須)
+- **処理フロー**: ローカル rootfs 指定 → WSL インポート → 動作テスト
 - **安全性**: 既存ディストリビューションがある場合、データ消失の警告を表示
 
 ## OL8 と OL10 のパッケージ差分

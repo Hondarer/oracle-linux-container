@@ -1,43 +1,24 @@
-﻿# Oracle Linux 開発環境を WSL2 にインポートする PowerShell スクリプト
+# Oracle Linux 開発環境を WSL2 にインポートする PowerShell スクリプト
 #
-# このスクリプトは、GitHub Container Registry (ghcr.io) から
-# OCI Artifact として公開されている WSL2 rootfs をダウンロードするか、
-# 事前に取得したローカルの WSL rootfs (tar.gz) を使用して、
+# このスクリプトは、GitHub Releases から取得した WSL2 用 rootfs (tar.gz) を使って、
 # WSL2 ディストリビューションとしてインポートします。
 #
 # 前提条件:
 # - Windows 10 (1803以降) または Windows 11
 # - WSL2 がインストール済み
-# - インターネット接続 (レジストリから取得する場合)
 #
 # 使用する Windows 標準機能:
-# - PowerShell (Invoke-RestMethod, Invoke-WebRequest)
+# - PowerShell
 # - wsl.exe (WSL2 管理コマンド)
 
 param(
-    [string]$OLVersion = "8",
-    [string]$Tag = "latest-wsl",
-    [string]$ImageUrl = "",
     [string]$RootFsPath = "",
-    [switch]$DownloadOnly,
-    [string]$RootFsOutputPath = "",
     [string]$WslDistroName = "",
     [string]$InstallLocation = "",
     [string]$TempDir = "$env:TEMP\wsl-import-$(Get-Date -Format 'yyyyMMddHHmmss')"
 )
 
 $hasExplicitWslDistroName = $PSBoundParameters.ContainsKey('WslDistroName')
-
-# デフォルト値の設定
-if ([string]::IsNullOrEmpty($WslDistroName) -and [string]::IsNullOrEmpty($RootFsPath)) {
-    $WslDistroName = "OracleLinux${OLVersion}-Dev"
-}
-if ([string]::IsNullOrEmpty($InstallLocation) -and -not [string]::IsNullOrEmpty($WslDistroName)) {
-    $InstallLocation = "$env:LOCALAPPDATA\WSL\$WslDistroName"
-}
-if ([string]::IsNullOrEmpty($ImageUrl) -and [string]::IsNullOrEmpty($RootFsPath)) {
-    $ImageUrl = "ghcr.io/hondarer/oracle-linux-container/oracle-linux-${OLVersion}-dev:$Tag"
-}
 
 $ErrorActionPreference = "Stop"
 $ProgressPreference = "SilentlyContinue"  # 進捗表示を無効化して高速化
@@ -112,148 +93,6 @@ function Resolve-RootFsPath {
     return $fullPath
 }
 
-function Resolve-RootFsOutputPath {
-    param(
-        [string]$Path,
-        [string]$TempDir
-    )
-
-    $fullPath = if ([string]::IsNullOrEmpty($Path)) {
-        Join-Path $TempDir "wsl-rootfs.tar.gz"
-    } else {
-        [System.IO.Path]::GetFullPath($Path)
-    }
-
-    $parentDir = Split-Path -Path $fullPath -Parent
-    if (-not [string]::IsNullOrEmpty($parentDir) -and -not (Test-Path -LiteralPath $parentDir -PathType Container)) {
-        New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
-    }
-
-    if (Test-Path -LiteralPath $fullPath) {
-        throw "rootfs の出力先ファイルが既に存在します: $fullPath"
-    }
-
-    return $fullPath
-}
-
-# イメージ URL 解析
-# =============================================================================
-
-function Parse-ImageUrl {
-    param([string]$Url)
-
-    # ghcr.io/owner/repo/image:tag 形式を解析
-    if ($Url -match '^(?:([^/]+)/)?(.+?):(.+)$') {
-        $registry = if ($matches[1]) { $matches[1] } else { "ghcr.io" }
-        $image = $matches[2]
-        $tag = $matches[3]
-    } elseif ($Url -match '^(?:([^/]+)/)?(.+)$') {
-        $registry = if ($matches[1]) { $matches[1] } else { "ghcr.io" }
-        $image = $matches[2]
-        $tag = "latest-wsl"
-    } else {
-        throw "無効なイメージ URL 形式: $Url"
-    }
-
-    return @{
-        Registry = $registry
-        Image = $image
-        Tag = $tag
-        Full = "$registry/$image`:$tag"
-    }
-}
-
-# =============================================================================
-# OCI Registry API v2 認証
-# =============================================================================
-
-function Get-RegistryToken {
-    param(
-        [string]$Registry,
-        [string]$Image
-    )
-
-    Write-Info "認証トークンを取得中..."
-
-    try {
-        $tokenUrl = "https://$Registry/token?service=$Registry&scope=repository:$Image`:pull"
-        $response = Invoke-RestMethod -Uri $tokenUrl -Method Get -ContentType "application/json"
-
-        if ($response.token) {
-            Write-Success "認証トークンを取得しました"
-            return $response.token
-        } else {
-            throw "トークンの取得に失敗しました"
-        }
-    } catch {
-        Write-ErrorMsg "認証に失敗しました: $_"
-        throw
-    }
-}
-
-# =============================================================================
-# マニフェスト取得
-# =============================================================================
-
-function Get-ArtifactManifest {
-    param(
-        [string]$Registry,
-        [string]$Image,
-        [string]$Tag,
-        [string]$Token
-    )
-
-    Write-Info "マニフェストを取得中..."
-
-    $headers = @{
-        "Authorization" = "Bearer $Token"
-        "Accept" = "application/vnd.oci.image.manifest.v1+json"
-    }
-
-    $manifestUrl = "https://$Registry/v2/$Image/manifests/$Tag"
-
-    try {
-        $response = Invoke-RestMethod -Uri $manifestUrl -Method Get -Headers $headers
-        Write-Success "マニフェストを取得しました"
-        return $response
-    } catch {
-        Write-ErrorMsg "マニフェストの取得に失敗しました: $_"
-        throw
-    }
-}
-
-# =============================================================================
-# Blob ダウンロード
-# =============================================================================
-
-function Download-Blob {
-    param(
-        [string]$Registry,
-        [string]$Image,
-        [string]$Token,
-        [string]$Digest,
-        [string]$OutputPath
-    )
-
-    $headers = @{
-        "Authorization" = "Bearer $Token"
-    }
-
-    $blobUrl = "https://$Registry/v2/$Image/blobs/$Digest"
-    $shortDigest = $Digest.Substring(0, 16)
-
-    Write-Info "WSL rootfs をダウンロード中: $shortDigest..."
-
-    try {
-        Invoke-WebRequest -Uri $blobUrl -Method Get -Headers $headers -OutFile $OutputPath
-        $size = (Get-Item $OutputPath).Length / 1MB
-        Write-Success "ダウンロード完了: $($size.ToString('F2')) MB"
-    } catch {
-        Write-ErrorMsg "ダウンロード失敗: $_"
-        throw
-    }
-}
-
 function Get-RootFsFromLocalFile {
     param([string]$Path)
 
@@ -267,56 +106,6 @@ function Get-RootFsFromLocalFile {
     Write-Success "ローカル rootfs を使用します"
 
     return $resolvedPath
-}
-
-function Get-RootFsFromRegistry {
-    param(
-        [string]$ImageUrl,
-        [string]$TempDir,
-        [string]$RootFsOutputPath
-    )
-
-    # イメージ URL の解析
-    Write-Step "イメージ情報を解析中"
-    $imageInfo = Parse-ImageUrl -Url $ImageUrl
-    Write-Host "  レジストリ: $($imageInfo.Registry)"
-    Write-Host "  イメージ  : $($imageInfo.Image)"
-    Write-Host "  タグ      : $($imageInfo.Tag)"
-
-    # 認証トークンの取得
-    Write-Step "レジストリに接続中"
-    $token = Get-RegistryToken -Registry $imageInfo.Registry -Image $imageInfo.Image
-
-    # マニフェストの取得
-    Write-Step "OCI Artifact マニフェストを取得中"
-    $manifest = Get-ArtifactManifest `
-        -Registry $imageInfo.Registry `
-        -Image $imageInfo.Image `
-        -Tag $imageInfo.Tag `
-        -Token $token
-
-    # レイヤー (WSL rootfs) の取得
-    if (-not ($manifest.layers -and $manifest.layers.Count -gt 0)) {
-        throw "マニフェストにレイヤーが含まれていません"
-    }
-
-    $layer = $manifest.layers[0]
-    Write-Info "Rootfs サイズ: $([math]::Round($layer.size / 1MB, 2)) MB"
-    Write-Info "Media Type: $($layer.mediaType)"
-
-    $outputPath = Resolve-RootFsOutputPath -Path $RootFsOutputPath -TempDir $TempDir
-    Write-Info "rootfs 保存先: $outputPath"
-
-    # Rootfs のダウンロード
-    Write-Step "WSL rootfs をダウンロード中"
-    Download-Blob `
-        -Registry $imageInfo.Registry `
-        -Image $imageInfo.Image `
-        -Token $token `
-        -Digest $layer.digest `
-        -OutputPath $outputPath
-
-    return $outputPath
 }
 
 # =============================================================================
@@ -496,23 +285,13 @@ function Main {
     Write-Host ""
     Write-Output "========================================"
     Write-Output "  WSL2 インポートツール"
-    Write-Output "  Oracle Linux $OLVersion 開発環境"
+    Write-Output "  Oracle Linux 開発環境"
     Write-Output "========================================"
     Write-Host ""
 
     # パラメータ表示
     Write-Host "設定:"
-    if ([string]::IsNullOrEmpty($RootFsPath)) {
-        Write-Host "  イメージ URL     : $ImageUrl"
-    } else {
-        Write-Host "  ローカル rootfs  : $RootFsPath"
-    }
-    if (-not [string]::IsNullOrEmpty($RootFsOutputPath)) {
-        Write-Host "  rootfs 出力先    : $RootFsOutputPath"
-    }
-    if ($DownloadOnly) {
-        Write-Host "  ダウンロードのみ : 有効"
-    }
+    Write-Host "  ローカル rootfs  : $RootFsPath"
     Write-Host "  WSL ディストリ名 : $WslDistroName"
     Write-Host "  インストール先   : $InstallLocation"
     Write-Host "  一時ディレクトリ : $TempDir"
@@ -536,54 +315,17 @@ function Main {
         }
         Write-Success "一時ディレクトリを作成しました: $TempDir"
 
-        if ($DownloadOnly -and -not [string]::IsNullOrEmpty($RootFsPath)) {
-            throw "DownloadOnly と RootFsPath は同時に指定できません"
+        if ([string]::IsNullOrEmpty($RootFsPath)) {
+            throw "rootfs ファイルのパスを -RootFsPath で指定してください。GitHub Releases から WSL 用 rootfs (tar.gz) をダウンロードして指定してください。"
         }
-        if (-not [string]::IsNullOrEmpty($RootFsPath) -and -not [string]::IsNullOrEmpty($RootFsOutputPath)) {
-            throw "RootFsPath と RootFsOutputPath は同時に指定できません"
-        }
-        if (-not [string]::IsNullOrEmpty($RootFsPath) -and -not $hasExplicitWslDistroName) {
+        if (-not $hasExplicitWslDistroName) {
             throw "RootFsPath を使ってインストールする場合は -WslDistroName を指定してください"
         }
         if ([string]::IsNullOrEmpty($InstallLocation) -and -not [string]::IsNullOrEmpty($WslDistroName)) {
             $InstallLocation = "$env:LOCALAPPDATA\WSL\$WslDistroName"
         }
 
-        $rootfsTarGz = $null
-        if ([string]::IsNullOrEmpty($RootFsPath)) {
-            $rootfsTarGz = Get-RootFsFromRegistry `
-                -ImageUrl $ImageUrl `
-                -TempDir $TempDir `
-                -RootFsOutputPath $RootFsOutputPath
-        } else {
-            if (-not [string]::IsNullOrEmpty($ImageUrl)) {
-                Write-Info "RootFsPath が指定されているため ImageUrl は使用しません"
-            }
-            if ($Tag -ne "latest-wsl") {
-                Write-Info "RootFsPath が指定されているため Tag は使用しません"
-            }
-
-            $rootfsTarGz = Get-RootFsFromLocalFile -Path $RootFsPath
-        }
-
-        if ($DownloadOnly) {
-            Write-Host ""
-            Write-Output "========================================"
-            Write-Output "  WSL rootfs のダウンロードが完了しました"
-            Write-Output "========================================"
-            Write-Host ""
-            Write-Host "保存した rootfs:"
-            Write-Output "  $rootfsTarGz"
-            Write-Host ""
-            Write-Host "後でこの rootfs からインストールする場合:"
-            Write-Output "  .\import-wsl.ps1 -RootFsPath `"$rootfsTarGz`" -WslDistroName `"OracleLinux${OLVersion}-Dev`""
-            if ([System.IO.Path]::GetFullPath($rootfsTarGz).StartsWith([System.IO.Path]::GetFullPath($TempDir), [System.StringComparison]::OrdinalIgnoreCase)) {
-                Write-Host ""
-                Write-WarningMsg "  rootfs は一時ディレクトリ配下に保存されています。必要なら削除前に別の場所へ移動してください。"
-            }
-            Write-Host ""
-            return
-        }
+        $rootfsTarGz = Get-RootFsFromLocalFile -Path $RootFsPath
 
         # WSL2 へのインポート
         Import-ToWSL2 `
@@ -615,17 +357,9 @@ function Main {
         Write-ErrorMsg "エラーが発生しました: $_"
         Write-Host ""
         Write-Host "トラブルシューティング:"
-        if ([string]::IsNullOrEmpty($RootFsPath)) {
-            Write-Host "  - インターネット接続を確認してください"
-            Write-Host "  - イメージ URL が正しいか確認してください"
-            if (-not [string]::IsNullOrEmpty($RootFsOutputPath)) {
-                Write-Host "  - RootFsOutputPath の保存先が有効で、同名ファイルが存在しないか確認してください"
-            }
-        } else {
-            Write-Host "  - RootFsPath で指定した rootfs ファイルが存在するか確認してください"
-            Write-Host "  - 持ち込んだ rootfs が WSL 用 tar.gz であることを確認してください"
-            Write-Host "  - RootFsPath を使う場合は -WslDistroName を指定してください"
-        }
+        Write-Host "  - RootFsPath で指定した rootfs ファイルが存在するか確認してください"
+        Write-Host "  - 持ち込んだ rootfs が WSL 用 tar.gz であることを確認してください"
+        Write-Host "  - RootFsPath を使う場合は -WslDistroName を指定してください"
         Write-Host "  - WSL2 が正しくインストールされているか確認してください"
         Write-Host ""
         exit 1

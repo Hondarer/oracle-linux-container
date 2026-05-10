@@ -77,7 +77,7 @@ tar -tzf ./OracleLinux8-Dev.tar.gz | head
 この `tar.gz` を Windows に持ち込み、標準のインポート手順と同様に `RootFsPath` として指定します。
 
 ```powershell
-.\import-wsl.ps1 -RootFsPath "D:\staging\OracleLinux8-Dev.tar.gz" -WslDistroName "OracleLinux8-Dev"
+powershell -ExecutionPolicy Bypass -File .\import-wsl.ps1 -RootFsPath "D:\staging\OracleLinux8-Dev.tar.gz" -WslDistroName "OracleLinux8-Dev"
 ```
 
 ## ヘルパーシェル

@@ -309,8 +309,7 @@ podman system prune -f
 
 ## Windows 環境で WSL2 にインポート
 
-標準手順では、GitHub Releases に添付された WSL2 用 rootfs (`tar.gz`) を取得し、Windows 標準の PowerShell のみで WSL2 ディストリビューションとしてインポートします。  
-開発版や未リリース版が必要な場合は、オプションとして `ghcr.io` 上の WSL OCI artifact から直接取得する方法も利用できます。
+標準手順では、GitHub Releases に添付された WSL2 用 rootfs (`tar.gz`) を取得し、Windows 標準の PowerShell のみで WSL2 ディストリビューションとしてインポートします。
 
 ### クイックスタート (Windows)
 
@@ -329,25 +328,18 @@ Invoke-WebRequest `
 
 # 3. OL8 をインポート
 $RootFs8 = "$env:USERPROFILE\Downloads\oracle-linux-8-dev-vYYYYMMDD.x.x-wsl-rootfs.tar.gz"
-.\import-wsl.ps1 `
+powershell -ExecutionPolicy Bypass -File .\import-wsl.ps1 `
   -RootFsPath $RootFs8 `
   -WslDistroName "OracleLinux8-Dev"
 
 # OL10 の場合
 $RootFs10 = "$env:USERPROFILE\Downloads\oracle-linux-10-dev-vYYYYMMDD.x.x-wsl-rootfs.tar.gz"
-.\import-wsl.ps1 `
+powershell -ExecutionPolicy Bypass -File .\import-wsl.ps1 `
   -RootFsPath $RootFs10 `
   -WslDistroName "OracleLinux10-Dev"
 
 # インポートされたディストリビューションを起動
 wsl -d OracleLinux8-Dev
-```
-
-開発版を `ghcr.io` から直接取得したい場合は、次のように `Tag` または `ImageUrl` を指定します。
-
-```powershell
-# main ブランチ相当の開発版を直接取得してインポート
-.\import-wsl.ps1 -Tag "main-wsl"
 ```
 
 詳細は [examples/import-wsl/README.md](examples/import-wsl/README.md) を参照してください。
