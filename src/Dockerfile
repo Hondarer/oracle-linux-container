@@ -77,10 +77,12 @@ RUN dnf install -y \
         libssh-devel \
         jq \
         json-glib \
+        kernel-headers \
         libGL \
         libX11-devel \
         libXt-devel \
         libXtst \
+        libcap \
         libcurl-devel \
         libdrm \
         libepoxy \
@@ -113,12 +115,32 @@ RUN dnf install -y \
         openssh-clients \
         openssh-server \
         openssl-devel \
+        perl-Compress-Raw-Bzip2 \
+        perl-Compress-Raw-Zlib \
+        perl-Data-Dumper \
+        perl-Digest-MD5 \
+        perl-Digest-SHA \
+        perl-Encode \
         perl-Env \
+        perl-Errno \
+        perl-IO \
+        perl-MIME-Base64 \
+        perl-PathTools \
+        perl-Scalar-List-Utils \
+        perl-Socket \
+        perl-Storable \
+        perl-Sys-Syslog \
+        perl-Unicode-Normalize \
+        perl-interpreter \
+        perl-libs \
+        perl-threads \
+        perl-threads-shared \
         rsync \
         sudo \
         sysstat \
         tree \
         unzip \
+        vim-minimal \
         vulkan-loader \
         xdg-utils \
         xkeyboard-config \
@@ -135,6 +157,7 @@ RUN dnf install -y \
             "rest" \
             "abattis-cantarell-fonts" \
             "dejavu-fonts-common" \
+            "perl-macros" \
             "vlgothic-fonts"; \
         else echo \
             "java-21-openjdk java-21-openjdk-devel" \
