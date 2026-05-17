@@ -195,6 +195,12 @@
 - **URL**: https://github.com/AlDanial/cloc
 - **説明**: ソースコードの行数計測ツール
 
+### editorconfig-checker
+- **バージョン**: 3.6.1
+- **ライセンス**: MIT License
+- **URL**: https://github.com/editorconfig-checker/editorconfig-checker
+- **説明**: `.editorconfig` 違反 (インデント、改行コード、末尾空白等) を検出するチェッカー
+
 ## グラフィックスとデスクトップライブラリ
 
 これらのライブラリは、PlantUML や Doxygen などのグラフィカルツールの依存関係として含まれています。

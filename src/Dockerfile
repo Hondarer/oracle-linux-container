@@ -292,6 +292,20 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
         cp packages/cloc-2.08.pl /usr/local/bin/cloc; \
     fi && \
     chmod +x /usr/local/bin/cloc && \
+    # editorconfig-checker
+    EC_VER="3.6.1" && \
+    EC_TARBALL_CACHE="ec-linux-amd64-v${EC_VER}.tar.gz" && \
+    EC_TARBALL_DL="ec-linux-amd64.tar.gz" && \
+    cd /tmp && \
+    if [ ! -f "packages/${EC_TARBALL_CACHE}" ]; then \
+        curl -fsSL -o "/tmp/${EC_TARBALL_DL}" \
+            "https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v${EC_VER}/${EC_TARBALL_DL}"; \
+    else \
+        cp "packages/${EC_TARBALL_CACHE}" "/tmp/${EC_TARBALL_DL}"; \
+    fi && \
+    tar xzf "${EC_TARBALL_DL}" && \
+    install -m 0755 ./bin/ec-linux-amd64 /usr/local/bin/editorconfig-checker && \
+    rm -rf /tmp/bin && \
     # doxygen
     cd /tmp && \
     if [ ! -f packages/doxygen-1.15.0.src.tar.gz ]; then \
