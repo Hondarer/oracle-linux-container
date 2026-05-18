@@ -141,6 +141,7 @@ RUN dnf install -y \
         tree \
         unzip \
         vim-minimal \
+        wget \
         vulkan-loader \
         xdg-utils \
         xkeyboard-config \
