@@ -1,4 +1,4 @@
-# Oracle Linux 開発環境を WSL2 にインポートする PowerShell スクリプト
+﻿# Oracle Linux 開発環境を WSL2 にインポートする PowerShell スクリプト
 #
 # このスクリプトは、GitHub Releases から取得した WSL2 用 rootfs (tar.gz) を使って、
 # WSL2 ディストリビューションとしてインポートします。

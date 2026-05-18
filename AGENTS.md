@@ -130,6 +130,11 @@ ssh-keygen -R "[127.0.0.1]:40822"
 - `src/packages/`: 追加パッケージの事前ダウンロード (オプション)
 - `src/container-release`: ビルド時刻の記録 (自動生成)
 
+## エンコーディング規則
+
+- `.ps1` ファイルは **BOM あり UTF-8** (UTF-8 with BOM) で保存すること
+  - Windows 標準の PowerShell は BOM なし UTF-8 を正しく認識しない場合があるため
+
 ## 注意事項
 
 - rootless Podman を使用するため、システムレベルの特権操作は制限される
