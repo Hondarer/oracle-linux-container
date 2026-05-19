@@ -178,6 +178,16 @@ RUN dnf install -y \
     pip install \
         hjson \
         gcovr && \
+    # ビルド時に有効化したリポジトリをデフォルト無効化
+    if [ "${OL_VERSION}" = "8" ]; then \
+        dnf config-manager --disable \
+            ol8_codeready_builder \
+            ol8_developer_EPEL \
+            ol8_developer_EPEL_modular 2>/dev/null || true; \
+    else \
+        dnf config-manager --disable \
+            ol10_codeready_builder 2>/dev/null || true; \
+    fi && \
     dnf clean all && \
     rm -f /var/log/dnf* /var/log/hawkey.log && \
     rm -rf /var/cache/dnf
