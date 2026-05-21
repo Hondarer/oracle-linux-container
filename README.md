@@ -125,6 +125,7 @@ podman pull hondarer/oracle-linux-10-dev:latest
 - **clang-format**、**git-clang-format** (LLVM 22.1.4)
 - **expect**、**nkf**、**cloc**
 - **editorconfig-checker** (v3.6.1)
+- **yamllint** (YAML 構文・スタイルチェッカー)
 - **bubblewrap** (bwrap)
 - **git**、**curl**、**wget**
 

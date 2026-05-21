@@ -48,6 +48,11 @@
 - **URL**: https://github.com/gcovr/gcovr
 - **説明**: コードカバレッジレポートツール
 
+### yamllint
+- **ライセンス**: GPL-3.0-or-later
+- **URL**: https://github.com/adrienverge/yamllint
+- **説明**: YAML ファイルの構文・スタイルチェッカー
+
 ## ドキュメント生成ツール
 
 ### Doxygen

@@ -94,6 +94,11 @@ License: MIT License
 Copyright: Christian Zangl
 URL: https://github.com/hjson/hjson-py
 
+yamllint
+License: GPL-3.0-or-later
+Copyright: Adrien Vergé and contributors
+URL: https://github.com/adrienverge/yamllint
+
 ================================================================================
 UTILITIES AND LIBRARIES
 ================================================================================

@@ -176,8 +176,9 @@ RUN dnf install -y \
         alternatives --install /usr/bin/pip pip /usr/bin/pip3 1; \
     fi && \
     pip install \
+        gcovr \
         hjson \
-        gcovr && \
+        yamllint && \
     # ビルド時に有効化したリポジトリをデフォルト無効化
     if [ "${OL_VERSION}" = "8" ]; then \
         dnf config-manager --disable \
