@@ -66,12 +66,12 @@ License: GNU General Public License v3.0 (GPL-3.0)
 Copyright: PlantUML Contributors
 URL: https://plantuml.com/
 
-Pandoc 3.7.0.2
+Pandoc 3.9.0.2
 License: GNU General Public License v2.0 or later (GPL-2.0+)
 Copyright: John MacFarlane
 URL: https://pandoc.org/
 
-pandoc-crossref 0.3.20
+pandoc-crossref 0.3.24a
 License: GNU General Public License v2.0 or later (GPL-2.0+)
 Copyright: Nikolay Yakimov
 URL: https://github.com/lierdakil/pandoc-crossref

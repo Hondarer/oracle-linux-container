@@ -76,13 +76,13 @@
 - **説明**: UML 図作成ツール
 
 ### Pandoc
-- **バージョン**: 3.7.0.2
+- **バージョン**: 3.9.0.2
 - **ライセンス**: GPLv2 or later
 - **URL**: https://pandoc.org/
 - **説明**: ドキュメント変換ツール
 
 ### pandoc-crossref
-- **バージョン**: 0.3.20
+- **バージョン**: 0.3.24a
 - **ライセンス**: GPLv2
 - **URL**: https://github.com/lierdakil/pandoc-crossref
 - **説明**: Pandoc の相互参照フィルター

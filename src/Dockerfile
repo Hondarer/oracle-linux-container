@@ -234,13 +234,13 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
         rm -f /tmp/doxybook2; \
     fi && \
     # pandoc
-    if [ ! -f packages/pandoc-3.9-linux-amd64.tar.gz ]; then \
-        curl -fsSL -o /tmp/pandoc-3.9-linux-amd64.tar.gz https://github.com/jgm/pandoc/releases/download/3.9/pandoc-3.9-linux-amd64.tar.gz; \
+    if [ ! -f packages/pandoc-3.9.0.2-linux-amd64.tar.gz ]; then \
+        curl -fsSL -o /tmp/pandoc-3.9.0.2-linux-amd64.tar.gz https://github.com/jgm/pandoc/releases/download/3.9.0.2/pandoc-3.9.0.2-linux-amd64.tar.gz; \
     else \
-        cp packages/pandoc-3.9-linux-amd64.tar.gz /tmp/; \
+        cp packages/pandoc-3.9.0.2-linux-amd64.tar.gz /tmp/; \
     fi && \
-    tar xfz pandoc-3.9-linux-amd64.tar.gz && \
-    BASE="pandoc-3.9" && \
+    tar xfz pandoc-3.9.0.2-linux-amd64.tar.gz && \
+    BASE="pandoc-3.9.0.2" && \
     install -d /usr/local/bin /usr/local/share/man/man1 && \
     install -m 0755 "$BASE/bin/pandoc" /usr/local/bin/pandoc && \
     ln -s /usr/local/bin/pandoc /usr/local/bin/pandoc-server && \
@@ -250,12 +250,12 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     install -m 0644 "$BASE/share/man/man1/pandoc-lua.1.gz" /usr/local/share/man/man1/pandoc-lua.1.gz && \
     rm -rf "$BASE" && \
     # pandoc-crossref
-    if [ ! -f packages/pandoc-crossref-Linux-X64.tar.xz ]; then \
-        curl -fsSL -o /tmp/pandoc-crossref-Linux-X64.tar.xz https://github.com/lierdakil/pandoc-crossref/releases/download/v0.3.23a/pandoc-crossref-Linux-X64.tar.xz; \
+    if [ ! -f packages/pandoc-crossref-0.3.24a-Linux-X64.tar.xz ]; then \
+        curl -fsSL -o /tmp/pandoc-crossref-0.3.24a-Linux-X64.tar.xz https://github.com/lierdakil/pandoc-crossref/releases/download/v0.3.24a/pandoc-crossref-Linux-X64.tar.xz; \
     else \
-        cp packages/pandoc-crossref-Linux-X64.tar.xz /tmp/; \
+        cp packages/pandoc-crossref-0.3.24a-Linux-X64.tar.xz /tmp/; \
     fi && \
-    tar xfJ pandoc-crossref-Linux-X64.tar.xz && \
+    tar xfJ pandoc-crossref-0.3.24a-Linux-X64.tar.xz && \
     gzip -9n pandoc-crossref.1 && \
     install -d /usr/local/bin /usr/local/share/man/man1 && \
     install -m 0755 "pandoc-crossref" /usr/local/bin/pandoc-crossref && \
