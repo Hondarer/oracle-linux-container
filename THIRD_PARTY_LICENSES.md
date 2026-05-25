@@ -18,6 +18,18 @@
 - **URL**: https://nodejs.org/
 - **説明**: JavaScript/TypeScript ランタイム環境
 
+### @antfu/ni
+- **バージョン**: 30.1.0
+- **ライセンス**: MIT License
+- **URL**: https://github.com/antfu-collective/ni
+- **説明**: ロックファイル等から適切な Node.js パッケージマネージャーを選択する CLI
+
+### pnpm
+- **バージョン**: 11.3.0
+- **ライセンス**: MIT License
+- **URL**: https://pnpm.io/
+- **説明**: 高速でディスク効率の良い Node.js パッケージマネージャー
+
 ### OpenJDK (Java)
 - **バージョン**: 17 (OL8) / 21 (OL10)
 - **ライセンス**: GPLv2 with Classpath Exception

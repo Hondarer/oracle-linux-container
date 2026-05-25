@@ -102,6 +102,11 @@ podman pull hondarer/oracle-linux-10-dev:latest
 | Python | 3.11 | 3.12 |
 | C/C++ (GCC) | 8 | 14 |
 
+### Node.js パッケージマネージャー支援
+
+- **@antfu/ni** (v30.1.0)
+- **pnpm** (v11.3.0)
+
 ### ドキュメント生成
 
 - **Doxygen** + doxybook2

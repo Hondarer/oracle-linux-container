@@ -21,6 +21,16 @@ License: MIT License
 Copyright: OpenJS Foundation and contributors
 URL: https://github.com/nodejs/node
 
+@antfu/ni 30.1.0
+License: MIT License
+Copyright: Anthony Fu and contributors
+URL: https://github.com/antfu-collective/ni
+
+pnpm 11.3.0
+License: MIT License
+Copyright: pnpm contributors
+URL: https://github.com/pnpm/pnpm
+
 Java (OpenJDK) 17 / 21
 License: GNU General Public License v2.0 with Classpath Exception
 Copyright: Oracle Corporation and/or its affiliates

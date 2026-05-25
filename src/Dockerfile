@@ -175,6 +175,14 @@ RUN dnf install -y \
         alternatives --install /usr/bin/python python /usr/bin/python3 1 && \
         alternatives --install /usr/bin/pip pip /usr/bin/pip3 1; \
     fi && \
+    npm install --global --prefix /usr/local \
+        @antfu/ni@30.1.0 \
+        pnpm@11.3.0 && \
+    npm cache clean --force && \
+    test -d /usr/local/lib/node_modules/@antfu/ni && \
+    test -d /usr/local/lib/node_modules/pnpm && \
+    test -x /usr/local/bin/ni && \
+    test -x /usr/local/bin/pnpm && \
     pip install \
         gcovr \
         hjson \
