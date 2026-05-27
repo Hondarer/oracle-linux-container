@@ -4,7 +4,7 @@ ARG OL_VERSION
 
 # メタデータラベル
 LABEL org.opencontainers.image.title="Oracle Linux ${OL_VERSION} Development Container"
-LABEL org.opencontainers.image.description="Oracle Linux ${OL_VERSION} based development container with Node.js, Java, .NET, Python, Doxygen, PlantUML, and other development tools"
+LABEL org.opencontainers.image.description="Oracle Linux ${OL_VERSION} based development container with Node.js, Java, .NET, Python, Doxygen, PlantUML, Inkscape, and other development tools"
 LABEL org.opencontainers.image.licenses="GPL-2.0 AND GPL-3.0-or-later AND Apache-2.0 AND LGPL-2.1-or-later AND MIT AND BSD-3-Clause AND PSF-2.0 AND OFL-1.1"
 LABEL org.opencontainers.image.vendor="hondarer"
 LABEL org.opencontainers.image.base.name="oraclelinux:${OL_VERSION}"
@@ -287,6 +287,27 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     echo '#!/bin/bash' > /etc/profile.d/plantuml.sh && \
     echo 'export PLANTUML_HOME=/usr/local/bin' >> /etc/profile.d/plantuml.sh && \
     chmod 0644 /etc/profile.d/plantuml.sh && \
+    # inkscape
+    cd /tmp && \
+    INKSCAPE_VERSION="1.4.4" && \
+    INKSCAPE_APPIMAGE="Inkscape-${INKSCAPE_VERSION}.AppImage" && \
+    INKSCAPE_URL="https://inkscape.org/gallery/item/59506/Inkscape-1.4.4.AppImage" && \
+    if [ ! -f "packages/${INKSCAPE_APPIMAGE}" ]; then \
+        curl -fsSL -o "/tmp/${INKSCAPE_APPIMAGE}" "${INKSCAPE_URL}"; \
+    else \
+        cp "packages/${INKSCAPE_APPIMAGE}" /tmp/; \
+    fi && \
+    chmod +x "/tmp/${INKSCAPE_APPIMAGE}" && \
+    rm -rf /tmp/squashfs-root /opt/inkscape && \
+    install -d /opt && \
+    "/tmp/${INKSCAPE_APPIMAGE}" --appimage-extract && \
+    mv /tmp/squashfs-root /opt/inkscape && \
+    chown -R root:root /opt/inkscape && \
+    echo '#!/bin/bash' > /usr/local/bin/inkscape && \
+    echo ': "${_INKSCAPE_GC:=disable}"' >> /usr/local/bin/inkscape && \
+    echo 'export _INKSCAPE_GC' >> /usr/local/bin/inkscape && \
+    echo 'exec /opt/inkscape/AppRun "$@"' >> /usr/local/bin/inkscape && \
+    chmod 0755 /usr/local/bin/inkscape && \
     # UDEVGothic font
     cd /tmp && \
     if [ ! -f packages/UDEVGothic_HSRF_v2.2.0.zip ]; then \
@@ -371,7 +392,8 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     install -m 0755 clang/tools/clang-format/git-clang-format /usr/local/bin/ && \
     cd /tmp && rm -rf "llvm-project-${LLVM_VER}.src" && \
     # clean up
-    rm -f /tmp/*.tar.* /tmp/*.jar /tmp/*.zip
+    rm -f /tmp/*.tar.* /tmp/*.jar /tmp/*.zip /tmp/Inkscape-*.AppImage && \
+    rm -rf /tmp/squashfs-root
 
 # Chromium のインストール
 # システムワイドなキャッシュディレクトリを使用し、ローカルインストール時の再ダウンロードを回避

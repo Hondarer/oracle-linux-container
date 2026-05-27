@@ -99,6 +99,12 @@
 - **URL**: https://github.com/lierdakil/pandoc-crossref
 - **説明**: Pandoc の相互参照フィルター
 
+### Inkscape
+- **バージョン**: 1.4.4
+- **ライセンス**: GPL
+- **URL**: https://inkscape.org/
+- **説明**: 公式 AppImage からインストールするベクターグラフィックスエディター
+
 ## フォント
 
 ### VLGothic (OL8 のみ)

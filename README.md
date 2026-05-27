@@ -107,11 +107,12 @@ podman pull hondarer/oracle-linux-10-dev:latest
 - **@antfu/ni** (v30.1.0)
 - **pnpm** (v11.3.0)
 
-### ドキュメント生成
+### ドキュメント・図版生成
 
 - **Doxygen** + doxybook2
 - **PlantUML**
 - **Pandoc** + pandoc-crossref
+- **Inkscape** (v1.4.4)
 
 ### テスト・ビルドツール
 
@@ -399,6 +400,7 @@ wsl -d OracleLinux8-Dev
 - **Doxygen**: GPL-2.0
 - **PlantUML**: GPL-3.0+
 - **Pandoc**: GPL-2.0+
+- **Inkscape**: GPL
 - **rsync**: GPL-3.0
 
 詳細なコンポーネントリストとライセンス情報は以下を参照してください：
