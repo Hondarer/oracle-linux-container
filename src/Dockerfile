@@ -138,6 +138,7 @@ RUN dnf install -y \
         rsync \
         sudo \
         sysstat \
+        systemd-devel \
         tree \
         unzip \
         vim-minimal \
@@ -177,12 +178,15 @@ RUN dnf install -y \
     fi && \
     npm install --global --prefix /usr/local \
         @antfu/ni@30.1.0 \
-        pnpm@11.3.0 && \
+        pnpm@11.3.0 \
+        @marp-team/marp-cli@4.4.0 && \
     npm cache clean --force && \
     test -d /usr/local/lib/node_modules/@antfu/ni && \
     test -d /usr/local/lib/node_modules/pnpm && \
+    test -d /usr/local/lib/node_modules/@marp-team/marp-cli && \
     test -x /usr/local/bin/ni && \
     test -x /usr/local/bin/pnpm && \
+    test -x /usr/local/bin/marp && \
     pip install \
         gcovr \
         hjson \
@@ -395,14 +399,16 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     rm -f /tmp/*.tar.* /tmp/*.jar /tmp/*.zip /tmp/Inkscape-*.AppImage && \
     rm -rf /tmp/squashfs-root
 
-# Chromium のインストール
-# システムワイドなキャッシュディレクトリを使用し、ローカルインストール時の再ダウンロードを回避
+# Chrome for Testing のインストール（Marp CLI の PDF/PPTX/画像変換に必要）
+# システムワイドなキャッシュへ導入し、CHROME_PATH を /etc/profile.d で marp-cli に解決させる
+# TODO: puppeteer と marp に対して、Chrome for Testing をうまく紐づける検証未実施のため、コメント
 #ENV PUPPETEER_CACHE_DIR=/opt/puppeteer-cache
 #RUN mkdir -p /opt/puppeteer-cache && \
-#    NPM_CONFIG_PREFIX= npx -y @puppeteer/browsers install chrome --path /opt/puppeteer-cache && \
+#    CFT_OUT="$(NPM_CONFIG_PREFIX= npx -y @puppeteer/browsers install chrome@stable --path /opt/puppeteer-cache)" && \
+#    CHROME_BIN="$(echo "$CFT_OUT" | awk '{print $NF}')" && \
+#    test -x "$CHROME_BIN" && \
 #    chmod -R 755 /opt/puppeteer-cache && \
-#    echo '#!/bin/bash' > /etc/profile.d/puppeteer.sh && \
-#    echo 'export PUPPETEER_CACHE_DIR=/opt/puppeteer-cache' >> /etc/profile.d/puppeteer.sh && \
+#    printf 'export PUPPETEER_CACHE_DIR=/opt/puppeteer-cache\nexport CHROME_PATH=%s\n' "$CHROME_BIN" > /etc/profile.d/puppeteer.sh && \
 #    chmod 0644 /etc/profile.d/puppeteer.sh
 
 # mandb
