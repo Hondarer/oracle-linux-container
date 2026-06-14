@@ -221,12 +221,49 @@ RUN --mount=type=bind,source=fonts,target=/tmp/fonts,readonly \
 # 追加パッケージのインストール
 RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     cd /tmp && \
+    download_required() { \
+        name="$1"; \
+        dest="$2"; \
+        url="$3"; \
+        cache="$4"; \
+        if [ -f "/tmp/packages/${cache}" ]; then \
+            echo "=== using cached package: ${name} (/tmp/packages/${cache}) ==="; \
+            cp "/tmp/packages/${cache}" "${dest}"; \
+        else \
+            echo "=== download: ${name} ==="; \
+            echo "url: ${url}"; \
+            if ! curl --fail --location --show-error --retry 3 --retry-delay 5 --connect-timeout 30 -o "${dest}" "${url}"; then \
+                status="$(curl --location --silent --output /dev/null --write-out '%{http_code}' "${url}" || echo curl_failed)"; \
+                echo "ERROR: failed to download ${name}" >&2; \
+                echo "ERROR: url=${url}" >&2; \
+                echo "ERROR: http_status=${status}" >&2; \
+                return 1; \
+            fi; \
+        fi; \
+    } && \
+    download_optional() { \
+        name="$1"; \
+        dest="$2"; \
+        url="$3"; \
+        cache="$4"; \
+        if [ -f "/tmp/packages/${cache}" ]; then \
+            echo "=== using cached package: ${name} (/tmp/packages/${cache}) ==="; \
+            cp "/tmp/packages/${cache}" "${dest}"; \
+        else \
+            echo "=== download: ${name} ==="; \
+            echo "url: ${url}"; \
+            if ! curl --fail --location --show-error --retry 3 --retry-delay 5 --connect-timeout 30 -o "${dest}" "${url}"; then \
+                status="$(curl --location --silent --output /dev/null --write-out '%{http_code}' "${url}" || echo curl_failed)"; \
+                echo "Warning: failed to download ${name}" >&2; \
+                echo "Warning: url=${url}" >&2; \
+                echo "Warning: http_status=${status}" >&2; \
+                rm -f "${dest}"; \
+                return 0; \
+            fi; \
+        fi; \
+    } && \
     # man-pages-ja
-    if [ ! -f packages/man-pages-ja-20260115.tar.gz ]; then \
-        curl -fsSL -o /tmp/man-pages-ja-20260115.tar.gz https://github.com/linux-jm/manual/releases/download/v20260115/man-pages-ja-20260115.tar.gz; \
-    else \
-        cp packages/man-pages-ja-20260115.tar.gz /tmp/; \
-    fi && \
+    download_required "man-pages-ja" "/tmp/man-pages-ja-20260115.tar.gz" "https://github.com/linux-jm/manual/releases/download/v20260115/man-pages-ja-20260115.tar.gz" "man-pages-ja-20260115.tar.gz" && \
     tar xzf man-pages-ja-20260115.tar.gz && \
     cd man-pages-ja-20260115 && \
     if [ -f /tmp/packages/man-pages-ja-auto-installer.sh ]; then \
@@ -235,22 +272,14 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     cd /tmp && rm -rf man-pages-ja-20260115 && \
     # doxybook2 (バージョン依存バイナリ)
     DOXYBOOK2_URL="https://github.com/Hondarer/doxybook2-bin/raw/main/bin/linux-el${OL_VERSION}-x64/doxybook2" && \
-    if [ ! -f "packages/doxybook2" ]; then \
-        curl -fsSL -o "/tmp/doxybook2" "${DOXYBOOK2_URL}" || echo "Warning: doxybook2 for el${OL_VERSION} not available, skipping"; \
-    else \
-        cp "packages/doxybook2" /tmp/; \
-    fi && \
+    download_optional "doxybook2 for el${OL_VERSION}" "/tmp/doxybook2" "${DOXYBOOK2_URL}" "doxybook2" && \
     if [ -f "/tmp/doxybook2" ]; then \
         chmod +x /tmp/doxybook2 && \
         cp /tmp/doxybook2 /usr/local/bin/ && \
         rm -f /tmp/doxybook2; \
     fi && \
     # pandoc
-    if [ ! -f packages/pandoc-3.9.0.2-linux-amd64.tar.gz ]; then \
-        curl -fsSL -o /tmp/pandoc-3.9.0.2-linux-amd64.tar.gz https://github.com/jgm/pandoc/releases/download/3.9.0.2/pandoc-3.9.0.2-linux-amd64.tar.gz; \
-    else \
-        cp packages/pandoc-3.9.0.2-linux-amd64.tar.gz /tmp/; \
-    fi && \
+    download_required "pandoc" "/tmp/pandoc-3.9.0.2-linux-amd64.tar.gz" "https://github.com/jgm/pandoc/releases/download/3.9.0.2/pandoc-3.9.0.2-linux-amd64.tar.gz" "pandoc-3.9.0.2-linux-amd64.tar.gz" && \
     tar xfz pandoc-3.9.0.2-linux-amd64.tar.gz && \
     BASE="pandoc-3.9.0.2" && \
     install -d /usr/local/bin /usr/local/share/man/man1 && \
@@ -262,11 +291,7 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     install -m 0644 "$BASE/share/man/man1/pandoc-lua.1.gz" /usr/local/share/man/man1/pandoc-lua.1.gz && \
     rm -rf "$BASE" && \
     # pandoc-crossref
-    if [ ! -f packages/pandoc-crossref-0.3.24a-Linux-X64.tar.xz ]; then \
-        curl -fsSL -o /tmp/pandoc-crossref-0.3.24a-Linux-X64.tar.xz https://github.com/lierdakil/pandoc-crossref/releases/download/v0.3.24a/pandoc-crossref-Linux-X64.tar.xz; \
-    else \
-        cp packages/pandoc-crossref-0.3.24a-Linux-X64.tar.xz /tmp/; \
-    fi && \
+    download_required "pandoc-crossref" "/tmp/pandoc-crossref-0.3.24a-Linux-X64.tar.xz" "https://github.com/lierdakil/pandoc-crossref/releases/download/v0.3.24a/pandoc-crossref-Linux-X64.tar.xz" "pandoc-crossref-0.3.24a-Linux-X64.tar.xz" && \
     tar xfJ pandoc-crossref-0.3.24a-Linux-X64.tar.xz && \
     gzip -9n pandoc-crossref.1 && \
     install -d /usr/local/bin /usr/local/share/man/man1 && \
@@ -275,11 +300,7 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     rm -f pandoc-crossref pandoc-crossref.1.gz && \
     # plantuml
     cd /tmp && \
-    if [ ! -f packages/plantuml-1.2026.2.jar ]; then \
-        curl -fsSL -o /tmp/plantuml-1.2026.2.jar https://github.com/plantuml/plantuml/releases/download/v1.2026.2/plantuml-1.2026.2.jar; \
-    else \
-        cp packages/plantuml-1.2026.2.jar /tmp/; \
-    fi && \
+    download_required "plantuml" "/tmp/plantuml-1.2026.2.jar" "https://github.com/plantuml/plantuml/releases/download/v1.2026.2/plantuml-1.2026.2.jar" "plantuml-1.2026.2.jar" && \
     chown root:root plantuml-1.2026.2.jar && \
     chmod 0755 plantuml-1.2026.2.jar && \
     cp plantuml-1.2026.2.jar /usr/local/bin/ && \
@@ -296,11 +317,7 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     INKSCAPE_VERSION="1.4.4" && \
     INKSCAPE_APPIMAGE="Inkscape-${INKSCAPE_VERSION}.AppImage" && \
     INKSCAPE_URL="https://inkscape.org/gallery/item/59506/Inkscape-1.4.4.AppImage" && \
-    if [ ! -f "packages/${INKSCAPE_APPIMAGE}" ]; then \
-        curl -fsSL -o "/tmp/${INKSCAPE_APPIMAGE}" "${INKSCAPE_URL}"; \
-    else \
-        cp "packages/${INKSCAPE_APPIMAGE}" /tmp/; \
-    fi && \
+    download_required "inkscape" "/tmp/${INKSCAPE_APPIMAGE}" "${INKSCAPE_URL}" "${INKSCAPE_APPIMAGE}" && \
     chmod +x "/tmp/${INKSCAPE_APPIMAGE}" && \
     rm -rf /tmp/squashfs-root /opt/inkscape && \
     install -d /opt && \
@@ -314,11 +331,7 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     chmod 0755 /usr/local/bin/inkscape && \
     # UDEVGothic font
     cd /tmp && \
-    if [ ! -f packages/UDEVGothic_HSRF_EM_v2.2.0.zip ]; then \
-        curl -fsSL -o /tmp/UDEVGothic_HSRF_EM_v2.2.0.zip https://github.com/Hondarer/udev-gothic-rf/releases/download/v2.2.0/UDEVGothic_HSRF_EM_v2.2.0.zip; \
-    else \
-        cp packages/UDEVGothic_HSRF_EM_v2.2.0.zip /tmp/; \
-    fi && \
+    download_required "UDEVGothic" "/tmp/UDEVGothic_HSRF_EM_v2.2.0.zip" "https://github.com/Hondarer/udev-gothic-rf/releases/download/v2.2.0/UDEVGothic_HSRF_EM_v2.2.0.zip" "UDEVGothic_HSRF_EM_v2.2.0.zip" && \
     unzip -q UDEVGothic_HSRF_EM_v2.2.0.zip && \
     mkdir -p /usr/share/fonts/udev-gothic && \
     cp UDEVGothic_HSRF_EM_v2.2.0/UDEVGothicHSRFJPDOCEM-Bold.ttf /usr/share/fonts/udev-gothic/ && \
@@ -331,33 +344,20 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     rm -rf UDEVGothic_HSRF_EM_v2.2.0 && \
     # cloc
     cd /tmp && \
-    if [ ! -f packages/cloc-2.08.pl ]; then \
-        curl -fsSL -o /usr/local/bin/cloc https://github.com/AlDanial/cloc/releases/download/v2.08/cloc-2.08.pl; \
-    else \
-        cp packages/cloc-2.08.pl /usr/local/bin/cloc; \
-    fi && \
+    download_required "cloc" "/usr/local/bin/cloc" "https://github.com/AlDanial/cloc/releases/download/v2.08/cloc-2.08.pl" "cloc-2.08.pl" && \
     chmod +x /usr/local/bin/cloc && \
     # editorconfig-checker
     EC_VER="3.6.1" && \
     EC_TARBALL_CACHE="ec-linux-amd64-v${EC_VER}.tar.gz" && \
     EC_TARBALL_DL="ec-linux-amd64.tar.gz" && \
     cd /tmp && \
-    if [ ! -f "packages/${EC_TARBALL_CACHE}" ]; then \
-        curl -fsSL -o "/tmp/${EC_TARBALL_DL}" \
-            "https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v${EC_VER}/${EC_TARBALL_DL}"; \
-    else \
-        cp "packages/${EC_TARBALL_CACHE}" "/tmp/${EC_TARBALL_DL}"; \
-    fi && \
+    download_required "editorconfig-checker" "/tmp/${EC_TARBALL_DL}" "https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v${EC_VER}/${EC_TARBALL_DL}" "${EC_TARBALL_CACHE}" && \
     tar xzf "${EC_TARBALL_DL}" && \
     install -m 0755 ./bin/ec-linux-amd64 /usr/local/bin/editorconfig-checker && \
     rm -rf /tmp/bin && \
     # doxygen
     cd /tmp && \
-    if [ ! -f packages/doxygen-1.15.0.src.tar.gz ]; then \
-        curl -fsSL -o /tmp/doxygen-1.15.0.src.tar.gz https://doxygen.nl/files/doxygen-1.15.0.src.tar.gz; \
-    else \
-        cp packages/doxygen-1.15.0.src.tar.gz /tmp/; \
-    fi && \
+    download_required "doxygen" "/tmp/doxygen-1.15.0.src.tar.gz" "https://doxygen.nl/files/doxygen-1.15.0.src.tar.gz" "doxygen-1.15.0.src.tar.gz" && \
     tar xfz doxygen-1.15.0.src.tar.gz && \
     cd doxygen-1.15.0 && \
     mkdir build && \
@@ -375,12 +375,7 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     LLVM_VER="22.1.4" && \
     LLVM_TARBALL="llvm-project-${LLVM_VER}.src.tar.xz" && \
     cd /tmp && \
-    if [ ! -f "packages/${LLVM_TARBALL}" ]; then \
-        curl -fsSL -o "/tmp/${LLVM_TARBALL}" \
-            "https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VER}/${LLVM_TARBALL}"; \
-    else \
-        cp "packages/${LLVM_TARBALL}" /tmp/; \
-    fi && \
+    download_required "llvm-project" "/tmp/${LLVM_TARBALL}" "https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VER}/${LLVM_TARBALL}" "${LLVM_TARBALL}" && \
     tar xfJ "${LLVM_TARBALL}" && \
     cd "llvm-project-${LLVM_VER}.src" && \
     cmake -S llvm -B build -G Ninja \
