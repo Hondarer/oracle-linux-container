@@ -249,7 +249,7 @@ User "1" -- "*" Post : creates
       -V documentclass=ltjsarticle \
       -V lang=ja \
       -V geometry:margin=2.5cm \
-      -V mainfont="UDEVGothicHSRFJPDOC-Regular" \
+      -V mainfont="UDEVGothicHSRFJPDOCEM-Regular" \
       --metadata title="ドキュメント" \
       --metadata author="Author Name"
 ```

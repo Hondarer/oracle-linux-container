@@ -132,7 +132,7 @@
 - **URL**: https://dejavu-fonts.github.io/
 - **説明**: Unicode カバレッジの高いフォント
 
-### UDEV Gothic HSRF
+### UDEV Gothic HSRF EM
 - **バージョン**: 2.2.0
 - **ライセンス**: SIL Open Font License 1.1
 - **URL**: https://github.com/Hondarer/udev-gothic-rf
