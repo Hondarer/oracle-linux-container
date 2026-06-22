@@ -1,6 +1,6 @@
 ﻿# Oracle Linux 開発環境を WSL2 にインポートする PowerShell スクリプト
 #
-# このスクリプトは、GitHub Releases から取得した WSL2 用 rootfs (tar.gz) を使って、
+# このスクリプトは、GitHub Releases から取得した WSL2 用 rootfs (tar.gz または tar) を使って、
 # WSL2 ディストリビューションとしてインポートします。
 #
 # 前提条件:
@@ -198,7 +198,7 @@ function Import-ToWSL2 {
     param(
         [string]$DistroName,
         [string]$InstallLocation,
-        [string]$RootFsTarGz,
+        [string]$RootFsArchive,
         [string]$TempDir
     )
 
@@ -240,7 +240,7 @@ function Import-ToWSL2 {
     Write-Info "インポート中: $DistroName"
     Write-Info "インストール先: $InstallLocation"
 
-    wsl --import $DistroName $InstallLocation $RootFsTarGz
+    wsl --import $DistroName $InstallLocation $RootFsArchive
 
     if ($LASTEXITCODE -eq 0) {
         Write-Success "WSL2 へのインポートが完了しました"
@@ -316,7 +316,7 @@ function Main {
         Write-Success "一時ディレクトリを作成しました: $TempDir"
 
         if ([string]::IsNullOrEmpty($RootFsPath)) {
-            throw "rootfs ファイルのパスを -RootFsPath で指定してください。GitHub Releases から WSL 用 rootfs (tar.gz) をダウンロードして指定してください。"
+            throw "rootfs ファイルのパスを -RootFsPath で指定してください。GitHub Releases から WSL 用 rootfs (tar.gz または tar) をダウンロードして指定してください。"
         }
         if (-not $hasExplicitWslDistroName) {
             throw "RootFsPath を使ってインストールする場合は -WslDistroName を指定してください"
@@ -325,13 +325,13 @@ function Main {
             $InstallLocation = "$env:LOCALAPPDATA\WSL\$WslDistroName"
         }
 
-        $rootfsTarGz = Get-RootFsFromLocalFile -Path $RootFsPath
+        $rootfsArchive = Get-RootFsFromLocalFile -Path $RootFsPath
 
         # WSL2 へのインポート
         Import-ToWSL2 `
             -DistroName $WslDistroName `
             -InstallLocation $InstallLocation `
-            -RootFsTarGz $rootfsTarGz `
+            -RootFsArchive $rootfsArchive `
             -TempDir $TempDir
 
         # テスト実行
@@ -358,7 +358,7 @@ function Main {
         Write-Host ""
         Write-Host "トラブルシューティング:"
         Write-Host "  - RootFsPath で指定した rootfs ファイルが存在するか確認してください"
-        Write-Host "  - 持ち込んだ rootfs が WSL 用 tar.gz であることを確認してください"
+        Write-Host "  - 持ち込んだ rootfs が WSL 用 tar.gz または tar であることを確認してください"
         Write-Host "  - RootFsPath を使う場合は -WslDistroName を指定してください"
         Write-Host "  - WSL2 が正しくインストールされているか確認してください"
         Write-Host ""
