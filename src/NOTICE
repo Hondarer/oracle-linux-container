@@ -169,6 +169,16 @@ License: MIT License
 Copyright: EditorConfig Checker Contributors
 URL: https://github.com/editorconfig-checker/editorconfig-checker
 
+gh (GitHub CLI) 2.95.0
+License: MIT License
+Copyright: GitHub, Inc.
+URL: https://github.com/cli/cli
+
+glab (GitLab CLI) 1.105.0
+License: MIT License
+Copyright: GitLab B.V.
+URL: https://gitlab.com/gitlab-org/cli
+
 ================================================================================
 FONTS
 ================================================================================
@@ -193,9 +203,9 @@ License: Bitstream Vera Fonts Copyright + Arev Fonts License
 Copyright: DejaVu fonts team
 URL: https://dejavu-fonts.github.io/
 
-UDEV Gothic HSRF EM 2.2.0
+UDEV Gothic HSRFEM 2.2.0
 License: SIL Open Font License 1.1
-Copyright: Original by yuru7, HSRF variant by Hondarer
+Copyright: Original by yuru7, RF & EM variant by Hondarer
 URL: https://github.com/Hondarer/udev-gothic-rf
 Original: https://github.com/yuru7/udev-gothic
 

@@ -391,6 +391,19 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     install -m 0755 build/bin/clang-format /usr/local/bin/ && \
     install -m 0755 clang/tools/clang-format/git-clang-format /usr/local/bin/ && \
     cd /tmp && rm -rf "llvm-project-${LLVM_VER}.src" && \
+    # gh (GitHub CLI)
+    cd /tmp && \
+    GH_VER="2.95.0" && \
+    GH_RPM="gh_${GH_VER}_linux_amd64.rpm" && \
+    download_required "gh ${GH_VER}" "/tmp/${GH_RPM}" "https://github.com/cli/cli/releases/download/v${GH_VER}/${GH_RPM}" "${GH_RPM}" && \
+    dnf install -y "/tmp/${GH_RPM}" && \
+    rm -f "/tmp/${GH_RPM}" && \
+    # glab (GitLab CLI)
+    GLAB_VER="1.105.0" && \
+    GLAB_RPM="glab_${GLAB_VER}_linux_amd64.rpm" && \
+    download_required "glab ${GLAB_VER}" "/tmp/${GLAB_RPM}" "https://gitlab.com/gitlab-org/cli/-/releases/v${GLAB_VER}/downloads/${GLAB_RPM}" "${GLAB_RPM}" && \
+    dnf install -y "/tmp/${GLAB_RPM}" && \
+    rm -f "/tmp/${GLAB_RPM}" && \
     # clean up
     rm -f /tmp/*.tar.* /tmp/*.jar /tmp/*.zip /tmp/Inkscape-*.AppImage && \
     rm -rf /tmp/squashfs-root

@@ -135,6 +135,11 @@ podman pull hondarer/oracle-linux-10-dev:latest
 - **bubblewrap** (bwrap)
 - **git**、**curl**、**wget**
 
+### リポジトリ操作 CLI
+
+- **gh** (v2.95.0) — GitHub CLI
+- **glab** (v1.105.0) — GitLab CLI
+
 ## クイックスタート
 
 ### イメージビルド

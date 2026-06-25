@@ -224,6 +224,18 @@
 - **URL**: https://github.com/editorconfig-checker/editorconfig-checker
 - **説明**: `.editorconfig` 違反 (インデント、改行コード、末尾空白等) を検出するチェッカー
 
+### gh (GitHub CLI)
+- **バージョン**: 2.95.0
+- **ライセンス**: MIT License
+- **URL**: https://github.com/cli/cli
+- **説明**: GitHub の公式 CLI。リポジトリ・PR・issue・workflow などをターミナルから操作
+
+### glab (GitLab CLI)
+- **バージョン**: 1.105.0
+- **ライセンス**: MIT License
+- **URL**: https://gitlab.com/gitlab-org/cli
+- **説明**: GitLab の公式 CLI。リポジトリ・MR・issue・CI などをターミナルから操作
+
 ## グラフィックスとデスクトップライブラリ
 
 これらのライブラリは、PlantUML や Doxygen などのグラフィカルツールの依存関係として含まれています。

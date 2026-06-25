@@ -108,6 +108,7 @@ ssh-keygen -R "[127.0.0.1]:40822"
 - **開発ライブラリ**: openssl-devel、libssh-devel、libcurl-devel、binutils-devel
 - **ドキュメント**: Doxygen、doxybook2、PlantUML、Pandoc
 - **ユーティリティ**: jq、tree、rsync、expect、cloc、time、editorconfig-checker
+- **リポジトリ操作 CLI**: gh (GitHub CLI)、glab (GitLab CLI)
 
 ### パッケージ管理
 
