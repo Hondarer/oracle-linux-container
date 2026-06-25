@@ -139,6 +139,7 @@ RUN dnf install -y \
         sudo \
         sysstat \
         systemd-devel \
+        time \
         tree \
         unzip \
         vim-minimal \
