@@ -91,6 +91,13 @@ License: GNU General Public License
 Copyright: Inkscape contributors
 URL: https://inkscape.org/
 
+FFmpeg
+License: GNU Lesser General Public License v2.1 or later (LGPL-2.1+)
+         and GNU General Public License v2.0 or later (GPL-2.0+) components
+Copyright: FFmpeg developers
+URL: https://ffmpeg.org/
+Package Source: RPM Fusion free
+
 ================================================================================
 TESTING FRAMEWORKS
 ================================================================================

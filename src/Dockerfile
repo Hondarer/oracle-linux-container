@@ -44,6 +44,11 @@ RUN dnf install -y \
     if [ "${OL_VERSION}" = "8" ]; then \
         dnf config-manager --enable ol8_developer_EPEL; \
     fi && \
+    if [ "${OL_VERSION}" = "10" ]; then \
+        rpm -Uvh --nodeps "https://download1.rpmfusion.org/free/el/rpmfusion-free-release-${OL_VERSION}.noarch.rpm"; \
+    else \
+        dnf install -y "https://download1.rpmfusion.org/free/el/rpmfusion-free-release-${OL_VERSION}.noarch.rpm"; \
+    fi && \
     dnf group install -y 'Development Tools' && \
     # Node.js 24: OL8 はモジュール有効化、OL10 は NodeSource リポジトリを使用
     # (OL10 は RHEL 10 ベースのため DNF モジュールシステムが廃止されており使用不可)
@@ -68,6 +73,7 @@ RUN dnf install -y \
         desktop-file-utils \
         dotnet-sdk-10.0 \
         expect \
+        ffmpeg \
         glib-networking \
         glibc-langpack-ja \
         glibc-static \
@@ -197,10 +203,14 @@ RUN dnf install -y \
         dnf config-manager --disable \
             ol8_codeready_builder \
             ol8_developer_EPEL \
-            ol8_developer_EPEL_modular 2>/dev/null || true; \
+            ol8_developer_EPEL_modular \
+            rpmfusion-free \
+            rpmfusion-free-updates 2>/dev/null || true; \
     else \
         dnf config-manager --disable \
-            ol10_codeready_builder 2>/dev/null || true; \
+            ol10_codeready_builder \
+            rpmfusion-free \
+            rpmfusion-free-updates 2>/dev/null || true; \
     fi && \
     dnf clean all && \
     rm -f /var/log/dnf* /var/log/hawkey.log && \

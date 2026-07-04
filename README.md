@@ -133,6 +133,7 @@ podman pull hondarer/oracle-linux-10-dev:latest
 - **editorconfig-checker** (v3.6.1)
 - **yamllint** (YAML 構文・スタイルチェッカー)
 - **bubblewrap** (bwrap)
+- **ffmpeg** (RPM Fusion free)
 - **git**、**curl**、**wget**
 
 ### リポジトリ操作 CLI
@@ -406,6 +407,7 @@ wsl -d OracleLinux8-Dev
 - **PlantUML**: GPL-3.0+
 - **Pandoc**: GPL-2.0+
 - **Inkscape**: GPL
+- **FFmpeg**: LGPL-2.1+ / GPL-2.0+ components
 - **rsync**: GPL-3.0
 
 詳細なコンポーネントリストとライセンス情報は以下を参照してください：

@@ -105,6 +105,12 @@
 - **URL**: https://inkscape.org/
 - **説明**: 公式 AppImage からインストールするベクターグラフィックスエディター
 
+### FFmpeg
+- **ライセンス**: LGPL-2.1-or-later / GPL-2.0-or-later components
+- **URL**: https://ffmpeg.org/
+- **パッケージ提供元**: RPM Fusion free
+- **説明**: 音声・動画の変換、処理、解析を行うマルチメディアフレームワーク
+
 ## フォント
 
 ### VLGothic (OL8 のみ)
