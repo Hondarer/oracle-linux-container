@@ -232,29 +232,24 @@ RUN --mount=type=bind,source=fonts,target=/tmp/fonts,readonly \
 # 追加パッケージのインストール
 RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     cd /tmp && \
-    if curl --help all 2>/dev/null | grep -q -- '--retry-all-errors'; then \
-        CURL_RETRY_ALL_ERRORS_OPT='--retry-all-errors'; \
-    else \
-        CURL_RETRY_ALL_ERRORS_OPT=''; \
-    fi && \
+    DOWNLOAD_MAX_ATTEMPTS=4 && \
     download_with_retry() { \
         level="$1"; \
         name="$2"; \
         dest="$3"; \
         shift 3; \
-        max_attempts=4; \
         attempt=1; \
-        while [ "${attempt}" -le "${max_attempts}" ]; do \
+        while [ "${attempt}" -le "${DOWNLOAD_MAX_ATTEMPTS}" ]; do \
             for url in "$@"; do \
-                echo "=== download (${level}) attempt ${attempt}/${max_attempts}: ${name} ==="; \
+                echo "=== download (${level}) attempt ${attempt}/${DOWNLOAD_MAX_ATTEMPTS}: ${name} ==="; \
                 echo "url: ${url}"; \
-                if curl --fail --location --show-error --retry 5 ${CURL_RETRY_ALL_ERRORS_OPT} --retry-delay 3 --connect-timeout 30 --max-time 600 -o "${dest}" "${url}"; then \
+                if curl --fail --location --show-error --connect-timeout 30 --max-time 600 -o "${dest}" "${url}"; then \
                     return 0; \
                 fi; \
                 status="$(curl --location --silent --output /dev/null --write-out '%{http_code}' "${url}" || echo curl_failed)"; \
                 echo "${level}: failed to download ${name} from ${url} (http_status=${status})" >&2; \
             done; \
-            if [ "${attempt}" -lt "${max_attempts}" ]; then \
+            if [ "${attempt}" -lt "${DOWNLOAD_MAX_ATTEMPTS}" ]; then \
                 sleep_sec=$((attempt * 20)); \
                 echo "${level}: retrying ${name} in ${sleep_sec}s..." >&2; \
                 sleep "${sleep_sec}"; \
@@ -352,8 +347,11 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     cd /tmp && \
     INKSCAPE_VERSION="1.4.4" && \
     INKSCAPE_APPIMAGE="Inkscape-${INKSCAPE_VERSION}.AppImage" && \
-    INKSCAPE_URL="https://inkscape.org/gallery/item/59506/Inkscape-1.4.4.AppImage" && \
-    download_required "inkscape" "/tmp/${INKSCAPE_APPIMAGE}" "${INKSCAPE_URL}" "${INKSCAPE_APPIMAGE}" && \
+    INKSCAPE_SHA256="d217fe05c92faaed5c3af46856b6299c98933dc722819cb5bc2ca052c5522166" && \
+    INKSCAPE_URL="https://media.inkscape.org/dl/resources/file/Inkscape-1.4.4.AppImage" && \
+    INKSCAPE_FALLBACK_URL="https://inkscape.org/gallery/item/59506/Inkscape-1.4.4.AppImage" && \
+    download_required "inkscape" "/tmp/${INKSCAPE_APPIMAGE}" "${INKSCAPE_URL}" "${INKSCAPE_APPIMAGE}" "${INKSCAPE_FALLBACK_URL}" && \
+    echo "${INKSCAPE_SHA256}  /tmp/${INKSCAPE_APPIMAGE}" | sha256sum -c - && \
     chmod +x "/tmp/${INKSCAPE_APPIMAGE}" && \
     rm -rf /tmp/squashfs-root /opt/inkscape && \
     install -d /opt && \

@@ -15,7 +15,65 @@ env:
   REGISTRY: ghcr.io
 
 jobs:
+  prepare-packages:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Prepare external packages
+        run: |
+          mkdir -p src/packages
+
+          INKSCAPE_APPIMAGE="Inkscape-1.4.4.AppImage"
+          INKSCAPE_SHA256="d217fe05c92faaed5c3af46856b6299c98933dc722819cb5bc2ca052c5522166"
+          INKSCAPE_URLS="
+          https://media.inkscape.org/dl/resources/file/Inkscape-1.4.4.AppImage
+          https://inkscape.org/gallery/item/59506/Inkscape-1.4.4.AppImage
+          "
+          DOWNLOAD_MAX_ATTEMPTS=4
+
+          download_with_retry() {
+            name="$1"
+            dest="$2"
+            shift 2
+            attempt=1
+            while [ "${attempt}" -le "${DOWNLOAD_MAX_ATTEMPTS}" ]; do
+              for url in "$@"; do
+                echo "=== download attempt ${attempt}/${DOWNLOAD_MAX_ATTEMPTS}: ${name} ==="
+                echo "url: ${url}"
+                if curl --fail --location --show-error --connect-timeout 30 --max-time 900 -o "${dest}" "${url}"; then
+                  return 0
+                fi
+                status="$(curl --location --silent --output /dev/null --write-out '%{http_code}' "${url}" || echo curl_failed)"
+                echo "ERROR: failed to download ${name} from ${url} (http_status=${status})" >&2
+              done
+              if [ "${attempt}" -lt "${DOWNLOAD_MAX_ATTEMPTS}" ]; then
+                sleep_sec=$((attempt * 20))
+                echo "ERROR: retrying ${name} in ${sleep_sec}s..." >&2
+                sleep "${sleep_sec}"
+              fi
+              attempt=$((attempt + 1))
+            done
+            return 1
+          }
+
+          if download_with_retry "${INKSCAPE_APPIMAGE}" "src/packages/${INKSCAPE_APPIMAGE}" ${INKSCAPE_URLS}; then
+            echo "${INKSCAPE_SHA256}  src/packages/${INKSCAPE_APPIMAGE}" | sha256sum -c -
+          else
+            echo "ERROR: failed to download ${INKSCAPE_APPIMAGE}" >&2
+            echo "ERROR: source_urls=${INKSCAPE_URLS}" >&2
+            exit 1
+          fi
+
+      - name: Upload external packages
+        uses: actions/upload-artifact@v7
+        with:
+          name: external-packages
+          path: src/packages/
+          if-no-files-found: error
+          retention-days: 1
+
   build-and-push:
+    needs: prepare-packages
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -27,6 +85,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+
+      - name: Download external packages
+        uses: actions/download-artifact@v8
+        with:
+          name: external-packages
+          path: src/packages
 
       - name: Set lowercase repository name
         id: repo
