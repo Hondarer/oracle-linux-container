@@ -237,7 +237,7 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
         name="$2"; \
         dest="$3"; \
         shift 3; \
-        max_attempts=5; \
+        max_attempts=4; \
         attempt=1; \
         while [ "${attempt}" -le "${max_attempts}" ]; do \
             for url in "$@"; do \
@@ -250,7 +250,7 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
                 echo "${level}: failed to download ${name} from ${url} (http_status=${status})" >&2; \
             done; \
             if [ "${attempt}" -lt "${max_attempts}" ]; then \
-                sleep_sec=$((attempt * 10)); \
+                sleep_sec=$((attempt * 20)); \
                 echo "${level}: retrying ${name} in ${sleep_sec}s..." >&2; \
                 sleep "${sleep_sec}"; \
             fi; \
