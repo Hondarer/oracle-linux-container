@@ -232,22 +232,45 @@ RUN --mount=type=bind,source=fonts,target=/tmp/fonts,readonly \
 # 追加パッケージのインストール
 RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     cd /tmp && \
+    download_with_retry() { \
+        level="$1"; \
+        name="$2"; \
+        dest="$3"; \
+        shift 3; \
+        max_attempts=4; \
+        attempt=1; \
+        while [ "${attempt}" -le "${max_attempts}" ]; do \
+            for url in "$@"; do \
+                echo "=== download (${level}) attempt ${attempt}/${max_attempts}: ${name} ==="; \
+                echo "url: ${url}"; \
+                if curl --fail --location --show-error --retry 5 --retry-all-errors --retry-delay 3 --connect-timeout 30 --max-time 600 -o "${dest}" "${url}"; then \
+                    return 0; \
+                fi; \
+                status="$(curl --location --silent --output /dev/null --write-out '%{http_code}' "${url}" || echo curl_failed)"; \
+                echo "${level}: failed to download ${name} from ${url} (http_status=${status})" >&2; \
+            done; \
+            if [ "${attempt}" -lt "${max_attempts}" ]; then \
+                sleep_sec=$((attempt * 20)); \
+                echo "${level}: retrying ${name} in ${sleep_sec}s..." >&2; \
+                sleep "${sleep_sec}"; \
+            fi; \
+            attempt=$((attempt + 1)); \
+        done; \
+        return 1; \
+    } && \
     download_required() { \
         name="$1"; \
         dest="$2"; \
         url="$3"; \
         cache="$4"; \
+        shift 4; \
         if [ -f "/tmp/packages/${cache}" ]; then \
             echo "=== using cached package: ${name} (/tmp/packages/${cache}) ==="; \
             cp "/tmp/packages/${cache}" "${dest}"; \
         else \
-            echo "=== download: ${name} ==="; \
-            echo "url: ${url}"; \
-            if ! curl --fail --location --show-error --retry 3 --retry-delay 5 --connect-timeout 30 -o "${dest}" "${url}"; then \
-                status="$(curl --location --silent --output /dev/null --write-out '%{http_code}' "${url}" || echo curl_failed)"; \
+            if ! download_with_retry "ERROR" "${name}" "${dest}" "${url}" "$@"; then \
                 echo "ERROR: failed to download ${name}" >&2; \
-                echo "ERROR: url=${url}" >&2; \
-                echo "ERROR: http_status=${status}" >&2; \
+                echo "ERROR: source_urls=${url} $*" >&2; \
                 return 1; \
             fi; \
         fi; \
@@ -257,17 +280,14 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
         dest="$2"; \
         url="$3"; \
         cache="$4"; \
+        shift 4; \
         if [ -f "/tmp/packages/${cache}" ]; then \
             echo "=== using cached package: ${name} (/tmp/packages/${cache}) ==="; \
             cp "/tmp/packages/${cache}" "${dest}"; \
         else \
-            echo "=== download: ${name} ==="; \
-            echo "url: ${url}"; \
-            if ! curl --fail --location --show-error --retry 3 --retry-delay 5 --connect-timeout 30 -o "${dest}" "${url}"; then \
-                status="$(curl --location --silent --output /dev/null --write-out '%{http_code}' "${url}" || echo curl_failed)"; \
+            if ! download_with_retry "Warning" "${name}" "${dest}" "${url}" "$@"; then \
                 echo "Warning: failed to download ${name}" >&2; \
-                echo "Warning: url=${url}" >&2; \
-                echo "Warning: http_status=${status}" >&2; \
+                echo "Warning: source_urls=${url} $*" >&2; \
                 rm -f "${dest}"; \
                 return 0; \
             fi; \
@@ -368,7 +388,7 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     rm -rf /tmp/bin && \
     # doxygen
     cd /tmp && \
-    download_required "doxygen" "/tmp/doxygen-1.15.0.src.tar.gz" "https://doxygen.nl/files/doxygen-1.15.0.src.tar.gz" "doxygen-1.15.0.src.tar.gz" && \
+    download_required "doxygen" "/tmp/doxygen-1.15.0.src.tar.gz" "https://doxygen.nl/files/doxygen-1.15.0.src.tar.gz" "doxygen-1.15.0.src.tar.gz" "https://github.com/doxygen/doxygen/releases/download/Release_1_15_0/doxygen-1.15.0.src.tar.gz" && \
     tar xfz doxygen-1.15.0.src.tar.gz && \
     cd doxygen-1.15.0 && \
     mkdir build && \
