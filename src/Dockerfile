@@ -232,6 +232,11 @@ RUN --mount=type=bind,source=fonts,target=/tmp/fonts,readonly \
 # 追加パッケージのインストール
 RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     cd /tmp && \
+    if curl --help all 2>/dev/null | grep -q -- '--retry-all-errors'; then \
+        CURL_RETRY_ALL_ERRORS_OPT='--retry-all-errors'; \
+    else \
+        CURL_RETRY_ALL_ERRORS_OPT=''; \
+    fi && \
     download_with_retry() { \
         level="$1"; \
         name="$2"; \
@@ -243,7 +248,7 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
             for url in "$@"; do \
                 echo "=== download (${level}) attempt ${attempt}/${max_attempts}: ${name} ==="; \
                 echo "url: ${url}"; \
-                if curl --fail --location --show-error --retry 5 --retry-all-errors --retry-delay 3 --connect-timeout 30 --max-time 600 -o "${dest}" "${url}"; then \
+                if curl --fail --location --show-error --retry 5 ${CURL_RETRY_ALL_ERRORS_OPT} --retry-delay 3 --connect-timeout 30 --max-time 600 -o "${dest}" "${url}"; then \
                     return 0; \
                 fi; \
                 status="$(curl --location --silent --output /dev/null --write-out '%{http_code}' "${url}" || echo curl_failed)"; \
