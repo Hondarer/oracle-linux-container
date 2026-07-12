@@ -365,17 +365,17 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     chmod 0755 /usr/local/bin/inkscape && \
     # UDEVGothic font
     cd /tmp && \
-    download_required "UDEVGothic" "/tmp/UDEVGothic_HSRF_EM_v2.2.0.zip" "https://github.com/Hondarer/udev-gothic-rf/releases/download/v2.2.0/UDEVGothic_HSRF_EM_v2.2.0.zip" "UDEVGothic_HSRF_EM_v2.2.0.zip" && \
-    unzip -q UDEVGothic_HSRF_EM_v2.2.0.zip && \
+    download_required "UDEVGothic" "/tmp/UDEVGothic_HSRF_EM_v2.2.0.1.zip" "https://github.com/Hondarer/udev-gothic-rf/releases/download/v2.2.0.1/UDEVGothic_HSRF_EM_v2.2.0.1.zip" "UDEVGothic_HSRF_EM_v2.2.0.1.zip" && \
+    unzip -q UDEVGothic_HSRF_EM_v2.2.0.1.zip && \
     mkdir -p /usr/share/fonts/udev-gothic && \
-    cp UDEVGothic_HSRF_EM_v2.2.0/UDEVGothicHSRFJPDOCEM-Bold.ttf /usr/share/fonts/udev-gothic/ && \
-    cp UDEVGothic_HSRF_EM_v2.2.0/UDEVGothicHSRFJPDOCEM-BoldItalic.ttf /usr/share/fonts/udev-gothic/ && \
-    cp UDEVGothic_HSRF_EM_v2.2.0/UDEVGothicHSRFJPDOCEM-Italic.ttf /usr/share/fonts/udev-gothic/ && \
-    cp UDEVGothic_HSRF_EM_v2.2.0/UDEVGothicHSRFJPDOCEM-Regular.ttf /usr/share/fonts/udev-gothic/ && \
+    cp UDEVGothic_HSRF_EM_v2.2.0.1/UDEVGothicHSRFJPDOCEM-Bold.ttf /usr/share/fonts/udev-gothic/ && \
+    cp UDEVGothic_HSRF_EM_v2.2.0.1/UDEVGothicHSRFJPDOCEM-BoldItalic.ttf /usr/share/fonts/udev-gothic/ && \
+    cp UDEVGothic_HSRF_EM_v2.2.0.1/UDEVGothicHSRFJPDOCEM-Italic.ttf /usr/share/fonts/udev-gothic/ && \
+    cp UDEVGothic_HSRF_EM_v2.2.0.1/UDEVGothicHSRFJPDOCEM-Regular.ttf /usr/share/fonts/udev-gothic/ && \
     chown root:root /usr/share/fonts/udev-gothic/*.ttf && \
     chmod 0644 /usr/share/fonts/udev-gothic/*.ttf && \
     fc-cache -fv > /dev/null 2>&1 && \
-    rm -rf UDEVGothic_HSRF_EM_v2.2.0 && \
+    rm -rf UDEVGothic_HSRF_EM_v2.2.0.1 && \
     # cloc
     cd /tmp && \
     download_required "cloc" "/usr/local/bin/cloc" "https://github.com/AlDanial/cloc/releases/download/v2.08/cloc-2.08.pl" "cloc-2.08.pl" && \
