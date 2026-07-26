@@ -91,6 +91,7 @@ RUN dnf install -y \
         libcap \
         libcurl-devel \
         libdrm \
+        libedit-devel \
         libepoxy \
         liberation-fonts \
         liberation-fonts-common \
@@ -141,6 +142,7 @@ RUN dnf install -y \
         perl-libs \
         perl-threads \
         perl-threads-shared \
+        readline-devel \
         rsync \
         sudo \
         sysstat \
