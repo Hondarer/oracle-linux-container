@@ -99,6 +99,20 @@
 - **URL**: https://github.com/lierdakil/pandoc-crossref
 - **説明**: Pandoc の相互参照フィルター
 
+### Marp CLI
+- **バージョン**: 4.4.0
+- **ライセンス**: MIT License
+- **URL**: https://github.com/marp-team/marp-cli
+- **説明**: Markdown からスライド、PDF、PPTX、画像を生成するツール
+
+### Chrome for Testing
+- **バージョン**: 148.0.7778.97
+- **ライセンス**: Google Chrome and ChromeOS Additional Terms of Service および同梱サードパーティライセンス
+- **URL**: https://googlechromelabs.github.io/chrome-for-testing/
+- **利用規約**: https://www.google.com/chrome/terms/
+- **同梱通知**: `/opt/chrome-for-testing/148.0.7778.97/chrome-linux64/ABOUT`
+- **説明**: Marp CLI と Puppeteer が使用するブラウザ自動化・テスト専用の Chrome
+
 ### Inkscape
 - **バージョン**: 1.4.4
 - **ライセンス**: GPL

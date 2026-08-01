@@ -83,6 +83,10 @@ jobs:
             "https://inkscape.org/gallery/item/59506/Inkscape-1.4.4.AppImage"
           echo "d217fe05c92faaed5c3af46856b6299c98933dc722819cb5bc2ca052c5522166  src/packages/Inkscape-1.4.4.AppImage" | sha256sum -c -
 
+          download_package "Chrome for Testing 148.0.7778.97" \
+            "chrome-linux64-148.0.7778.97.zip" \
+            "https://storage.googleapis.com/chrome-for-testing-public/148.0.7778.97/linux64/chrome-linux64.zip"
+
           download_package "cloc" \
             "cloc-2.08.pl" \
             "https://github.com/AlDanial/cloc/releases/download/v2.08/cloc-2.08.pl"
@@ -308,6 +312,47 @@ jobs:
           echo "=== PlantUML version ==="
           podman exec $CONTAINER_ID plantuml -version
 
+          echo "=== Chrome for Testing version ==="
+          podman exec --user testuser --env HOME=/home/testuser $CONTAINER_ID chrome --version
+
+          echo "=== Chrome for Testing environment ==="
+          podman exec --user testuser --env HOME=/home/testuser $CONTAINER_ID bash -lc '
+            test "$CHROME_PATH" = /usr/local/bin/chrome
+            test "$PUPPETEER_EXECUTABLE_PATH" = /usr/local/bin/chrome
+            test "$PUPPETEER_SKIP_DOWNLOAD" = true
+            test -x "$CHROME_PATH"
+          '
+
+          echo "=== Marp PDF smoke test ==="
+          podman exec --user testuser --env HOME=/home/testuser $CONTAINER_ID \
+            marp --pdf --no-config-file \
+              /usr/share/doc/oracle-linux-dev-container/README.md \
+              -o /tmp/marp-smoke.pdf
+          podman exec $CONTAINER_ID test -s /tmp/marp-smoke.pdf
+
+          echo "=== Puppeteer system Chrome smoke test ==="
+          podman exec --user testuser --env HOME=/home/testuser $CONTAINER_ID bash -lc '
+            test ! -d "$HOME/.cache/puppeteer"
+            mkdir /tmp/puppeteer-smoke
+            cd /tmp/puppeteer-smoke
+            npm init -y >/dev/null
+            npm install --no-audit --no-fund puppeteer@24.43.1
+            test ! -d "$HOME/.cache/puppeteer"
+            node -e '\''
+              const puppeteer = require("puppeteer");
+              (async () => {
+                const browser = await puppeteer.launch({
+                  headless: true,
+                  args: ["--no-sandbox"],
+                });
+                const page = await browser.newPage();
+                await page.setContent("<title>puppeteer-smoke</title>");
+                if ((await page.title()) !== "puppeteer-smoke") process.exit(1);
+                await browser.close();
+              })().catch((error) => { console.error(error); process.exit(1); });
+            '\''
+          '
+
           # sshd が起動しているか確認
           echo "=== Checking sshd process ==="
           podman exec $CONTAINER_ID pgrep sshd
@@ -329,6 +374,17 @@ jobs:
             .
 
           echo "WSL_BUILD_IMAGE=$WSL_BUILD_IMAGE" >> $GITHUB_ENV
+
+      - name: Test WSL derivative image
+        run: |
+          podman run --rm --entrypoint /bin/bash "$WSL_BUILD_IMAGE" -lc '
+            unset CHROME_PATH PUPPETEER_EXECUTABLE_PATH PUPPETEER_SKIP_DOWNLOAD
+            . /etc/profile.d/chrome-for-testing.sh
+            test "$CHROME_PATH" = /usr/local/bin/chrome
+            test "$PUPPETEER_EXECUTABLE_PATH" = /usr/local/bin/chrome
+            test "$PUPPETEER_SKIP_DOWNLOAD" = true
+            chrome --version
+          '
 
       - name: Push container image
         if: github.event_name != 'pull_request'

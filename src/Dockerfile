@@ -1,11 +1,12 @@
 ARG OL_VERSION=8
 FROM oraclelinux:${OL_VERSION}
 ARG OL_VERSION
+ARG CHROME_FOR_TESTING_VERSION=148.0.7778.97
 
 # メタデータラベル
 LABEL org.opencontainers.image.title="Oracle Linux ${OL_VERSION} Development Container"
 LABEL org.opencontainers.image.description="Oracle Linux ${OL_VERSION} based development container with Node.js, Java, .NET, Python, Doxygen, PlantUML, Inkscape, and other development tools"
-LABEL org.opencontainers.image.licenses="GPL-2.0 AND GPL-3.0-or-later AND Apache-2.0 AND LGPL-2.1-or-later AND MIT AND BSD-3-Clause AND PSF-2.0 AND OFL-1.1"
+LABEL org.opencontainers.image.licenses="GPL-2.0 AND GPL-3.0-or-later AND Apache-2.0 AND LGPL-2.1-or-later AND MIT AND BSD-3-Clause AND PSF-2.0 AND OFL-1.1 AND LicenseRef-Google-Chrome"
 LABEL org.opencontainers.image.vendor="hondarer"
 LABEL org.opencontainers.image.base.name="oraclelinux:${OL_VERSION}"
 
@@ -439,21 +440,32 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     download_required "glab ${GLAB_VER}" "/tmp/${GLAB_RPM}" "https://gitlab.com/gitlab-org/cli/-/releases/v${GLAB_VER}/downloads/${GLAB_RPM}" "${GLAB_RPM}" && \
     dnf install -y "/tmp/${GLAB_RPM}" && \
     rm -f "/tmp/${GLAB_RPM}" && \
+    # Chrome for Testing (Marp CLI / Puppeteer)
+    CHROME_ARCHIVE="chrome-linux64-${CHROME_FOR_TESTING_VERSION}.zip" && \
+    CHROME_INSTALL_DIR="/opt/chrome-for-testing/${CHROME_FOR_TESTING_VERSION}" && \
+    download_required "Chrome for Testing ${CHROME_FOR_TESTING_VERSION}" "/tmp/${CHROME_ARCHIVE}" "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_FOR_TESTING_VERSION}/linux64/chrome-linux64.zip" "${CHROME_ARCHIVE}" && \
+    install -d "${CHROME_INSTALL_DIR}" && \
+    unzip -q "/tmp/${CHROME_ARCHIVE}" -d "${CHROME_INSTALL_DIR}" && \
+    chown -R root:root /opt/chrome-for-testing && \
+    chmod -R a+rX /opt/chrome-for-testing && \
+    ln -s "${CHROME_INSTALL_DIR}/chrome-linux64/chrome" /usr/local/bin/chrome && \
+    test -x /usr/local/bin/chrome && \
+    /usr/local/bin/chrome --version && \
+    rm -f "/tmp/${CHROME_ARCHIVE}" && \
     # clean up
     rm -f /tmp/*.tar.* /tmp/*.jar /tmp/*.zip /tmp/Inkscape-*.AppImage && \
     rm -rf /tmp/squashfs-root
 
-# Chrome for Testing のインストール（Marp CLI の PDF/PPTX/画像変換に必要）
-# システムワイドなキャッシュへ導入し、CHROME_PATH を /etc/profile.d で marp-cli に解決させる
-# TODO: puppeteer と marp に対して、Chrome for Testing をうまく紐づける検証未実施のため、コメント
-#ENV PUPPETEER_CACHE_DIR=/opt/puppeteer-cache
-#RUN mkdir -p /opt/puppeteer-cache && \
-#    CFT_OUT="$(NPM_CONFIG_PREFIX= npx -y @puppeteer/browsers install chrome@stable --path /opt/puppeteer-cache)" && \
-#    CHROME_BIN="$(echo "$CFT_OUT" | awk '{print $NF}')" && \
-#    test -x "$CHROME_BIN" && \
-#    chmod -R 755 /opt/puppeteer-cache && \
-#    printf 'export PUPPETEER_CACHE_DIR=/opt/puppeteer-cache\nexport CHROME_PATH=%s\n' "$CHROME_BIN" > /etc/profile.d/puppeteer.sh && \
-#    chmod 0644 /etc/profile.d/puppeteer.sh
+# Chrome for Testing を Marp CLI と Puppeteer の既定ブラウザに設定
+ENV CHROME_PATH="/usr/local/bin/chrome" \
+    PUPPETEER_EXECUTABLE_PATH="/usr/local/bin/chrome" \
+    PUPPETEER_SKIP_DOWNLOAD="true"
+RUN printf '%s\n' \
+        'export CHROME_PATH=/usr/local/bin/chrome' \
+        'export PUPPETEER_EXECUTABLE_PATH=/usr/local/bin/chrome' \
+        'export PUPPETEER_SKIP_DOWNLOAD=true' \
+        > /etc/profile.d/chrome-for-testing.sh && \
+    chmod 0644 /etc/profile.d/chrome-for-testing.sh
 
 # mandb
 RUN echo "Processing manual pages with mandb..."; \

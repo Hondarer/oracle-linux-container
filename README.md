@@ -112,6 +112,8 @@ podman pull hondarer/oracle-linux-10-dev:latest
 - **Doxygen** + doxybook2
 - **PlantUML**
 - **Pandoc** + pandoc-crossref
+- **Marp CLI** (v4.4.0)
+- **Chrome for Testing** (v148.0.7778.97)
 - **Inkscape** (v1.4.4)
 
 ### テスト・ビルドツール
@@ -220,7 +222,45 @@ doxygen Doxyfile
 
 # Pandoc による文書変換
 pandoc README.md -o README.pdf
+
+# Marp による PDF 変換（システムの Chrome for Testing を自動使用）
+marp slides.md -o slides.pdf
 ```
+
+### Chrome for Testing と Puppeteer
+
+Chrome for Testing は `/opt/chrome-for-testing/148.0.7778.97/` に配置され、`chrome` コマンドで利用できます。
+
+```bash
+chrome --version
+```
+
+`PUPPETEER_EXECUTABLE_PATH=/usr/local/bin/chrome` と `PUPPETEER_SKIP_DOWNLOAD=true` が設定済みのため、プロジェクトへ Puppeteer をインストールしてもブラウザは追加ダウンロードされません。
+
+```bash
+npm install puppeteer
+```
+
+コンテナや WSL 環境では Chrome sandbox を利用できないため、起動時に `--no-sandbox` を指定してください。実行ファイルの指定は不要です。
+
+```javascript
+const puppeteer = require('puppeteer')
+
+const browser = await puppeteer.launch({
+  headless: true,
+  args: ['--no-sandbox'],
+})
+```
+
+Puppeteer が要求する別バージョンのブラウザを利用する場合は、システム設定を解除してからインストールしてください。
+
+```bash
+unset PUPPETEER_EXECUTABLE_PATH
+export PUPPETEER_SKIP_DOWNLOAD=false
+npm install puppeteer
+```
+
+Chrome for Testing はブラウザ自動化・テスト専用です。信頼できるコンテンツに対して使用してください。
 
 ## 高度な使い方
 
