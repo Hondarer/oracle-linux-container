@@ -188,6 +188,7 @@ RUN dnf install -y \
         update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1 && \
         update-alternatives --install /usr/bin/pip pip /usr/bin/pip3.11 2; \
     elif [ "${OL_VERSION}" = "9" ]; then \
+        alternatives --set java $(alternatives --display java 2>/dev/null | grep -E "java-21-openjdk.*bin/java" | head -1 | awk '{print $1}') && \
         update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1; \
     else \
         alternatives --install /usr/bin/python python /usr/bin/python3 1 && \
