@@ -1,6 +1,6 @@
 # Dev Container サンプル設定
 
-このディレクトリには、公開されている Oracle Linux コンテナイメージを使用して、あなたのプロジェクトで Dev Container を設定するためのサンプルが含まれています。OL8 と OL10 のバリアントが `ol8/` と `ol10/` サブディレクトリに用意されています。
+このディレクトリには、公開されている Oracle Linux コンテナイメージを使用して、あなたのプロジェクトで Dev Container を設定するためのサンプルが含まれています。OL8、OL9、OL10 のバリアントが `ol8/`、`ol9/`、`ol10/` サブディレクトリに用意されています。
 
 ## クイックスタート
 
@@ -23,7 +23,7 @@ cp -r /path/to/oracle-linux-container/examples/devcontainer/ol8 .devcontainer
 
 ## 含まれる開発ツール
 
-- **言語ランタイム**: Node.js 24, Java 17(OL8)/21(OL10), .NET 10, Python 3.11(OL8)/3.12(OL10)
+- **言語ランタイム**: Node.js 24, Java 17(OL8)/21(OL9/10), .NET 10, Python 3.11(OL8)/3.9(OL9)/3.12(OL10)
 - **ビルドツール**: GCC, CMake, Make, automake
 - **ドキュメント**: Doxygen, PlantUML, Pandoc
 - **テスト**: Jest, JUnit, pytest, xUnit
@@ -33,6 +33,8 @@ cp -r /path/to/oracle-linux-container/examples/devcontainer/ol8 .devcontainer
 
 - `ol8/devcontainer.json` - OL8 用 Dev Container 設定ファイル
   - 公開イメージ (`ghcr.io/hondarer/oracle-linux-container/oracle-linux-8-dev:latest`) を使用
+- `ol9/devcontainer.json` - OL9 用 Dev Container 設定ファイル
+  - 公開イメージ (`ghcr.io/hondarer/oracle-linux-container/oracle-linux-9-dev:latest`) を使用
 - `ol10/devcontainer.json` - OL10 用 Dev Container 設定ファイル
   - 公開イメージ (`ghcr.io/hondarer/oracle-linux-container/oracle-linux-10-dev:latest`) を使用
 - 共通機能:

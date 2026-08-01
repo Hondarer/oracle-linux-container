@@ -112,6 +112,12 @@ jobs:
             "glab_1.105.0_linux_amd64.rpm" \
             "https://gitlab.com/gitlab-org/cli/-/releases/v1.105.0/downloads/glab_1.105.0_linux_amd64.rpm"
 
+          for ol_version in 8 9 10; do
+            download_package "doxybook2 for el${ol_version}" \
+              "doxybook2-linux-el${ol_version}-x64" \
+              "https://github.com/Hondarer/doxybook2-bin/raw/main/bin/linux-el${ol_version}-x64/doxybook2"
+          done
+
       - name: Upload external packages
         uses: actions/upload-artifact@v7
         with:
@@ -273,8 +279,13 @@ jobs:
           sleep 5
 
           # コンテナ内でバージョン確認
+          echo "=== Oracle Linux version ==="
+          OS_MAJOR=$(podman exec $CONTAINER_ID bash -c '. /etc/os-release; echo "${VERSION_ID%%.*}"')
+          test "$OS_MAJOR" = "${{ matrix.ol_version }}"
+
           echo "=== Node.js version ==="
           podman exec $CONTAINER_ID node --version
+          test "$(podman exec $CONTAINER_ID node -p 'process.versions.node.split(".")[0]')" = "24"
 
           echo "=== npm version ==="
           podman exec $CONTAINER_ID npm --version
@@ -292,6 +303,33 @@ jobs:
 
           echo "=== Python version ==="
           podman exec $CONTAINER_ID python --version
+          PYTHON_MINOR=$(podman exec $CONTAINER_ID python -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+
+          case "${{ matrix.ol_version }}" in
+            8)
+              EXPECTED_JAVA=17
+              EXPECTED_PYTHON=3.11
+              EXPECTED_GCC=8
+              ;;
+            9)
+              EXPECTED_JAVA=21
+              EXPECTED_PYTHON=3.9
+              EXPECTED_GCC=11
+              ;;
+            10)
+              EXPECTED_JAVA=21
+              EXPECTED_PYTHON=3.12
+              EXPECTED_GCC=14
+              ;;
+          esac
+
+          podman exec $CONTAINER_ID java --version 2>&1 | head -1 | grep -E "^openjdk ${EXPECTED_JAVA}([.[:space:]]|$)"
+          test "$PYTHON_MINOR" = "$EXPECTED_PYTHON"
+          podman exec $CONTAINER_ID python -m pip --version
+
+          echo "=== GCC version ==="
+          GCC_MAJOR=$(podman exec $CONTAINER_ID gcc -dumpversion | cut -d. -f1)
+          test "$GCC_MAJOR" = "$EXPECTED_GCC"
 
           echo "=== Python 3.11 version ==="
           if podman exec $CONTAINER_ID which python3.11 > /dev/null 2>&1; then
@@ -305,12 +343,23 @@ jobs:
 
           echo "=== .NET version ==="
           podman exec $CONTAINER_ID dotnet --version
+          podman exec $CONTAINER_ID dotnet --version | grep -E '^10\.'
 
           echo "=== Doxygen version ==="
           podman exec $CONTAINER_ID doxygen --version
 
           echo "=== PlantUML version ==="
           podman exec $CONTAINER_ID plantuml -version
+
+          echo "=== doxybook2 version ==="
+          podman exec $CONTAINER_ID doxybook2 --help
+
+          echo "=== Disabled build repositories ==="
+          ENABLED_REPOS=$(podman exec $CONTAINER_ID dnf repolist --enabled)
+          if echo "$ENABLED_REPOS" | grep -E "ol${{ matrix.ol_version }}_(codeready_builder|developer_EPEL)|rpmfusion-free"; then
+            echo "Build-only repository is still enabled"
+            exit 1
+          fi
 
           echo "=== Chrome for Testing version ==="
           podman exec --user testuser --env HOME=/home/testuser $CONTAINER_ID chrome --version
@@ -321,6 +370,7 @@ jobs:
             test "$PUPPETEER_EXECUTABLE_PATH" = /usr/local/bin/chrome
             test "$PUPPETEER_SKIP_DOWNLOAD" = true
             test -x "$CHROME_PATH"
+            doxybook2 --help
           '
 
           echo "=== Marp PDF smoke test ==="
@@ -426,7 +476,7 @@ jobs:
           readme-filepath: /tmp/dockerhub-readme.md
 
       - name: Export WSL rootfs and upload release asset
-        if: github.event_name != 'pull_request'
+        if: github.ref_type == 'tag'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -492,8 +542,12 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### WSL2 Rootfs File" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          echo "$WSL_ROOTFS_FILE" >> $GITHUB_STEP_SUMMARY
-          echo "size: ${WSL_ROOTFS_SIZE_BYTES:-unknown} bytes" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            echo "$WSL_ROOTFS_FILE" >> $GITHUB_STEP_SUMMARY
+            echo "size: ${WSL_ROOTFS_SIZE_BYTES:-unknown} bytes" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Skipped for non-tag builds" >> $GITHUB_STEP_SUMMARY
+          fi
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Pull command (Container)" >> $GITHUB_STEP_SUMMARY
@@ -509,7 +563,6 @@ jobs:
             echo "Invoke-WebRequest -Uri https://raw.githubusercontent.com/${{ github.repository }}/main/examples/import-wsl/import-wsl.ps1 -OutFile .\\import-wsl.ps1" >> $GITHUB_STEP_SUMMARY
             echo ".\\import-wsl.ps1 -RootFsPath \"$WSL_ROOTFS_FILE\" -WslDistroName \"OracleLinux${{ matrix.ol_version }}-Dev\"" >> $GITHUB_STEP_SUMMARY
           else
-            echo "# WSL rootfs was exported but is not published for development builds." >> $GITHUB_STEP_SUMMARY
-            echo "# WSL rootfs is published as a GitHub Release asset on tagged releases only." >> $GITHUB_STEP_SUMMARY
+            echo "# WSL rootfs is exported and published on tagged releases only." >> $GITHUB_STEP_SUMMARY
           fi
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY

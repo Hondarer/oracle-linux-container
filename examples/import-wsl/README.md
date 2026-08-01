@@ -1,6 +1,6 @@
 # WSL2 インポートツール
 
-Oracle Linux 開発環境を WSL2 にインポートするための PowerShell スクリプトです。OL8 と OL10 に対応しています。
+Oracle Linux 開発環境を WSL2 にインポートするための PowerShell スクリプトです。OL8、OL9、OL10 に対応しています。
 
 ## 概要
 
@@ -41,6 +41,12 @@ $RootFs8 = "$env:USERPROFILE\Downloads\oracle-linux-8-dev-vYYYYMMDD.x.x-wsl-root
 powershell -ExecutionPolicy Bypass -File .\import-wsl.ps1 `
   -RootFsPath $RootFs8 `
   -WslDistroName "OracleLinux8-Dev"
+
+# OL9 をインポートする場合
+$RootFs9 = "$env:USERPROFILE\Downloads\oracle-linux-9-dev-vYYYYMMDD.x.x-wsl-rootfs.tar.gz"
+powershell -ExecutionPolicy Bypass -File .\import-wsl.ps1 `
+  -RootFsPath $RootFs9 `
+  -WslDistroName "OracleLinux9-Dev"
 
 # OL10 をインポートする場合
 $RootFs10 = "$env:USERPROFILE\Downloads\oracle-linux-10-dev-vYYYYMMDD.x.x-wsl-rootfs.tar.gz"

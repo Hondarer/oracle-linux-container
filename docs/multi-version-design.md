@@ -2,7 +2,7 @@
 
 ## 概要
 
-リポジトリ `oracle-linux-container` は Oracle Linux 8 と 10 の両方に対応しており、将来のバージョン追加も容易な構造となっている。マルチインスタンス対応と組み合わせ、`./storage/{version}/{instance}/` の階層構造でデータを管理する。
+リポジトリ `oracle-linux-container` は Oracle Linux 8、9、10 に対応しており、将来のバージョン追加も容易な構造となっている。マルチインスタンス対応と組み合わせ、`./storage/{version}/{instance}/` の階層構造でデータを管理する。
 
 ## 設計方針
 
@@ -10,7 +10,7 @@
 |------|------|
 | Dockerfile | 単一ファイル + `ARG OL_VERSION` で分岐 |
 | シェルスクリプト | 第1引数でバージョン指定、共通設定を `version-config.sh` に集約 |
-| ストレージ | `./storage/{version}/{instance}/` 例: `./storage/8/1/`, `./storage/10/1/` |
+| ストレージ | `./storage/{version}/{instance}/` 例: `./storage/8/1/`, `./storage/9/1/`, `./storage/10/1/` |
 | ポート | 計算式: `40000 + (OL_VERSION * 100) + (21 + INSTANCE_NUM)` |
 | ツールバージョン | 各ディストリビューションの標準に合わせる |
 | コンテナ名 | `oracle-linux-{ver}_{instance}` 例: `oracle-linux-8_1` |
@@ -19,6 +19,7 @@
 
 ```
 OL8  インスタンス1: 40822  インスタンス2: 40823  インスタンス3: 40824 ...
+OL9  インスタンス1: 40922  インスタンス2: 40923  インスタンス3: 40924 ...
 OL10 インスタンス1: 41022  インスタンス2: 41023  インスタンス3: 41024 ...
 ```
 
@@ -36,7 +37,7 @@ OL10 インスタンス1: 41022  インスタンス2: 41023  インスタンス3
 引数: $1 = OL_VERSION (デフォルト: 8), $2 = INSTANCE_NUM (デフォルト: 1)
 
 設定される変数:
-- OL_VERSION         バージョン番号 (8 or 10)
+- OL_VERSION         バージョン番号 (8, 9, or 10)
 - INSTANCE_NUM       インスタンス番号
 - CONTAINER_NAME     ベースイメージ名 (例: oracle-linux-8)
 - CONTAINER_INSTANCE コンテナインスタンス名 (例: oracle-linux-8_1)
@@ -45,11 +46,11 @@ OL10 インスタンス1: 41022  インスタンス2: 41023  インスタンス3
 - BASE_IMAGE         OCI ベースイメージ (例: oraclelinux:8)
 ```
 
-冪等性を考慮し、変数 (`CONTAINER_INSTANCE`) が設定済みの場合は再設定をスキップする。バージョンは 8 と 10 のみ受け付け、それ以外はエラーとなる。
+冪等性を考慮し、変数 (`CONTAINER_INSTANCE`) が設定済みの場合は再設定をスキップする。バージョンは 8、9、10 のみ受け付け、それ以外はエラーとなる。
 
 ### `src/Dockerfile` — マルチバージョン対応
 
-単一の Dockerfile で `ARG OL_VERSION` による条件分岐を行い、OL8/OL10 の両方をサポートする。
+単一の Dockerfile で `ARG OL_VERSION` による条件分岐を行い、OL8/OL9/OL10 をサポートする。
 
 **ベースイメージ**:
 
@@ -61,19 +62,18 @@ ARG OL_VERSION
 
 **主な条件分岐**:
 
-| 項目 | OL8 | OL10 |
-|------|-----|------|
-| EPEL | `oracle-epel-release-el8` | `oracle-epel-release-el10` |
-| リポジトリ | `ol8_codeready_builder`, `ol8_developer_EPEL` | `ol10_codeready_builder`, `ol10_developer_EPEL` |
-| Node.js | `dnf module enable nodejs:24` + install | `dnf install nodejs` (AppStream) |
-| Java | `java-17-openjdk*` | `java-21-openjdk*` |
-| Python pip | `python3.11-pip` | `python3-pip` (3.12 が標準) |
-| フォント | DejaVu + VLGothic | Google Noto Sans CJK |
-| doxybook2 | `linux-el8-x64` ビルド | `linux-el10-x64` ビルド |
-| llvm-compat-libs | あり | 不要 |
-| libmodman, libsoup, rest | あり | 不要 |
+| 項目 | OL8 | OL9 | OL10 |
+|------|-----|-----|------|
+| EPEL | `oracle-epel-release-el8` | `oracle-epel-release-el9` | `oracle-epel-release-el10` |
+| リポジトリ | `ol8_codeready_builder`, `ol8_developer_EPEL` | `ol9_codeready_builder`, `ol9_developer_EPEL` | `ol10_codeready_builder` |
+| Node.js | module 24 | module 24 | NodeSource 24.x |
+| Java | OpenJDK 17 | OpenJDK 21 | OpenJDK 21 |
+| Python | 3.11 | 3.9 | 3.12 |
+| フォント | DejaVu + VLGothic | Google Noto Sans CJK TTC | Google Noto Sans CJK |
+| doxybook2 | `linux-el8-x64` | `linux-el9-x64` | `linux-el10-x64` |
+| OL8互換ライブラリ | あり | 不要 | 不要 |
 
-条件分岐は RUN ブロック内の `if [ "${OL_VERSION}" = "8" ]; then ... else ... fi` で実装している。
+条件分岐は RUN ブロック内でOL8、OL9、OL10を明示して実装している。
 
 **alternatives 設定**:
 
@@ -119,31 +119,33 @@ GitHub リポジトリ (`Hondarer/doxybook2-bin`) から `linux-el${OL_VERSION}-
 
 ### GitHub Actions ワークフロー — マトリックスビルド
 
-`.github/workflows/build-and-publish.yml` にて、`strategy.matrix.ol_version: ["8", "10"]` により OL8 と OL10 を並列にビルド・テスト・公開する。
+`.github/workflows/build-and-publish.yml` にて、`strategy.matrix.ol_version: ["8", "9", "10"]` により OL8、OL9、OL10 を並列にビルド・テスト・公開する。
 
-- **イメージ名**: `oracle-linux-{8|10}-dev`
+- **イメージ名**: `oracle-linux-{8|9|10}-dev`
 - **ビルド引数**: `--build-arg OL_VERSION=${{ matrix.ol_version }}`
 - **テスト項目**: Node.js、Java、Python、.NET、Doxygen、PlantUML、sshd
-- **公開先**: `ghcr.io/hondarer/oracle-linux-container/oracle-linux-{8|10}-dev:TAG`
+- **公開先**: `ghcr.io/hondarer/oracle-linux-container/oracle-linux-{8|9|10}-dev:TAG`
 - **WSL rootfs**: WSL インポート用 `tar.gz` を release asset として配布
-- **Release asset 名**: `oracle-linux-{8|10}-dev-{tag}-wsl-rootfs.tar.gz`
+- **Release asset 名**: `oracle-linux-{8|9|10}-dev-{tag}-wsl-rootfs.tar.gz`
 - **プッシュ条件**: PR イベント以外の場合のみレジストリにプッシュ
 
 ### Dev Container 設定 — バージョン別構成
 
-`examples/devcontainer/` に OL8 と OL10 の個別設定を配置している。
+`examples/devcontainer/` に OL8、OL9、OL10 の個別設定を配置している。
 
 ```
 examples/devcontainer/
 ├── README.md
 ├── ol8/
 │   └── devcontainer.json
+├── ol9/
+│   └── devcontainer.json
 └── ol10/
     └── devcontainer.json
 ```
 
 両バージョン共通の設定:
-- イメージ: `ghcr.io/hondarer/oracle-linux-container/oracle-linux-{8|10}-dev:latest`
+- イメージ: `ghcr.io/hondarer/oracle-linux-container/oracle-linux-{8|9|10}-dev:latest`
 - postCreateCommand: `devcontainer-entrypoint.sh` を root で実行し、動的にユーザーを作成
 - SSH 鍵: ホストの `~/.ssh` を読み取り専用でマウント
 - ワークスペース: `/workspace` にバインドマウント
@@ -158,22 +160,17 @@ examples/devcontainer/
 - **処理フロー**: ローカル rootfs 指定 → WSL インポート → 動作テスト
 - **安全性**: 既存ディストリビューションがある場合、データ消失の警告を表示
 
-## OL8 と OL10 のパッケージ差分
+## OL8、OL9、OL10 のパッケージ差分
 
-| パッケージ | OL8 | OL10 | 対応 |
-|-----------|-----|------|------|
-| EPEL | `oracle-epel-release-el8` | `oracle-epel-release-el10` | 条件分岐 |
-| リポジトリ | `ol8_codeready_builder`, `ol8_developer_EPEL` | `ol10_codeready_builder`, `ol10_developer_EPEL` | 条件分岐 |
-| Node.js | `dnf module enable nodejs:24` + install | `dnf install nodejs` (AppStream) | 条件分岐 |
-| Java | `java-17-openjdk*` | `java-21-openjdk*` | 条件分岐 |
-| Python pip | `python3.11-pip` | `python3-pip` | 条件分岐 |
-| llvm-compat-libs | あり | 不要 | 条件分岐 |
-| libmodman | あり | 不要 | 条件分岐 |
-| libsoup | あり | 不要 | 条件分岐 |
-| rest | あり | 不要 | 条件分岐 |
-| フォント | DejaVu + VLGothic | Google Noto Sans CJK | 条件分岐 |
-| doxybook2 | `linux-el8-x64` | `linux-el10-x64` | URL 分岐 |
-| .NET SDK | `dotnet-sdk-10.0` | `dotnet-sdk-10.0` | 共通 |
+| パッケージ | OL8 | OL9 | OL10 |
+|-----------|-----|-----|------|
+| Node.js | module 24 | module 24 | NodeSource 24.x |
+| Java | 17 | 21 | 21 |
+| Python | 3.11 | 3.9 | 3.12 |
+| GCC | 8 | 11 | 14 |
+| Noto CJK | なし | TTC | あり |
+| doxybook2 | el8 | el9 | el10 |
+| .NET SDK | 10 | 10 | 10 |
 
 ## バージョン拡張
 

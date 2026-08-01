@@ -320,12 +320,10 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     cd /tmp && rm -rf man-pages-ja-20260115 && \
     # doxybook2 (バージョン依存バイナリ)
     DOXYBOOK2_URL="https://github.com/Hondarer/doxybook2-bin/raw/main/bin/linux-el${OL_VERSION}-x64/doxybook2" && \
-    download_optional "doxybook2 for el${OL_VERSION}" "/tmp/doxybook2" "${DOXYBOOK2_URL}" "doxybook2" && \
-    if [ -f "/tmp/doxybook2" ]; then \
-        chmod +x /tmp/doxybook2 && \
-        cp /tmp/doxybook2 /usr/local/bin/ && \
-        rm -f /tmp/doxybook2; \
-    fi && \
+    download_required "doxybook2 for el${OL_VERSION}" "/tmp/doxybook2" "${DOXYBOOK2_URL}" "doxybook2-linux-el${OL_VERSION}-x64" && \
+    chmod +x /tmp/doxybook2 && \
+    cp /tmp/doxybook2 /usr/local/bin/ && \
+    rm -f /tmp/doxybook2 && \
     # pandoc
     download_required "pandoc" "/tmp/pandoc-3.9.0.2-linux-amd64.tar.gz" "https://github.com/jgm/pandoc/releases/download/3.9.0.2/pandoc-3.9.0.2-linux-amd64.tar.gz" "pandoc-3.9.0.2-linux-amd64.tar.gz" && \
     tar xfz pandoc-3.9.0.2-linux-amd64.tar.gz && \

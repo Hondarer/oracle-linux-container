@@ -4,11 +4,11 @@
 
 ## 概要
 
-このプロジェクトは、Oracle Linux (8/10) ベースのポータブルな開発用コンテナを Podman で構築・管理するためのシステムです。コンテナには開発ツール (Node.js、Java、.NET、Python)、ドキュメント生成ツール (Doxygen、PlantUML、Pandoc)、日本語マニュアルページが含まれます。
+このプロジェクトは、Oracle Linux (8/9/10) ベースのポータブルな開発用コンテナを Podman で構築・管理するためのシステムです。コンテナには開発ツール (Node.js、Java、.NET、Python)、ドキュメント生成ツール (Doxygen、PlantUML、Pandoc)、日本語マニュアルページが含まれます。
 
 ## アーキテクチャ
 
-- **ベースイメージ**: Oracle Linux 8 / 10 (ARG OL_VERSION でパラメータ化)
+- **ベースイメージ**: Oracle Linux 8 / 9 / 10 (ARG OL_VERSION でパラメータ化)
 - **コンテナエンジン**: Podman (rootless mode)
 - **主要ディレクトリ**:
   - `src/`: コンテナイメージのビルドファイル群
@@ -18,16 +18,16 @@
 ### マルチバージョン設計
 
 - `version-config.sh`: 全スクリプトが source する共通設定ファイル
-- 引数: `$1` = OL_VERSION (8 or 10)、`$2` = INSTANCE_NUM (デフォルト: 1)
+- 引数: `$1` = OL_VERSION (8, 9, or 10)、`$2` = INSTANCE_NUM (デフォルト: 1)
 - ポート番号: `40000 + (OL_VERSION * 100) + (21 + INSTANCE_NUM)` (例: OL8#1=40822, OL10#1=41022)
 - コンテナ名: `oracle-linux-{ver}_{instance}` (例: `oracle-linux-8_1`)
 
 ### コンテナビルド仕様
 
-Dockerfile は `ARG OL_VERSION` により、OL8/OL10 の両方をサポートします。
+Dockerfile は `ARG OL_VERSION` により、OL8/OL9/OL10 をサポートします。
 
 1. Oracle Linux パッケージの更新と開発ツールの導入
-2. 開発環境 (Node.js 24、Java 17/21、.NET 10、Python 3.11/3.12)
+2. 開発環境 (Node.js 24、Java 17/21、.NET 10、Python 3.9/3.11/3.12)
 3. ドキュメント生成ツール (Doxygen、PlantUML、Pandoc 系)
 4. 日本語環境とフォント設定
 5. SSH サーバーと認証キー設定
@@ -50,14 +50,17 @@ Dockerfile は `ARG OL_VERSION` により、OL8/OL10 の両方をサポートし
 ```bash
 # イメージビルド (引数: OL_VERSION [INSTANCE_NUM])
 ./build-pod.sh 8        # OL8 をビルド
+./build-pod.sh 9        # OL9 をビルド
 ./build-pod.sh 10       # OL10 をビルド
 
 # コンテナ起動
 ./start-pod.sh 8        # OL8 を起動
+./start-pod.sh 9        # OL9 を起動
 ./start-pod.sh 10       # OL10 を起動
 
 # コンテナ停止
 ./stop-pod.sh 8
+./stop-pod.sh 9
 ./stop-pod.sh 10
 
 # イメージ保存 (圧縮 tar として)
@@ -72,6 +75,9 @@ Dockerfile は `ARG OL_VERSION` により、OL8/OL10 の両方をサポートし
 ```bash
 # OL8 SSH 接続 (ポート 40822)
 ssh -p 40822 user@127.0.0.1
+
+# OL9 SSH 接続 (ポート 40922)
+ssh -p 40922 user@127.0.0.1
 
 # OL10 SSH 接続 (ポート 41022)
 ssh -p 41022 user@127.0.0.1
@@ -103,7 +109,7 @@ ssh-keygen -R "[127.0.0.1]:40822"
 
 ### インストール済みツール
 
-- **言語ランタイム**: Node.js 24、Java 17(OL8)/21(OL10)、.NET 10、Python 3.11(OL8)/3.12(OL10)
+- **言語ランタイム**: Node.js 24、Java 17(OL8)/21(OL9/10)、.NET 10、Python 3.11(OL8)/3.9(OL9)/3.12(OL10)
 - **ビルドツール**: GCC、Make、CMake、automake、libtool、clang-format (LLVM 22.1.4)
 - **開発ライブラリ**: openssl-devel、libssh-devel、libcurl-devel、binutils-devel、readline-devel、libedit-devel
 - **ドキュメント**: Doxygen、doxybook2、PlantUML、Pandoc
@@ -114,7 +120,7 @@ ssh-keygen -R "[127.0.0.1]:40822"
 
 - **Node.js**: npm (ユーザーローカルプレフィックス設定済み)
 - **Python**: pip (システムとユーザー両方利用可能)
-- **Java**: OpenJDK 17(OL8) / 21(OL10) がデフォルト
+- **Java**: OpenJDK 17(OL8) / 21(OL9/10) がデフォルト
 - **.NET**: SDK 10
 
 ### カスタムインストール処理

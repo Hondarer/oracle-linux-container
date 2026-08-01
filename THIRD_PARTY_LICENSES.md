@@ -4,8 +4,8 @@
 
 ## ベースイメージとOS
 
-### Oracle Linux 8/10
-- **バージョン**: 8/10
+### Oracle Linux 8/9/10
+- **バージョン**: 8/9/10
 - **ライセンス**: GPLv2 and other open source licenses
 - **URL**: https://www.oracle.com/linux/
 - **説明**: コンテナイメージのベースOS
@@ -13,7 +13,7 @@
 ## プログラミング言語とランタイム
 
 ### Node.js
-- **バージョン**: 24 (OL8) / 22 (OL10)
+- **バージョン**: 24 (OL8/9/10)
 - **ライセンス**: MIT License
 - **URL**: https://nodejs.org/
 - **説明**: JavaScript/TypeScript ランタイム環境
@@ -31,7 +31,7 @@
 - **説明**: 高速でディスク効率の良い Node.js パッケージマネージャー
 
 ### OpenJDK (Java)
-- **バージョン**: 17 (OL8) / 21 (OL10)
+- **バージョン**: 17 (OL8) / 21 (OL9/10)
 - **ライセンス**: GPLv2 with Classpath Exception
 - **URL**: https://openjdk.org/
 - **説明**: Java 開発キットとランタイム
@@ -43,7 +43,7 @@
 - **説明**: .NET 開発環境
 
 ### Python
-- **バージョン**: 3.11 (OL8) / 3.12 (OL10)
+- **バージョン**: 3.11 (OL8) / 3.9 (OL9) / 3.12 (OL10)
 - **ライセンス**: PSF License (Python Software Foundation License)
 - **URL**: https://www.python.org/
 - **説明**: Python プログラミング言語
@@ -74,11 +74,10 @@
 - **説明**: ソースコードドキュメント生成ツール
 
 ### doxybook2
-- **バージョン**: Custom build for el8/el10
+- **バージョン**: Custom build for el8/el9/el10
 - **ライセンス**: MIT License
 - **URL**: https://github.com/matusnovak/doxybook2
-- **Custom build (OL8)**: https://github.com/Hondarer/doxybook2.el8.x86_64
-- **Custom build (OL10)**: https://github.com/Hondarer/doxybook2.el10.x86_64
+- **Custom builds**: https://github.com/Hondarer/doxybook2-bin
 - **説明**: Doxygen XML を Markdown に変換するツール
 
 ### PlantUML
@@ -132,7 +131,7 @@
 - **URL**: https://github.com/project-vc/vlgothic
 - **説明**: 日本語 Gothic フォント
 
-### Google Noto Sans CJK (OL10 のみ)
+### Google Noto Sans CJK (OL9/OL10)
 - **ライセンス**: SIL Open Font License 1.1
 - **URL**: https://github.com/googlefonts/noto-cjk
 - **説明**: Google Noto CJK フォント（日本語・中国語・韓国語）
@@ -181,7 +180,7 @@
 
 ### GNU Development Tools
 - **パッケージ**: gcc, make, automake, autoconf, libtool, binutils
-- **バージョン**: GCC 8 (OL8) / GCC 14 (OL10)
+- **バージョン**: GCC 8 (OL8) / GCC 11 (OL9) / GCC 14 (OL10)
 - **ライセンス**: GPLv3 or later
 - **URL**: https://www.gnu.org/
 - **説明**: GNU コンパイラコレクションとビルドツール

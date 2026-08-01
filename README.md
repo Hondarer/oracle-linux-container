@@ -2,7 +2,7 @@
 
 Oracle Linux ベースのポータブルな開発用コンテナシステムです。Podman を使用して、開発ツールや日本語環境が事前設定された開発環境を簡単に構築・利用できます。
 
-Oracle Linux 8 および 10 のマルチバージョンに対応しています。
+Oracle Linux 8、9、10 のマルチバージョンに対応しています。
 
 ## 特徴
 
@@ -26,7 +26,7 @@ Oracle Linux 8 および 10 のマルチバージョンに対応しています�
 
 ```
 [ローカル PC の VS Code]
-        │  SSH 接続 (port 40822 / 41022)
+        │  SSH 接続 (port 40822 / 40922 / 41022)
         ▼
 [リモートサーバー上の Podman コンテナ]
   ├── SSH サーバー（常駐）
@@ -69,10 +69,12 @@ GitHub Actions 等のビルド・テスト環境としても利用できます�
 | イメージ | タグ |
 |---------|------|
 | [oracle-linux-8-dev](https://github.com/hondarer/oracle-linux-container/pkgs/container/oracle-linux-container%2Foracle-linux-8-dev) | `latest` / `main` / `vYYYYMMDD.x.x` |
+| [oracle-linux-9-dev](https://github.com/hondarer/oracle-linux-container/pkgs/container/oracle-linux-container%2Foracle-linux-9-dev) | `latest` / `main` / `vYYYYMMDD.x.x` |
 | [oracle-linux-10-dev](https://github.com/hondarer/oracle-linux-container/pkgs/container/oracle-linux-container%2Foracle-linux-10-dev) | `latest` / `main` / `vYYYYMMDD.x.x` |
 
 ```bash
 podman pull ghcr.io/hondarer/oracle-linux-container/oracle-linux-8-dev:latest
+podman pull ghcr.io/hondarer/oracle-linux-container/oracle-linux-9-dev:latest
 podman pull ghcr.io/hondarer/oracle-linux-container/oracle-linux-10-dev:latest
 ```
 
@@ -83,10 +85,12 @@ GitHub Secrets (`DOCKERHUB_USERNAME` / `DOCKERHUB_TOKEN`) を設定した場合�
 | イメージ | タグ |
 |---------|------|
 | [hondarer/oracle-linux-8-dev](https://hub.docker.com/r/hondarer/oracle-linux-8-dev) | `latest` / `main` / `vYYYYMMDD.x.x` |
+| [hondarer/oracle-linux-9-dev](https://hub.docker.com/r/hondarer/oracle-linux-9-dev) | `latest` / `main` / `vYYYYMMDD.x.x` |
 | [hondarer/oracle-linux-10-dev](https://hub.docker.com/r/hondarer/oracle-linux-10-dev) | `latest` / `main` / `vYYYYMMDD.x.x` |
 
 ```bash
 podman pull hondarer/oracle-linux-8-dev:latest
+podman pull hondarer/oracle-linux-9-dev:latest
 podman pull hondarer/oracle-linux-10-dev:latest
 ```
 
@@ -94,13 +98,13 @@ podman pull hondarer/oracle-linux-10-dev:latest
 
 ### 言語ランタイム
 
-| ツール | OL8 | OL10 |
-|--------|-----|------|
-| Node.js | 24 | 24 |
-| Java (OpenJDK) | 17 | 21 |
-| .NET SDK | 10 | 10 |
-| Python | 3.11 | 3.12 |
-| C/C++ (GCC) | 8 | 14 |
+| ツール | OL8 | OL9 | OL10 |
+|--------|-----|-----|------|
+| Node.js | 24 | 24 | 24 |
+| Java (OpenJDK) | 17 | 21 | 21 |
+| .NET SDK | 10 | 10 | 10 |
+| Python | 3.11 | 3.9 | 3.12 |
+| C/C++ (GCC) | 8 | 11 | 14 |
 
 ### Node.js パッケージマネージャー支援
 
@@ -152,6 +156,9 @@ podman pull hondarer/oracle-linux-10-dev:latest
 # OL8 をビルド (デフォルト)
 ./build-pod.sh 8
 
+# OL9 をビルド
+./build-pod.sh 9
+
 # OL10 をビルド
 ./build-pod.sh 10
 ```
@@ -162,6 +169,9 @@ podman pull hondarer/oracle-linux-10-dev:latest
 # OL8 インスタンス1 を起動 (デフォルト)
 ./start-pod.sh 8
 
+# OL9 インスタンス1 を起動
+./start-pod.sh 9
+
 # OL10 インスタンス1 を起動
 ./start-pod.sh 10
 ```
@@ -171,6 +181,9 @@ podman pull hondarer/oracle-linux-10-dev:latest
 ```bash
 # OL8 SSH 接続 (ポート 40822)
 ssh -p 40822 user@127.0.0.1
+
+# OL9 SSH 接続 (ポート 40922)
+ssh -p 40922 user@127.0.0.1
 
 # OL10 SSH 接続 (ポート 41022)
 ssh -p 41022 user@127.0.0.1
@@ -184,6 +197,9 @@ ssh-keygen -R "[127.0.0.1]:40822"
 ```bash
 # OL8 を停止
 ./stop-pod.sh 8
+
+# OL9 を停止
+./stop-pod.sh 9
 
 # OL10 を停止
 ./stop-pod.sh 10
@@ -270,11 +286,15 @@ Chrome for Testing はブラウザ自動化・テスト専用です。信頼で�
 # OL8 イメージを圧縮ファイルとして保存
 ./save-pod.sh 8
 
+# OL9 イメージを保存
+./save-pod.sh 9
+
 # OL10 イメージを保存
 ./save-pod.sh 10
 
 # 保存したイメージを読み込み
 ./load-pod.sh 8
+./load-pod.sh 9
 ./load-pod.sh 10
 ```
 
@@ -307,6 +327,9 @@ Chrome for Testing はブラウザ自動化・テスト専用です。信頼で�
 │   ├── 8/1/             # OL8 インスタンス1
 │   │   ├── home_${USER}/
 │   │   └── workspace/
+│   ├── 9/1/             # OL9 インスタンス1
+│   │   ├── home_${USER}/
+│   │   └── workspace/
 │   └── 10/1/            # OL10 インスタンス1
 │       ├── home_${USER}/
 │       └── workspace/
@@ -317,10 +340,10 @@ Chrome for Testing はブラウザ自動化・テスト専用です。信頼で�
 
 ## 技術仕様
 
-- **ベースイメージ**: Oracle Linux 8 / 10
+- **ベースイメージ**: Oracle Linux 8 / 9 / 10
 - **コンテナエンジン**: Podman (rootless mode)
 - **アーキテクチャ**: x86_64
-- **ポート**: 22 (SSH、ホスト側は 40822/41022 等)
+- **ポート**: 22 (SSH、ホスト側は 40822/40922/41022 等)
 - **マウント**: ホームディレクトリ、ワークスペース
 - **UID/GID マッピング**: Podman keep-id
 - **ストレージ**: `./storage/{version}/{instance}/`
@@ -387,6 +410,12 @@ powershell -ExecutionPolicy Bypass -File .\import-wsl.ps1 `
   -RootFsPath $RootFs8 `
   -WslDistroName "OracleLinux8-Dev"
 
+# OL9 の場合
+$RootFs9 = "$env:USERPROFILE\Downloads\oracle-linux-9-dev-vYYYYMMDD.x.x-wsl-rootfs.tar.gz"
+powershell -ExecutionPolicy Bypass -File .\import-wsl.ps1 `
+  -RootFsPath $RootFs9 `
+  -WslDistroName "OracleLinux9-Dev"
+
 # OL10 の場合
 $RootFs10 = "$env:USERPROFILE\Downloads\oracle-linux-10-dev-vYYYYMMDD.x.x-wsl-rootfs.tar.gz"
 powershell -ExecutionPolicy Bypass -File .\import-wsl.ps1 `
@@ -414,6 +443,7 @@ wsl -d OracleLinux8-Dev
 ### 外部リンク
 
 - [Oracle Linux 8 公式ドキュメント](https://docs.oracle.com/en/operating-systems/oracle-linux/8/)
+- [Oracle Linux 9 公式ドキュメント](https://docs.oracle.com/en/operating-systems/oracle-linux/9/)
 - [Oracle Linux 10 公式ドキュメント](https://docs.oracle.com/en/operating-systems/oracle-linux/10/)
 - [Podman 公式ドキュメント](https://podman.io/docs)
 
@@ -438,12 +468,12 @@ wsl -d OracleLinux8-Dev
 
 ### 主要コンポーネントのライセンス
 
-- **Oracle Linux 8/10**: GPL-2.0
+- **Oracle Linux 8/9/10**: GPL-2.0
 - **OpenJDK 17/21**: GPL-2.0 with Classpath Exception
 - **Node.js 24**: MIT License
 - **.NET 10**: MIT License
-- **Python 3.11/3.12**: PSF License
-- **GCC 8/14**: GPL-3.0-or-later
+- **Python 3.9/3.11/3.12**: PSF License
+- **GCC 8/11/14**: GPL-3.0-or-later
 - **Doxygen**: GPL-2.0
 - **PlantUML**: GPL-3.0+
 - **Pandoc**: GPL-2.0+

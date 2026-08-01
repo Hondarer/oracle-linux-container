@@ -37,6 +37,11 @@ cd examples/export-wsl
   --image-ref ghcr.io/hondarer/oracle-linux-container/oracle-linux-8-dev:latest \
   --output ./OracleLinux8-Dev.tar.gz
 
+# OL9
+./export-wsl.sh \
+  --image-ref ghcr.io/hondarer/oracle-linux-container/oracle-linux-9-dev:latest \
+  --output ./OracleLinux9-Dev.tar.gz
+
 # OL10
 ./export-wsl.sh \
   --image-ref ghcr.io/hondarer/oracle-linux-container/oracle-linux-10-dev:latest \
