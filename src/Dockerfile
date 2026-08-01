@@ -224,10 +224,9 @@ RUN dnf install -y \
             rpmfusion-free \
             rpmfusion-free-updates 2>/dev/null || true; \
     else \
-        dnf config-manager --disable \
-            ol10_codeready_builder \
-            rpmfusion-free \
-            rpmfusion-free-updates 2>/dev/null || true; \
+        dnf config-manager --disable ol10_codeready_builder 2>/dev/null || true; \
+        dnf config-manager --disable rpmfusion-free 2>/dev/null || true; \
+        dnf config-manager --disable rpmfusion-free-updates 2>/dev/null || true; \
     fi && \
     dnf clean all && \
     rm -f /var/log/dnf* /var/log/hawkey.log && \
