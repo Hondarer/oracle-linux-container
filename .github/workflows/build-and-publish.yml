@@ -125,7 +125,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ol_version: ["8", "10"]
+        ol_version: ["8", "9", "10"]
     permissions:
       contents: write
       packages: write

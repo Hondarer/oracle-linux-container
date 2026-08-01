@@ -42,8 +42,8 @@ RUN dnf install -y \
     # リポジトリの有効化 (OL10 では EPEL は oracle-epel-release-el10 により自動有効化済み)
     dnf config-manager --enable \
         ol${OL_VERSION}_codeready_builder && \
-    if [ "${OL_VERSION}" = "8" ]; then \
-        dnf config-manager --enable ol8_developer_EPEL; \
+    if [ "${OL_VERSION}" = "8" ] || [ "${OL_VERSION}" = "9" ]; then \
+        dnf config-manager --enable "ol${OL_VERSION}_developer_EPEL"; \
     fi && \
     if [ "${OL_VERSION}" = "10" ]; then \
         rpm -Uvh --nodeps "https://download1.rpmfusion.org/free/el/rpmfusion-free-release-${OL_VERSION}.noarch.rpm"; \
@@ -51,9 +51,9 @@ RUN dnf install -y \
         dnf install -y "https://download1.rpmfusion.org/free/el/rpmfusion-free-release-${OL_VERSION}.noarch.rpm"; \
     fi && \
     dnf group install -y 'Development Tools' && \
-    # Node.js 24: OL8 はモジュール有効化、OL10 は NodeSource リポジトリを使用
+    # Node.js 24: OL8/OL9 はモジュール有効化、OL10 は NodeSource リポジトリを使用
     # (OL10 は RHEL 10 ベースのため DNF モジュールシステムが廃止されており使用不可)
-    if [ "${OL_VERSION}" = "8" ]; then \
+    if [ "${OL_VERSION}" = "8" ] || [ "${OL_VERSION}" = "9" ]; then \
         dnf module -y enable nodejs:24; \
     else \
         curl -fsSL https://rpm.nodesource.com/setup_24.x | bash -; \
@@ -171,6 +171,11 @@ RUN dnf install -y \
             "dejavu-fonts-common" \
             "perl-macros" \
             "vlgothic-fonts"; \
+        elif [ "${OL_VERSION}" = "9" ]; then echo \
+            "java-21-openjdk java-21-openjdk-devel" \
+            "python3-pip" \
+            "python-unversioned-command" \
+            "google-noto-sans-cjk-fonts"; \
         else echo \
             "java-21-openjdk java-21-openjdk-devel" \
             "python3-pip" \
@@ -182,6 +187,8 @@ RUN dnf install -y \
         alternatives --set python /usr/bin/python3.11 && \
         update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1 && \
         update-alternatives --install /usr/bin/pip pip /usr/bin/pip3.11 2; \
+    elif [ "${OL_VERSION}" = "9" ]; then \
+        update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1; \
     else \
         alternatives --install /usr/bin/python python /usr/bin/python3 1 && \
         alternatives --install /usr/bin/pip pip /usr/bin/pip3 1; \
@@ -207,6 +214,12 @@ RUN dnf install -y \
             ol8_codeready_builder \
             ol8_developer_EPEL \
             ol8_developer_EPEL_modular \
+            rpmfusion-free \
+            rpmfusion-free-updates 2>/dev/null || true; \
+    elif [ "${OL_VERSION}" = "9" ]; then \
+        dnf config-manager --disable \
+            ol9_codeready_builder \
+            ol9_developer_EPEL \
             rpmfusion-free \
             rpmfusion-free-updates 2>/dev/null || true; \
     else \

@@ -23,11 +23,11 @@ INSTANCE_NUM="${2:-1}"
 
 # バージョンの検証
 case "${OL_VERSION}" in
-    8|10)
+    8|9|10)
         ;;
     *)
         echo "Error: Unsupported Oracle Linux version: ${OL_VERSION}"
-        echo "Supported versions: 8, 10"
+        echo "Supported versions: 8, 9, 10"
         exit 1
         ;;
 esac
