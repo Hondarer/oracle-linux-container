@@ -175,7 +175,7 @@ RUN dnf install -y \
             "java-21-openjdk java-21-openjdk-devel" \
             "python3-pip" \
             "python-unversioned-command" \
-            "google-noto-sans-cjk-fonts"; \
+            "google-noto-sans-cjk-ttc-fonts"; \
         else echo \
             "java-21-openjdk java-21-openjdk-devel" \
             "python3-pip" \
