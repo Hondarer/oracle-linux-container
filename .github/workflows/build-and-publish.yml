@@ -97,8 +97,8 @@ jobs:
 
           download_package "doxygen" \
             "doxygen-1.15.0.src.tar.gz" \
-            "https://doxygen.nl/files/doxygen-1.15.0.src.tar.gz" \
-            "https://github.com/doxygen/doxygen/releases/download/Release_1_15_0/doxygen-1.15.0.src.tar.gz"
+            "https://github.com/doxygen/doxygen/releases/download/Release_1_15_0/doxygen-1.15.0.src.tar.gz" \
+            "https://doxygen.nl/files/doxygen-1.15.0.src.tar.gz"
 
           download_package "llvm-project" \
             "llvm-project-22.1.4.src.tar.xz" \
