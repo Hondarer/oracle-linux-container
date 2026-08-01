@@ -211,18 +211,16 @@ RUN dnf install -y \
         yamllint && \
     # ビルド時に有効化したリポジトリをデフォルト無効化
     if [ "${OL_VERSION}" = "8" ]; then \
-        dnf config-manager --disable \
-            ol8_codeready_builder \
-            ol8_developer_EPEL \
-            ol8_developer_EPEL_modular \
-            rpmfusion-free \
-            rpmfusion-free-updates 2>/dev/null || true; \
+        dnf config-manager --disable ol8_codeready_builder 2>/dev/null || true; \
+        dnf config-manager --disable ol8_developer_EPEL 2>/dev/null || true; \
+        dnf config-manager --disable ol8_developer_EPEL_modular 2>/dev/null || true; \
+        dnf config-manager --disable rpmfusion-free 2>/dev/null || true; \
+        dnf config-manager --disable rpmfusion-free-updates 2>/dev/null || true; \
     elif [ "${OL_VERSION}" = "9" ]; then \
-        dnf config-manager --disable \
-            ol9_codeready_builder \
-            ol9_developer_EPEL \
-            rpmfusion-free \
-            rpmfusion-free-updates 2>/dev/null || true; \
+        dnf config-manager --disable ol9_codeready_builder 2>/dev/null || true; \
+        dnf config-manager --disable ol9_developer_EPEL 2>/dev/null || true; \
+        dnf config-manager --disable rpmfusion-free 2>/dev/null || true; \
+        dnf config-manager --disable rpmfusion-free-updates 2>/dev/null || true; \
     else \
         dnf config-manager --disable ol10_codeready_builder 2>/dev/null || true; \
         dnf config-manager --disable rpmfusion-free 2>/dev/null || true; \
