@@ -428,6 +428,20 @@ jobs:
       - name: Test WSL derivative image
         run: |
           podman run --rm --entrypoint /bin/bash "$WSL_BUILD_IMAGE" -lc '
+            command -v podman
+            command -v docker
+            command -v podman-compose
+            test -u /usr/bin/newuidmap
+            test -u /usr/bin/newgidmap
+            test -f /etc/containers/nodocker
+            grep -q "^user:" /etc/subuid
+            grep -q "^user:" /etc/subgid
+            test -f /home/user/.config/containers/containers.conf
+            grep -q "^cgroup_manager = \"cgroupfs\"" /home/user/.config/containers/containers.conf
+            test -f /home/user/.config/systemd/user/podman.socket
+            test -f /home/user/.config/systemd/user/podman.service
+            test -L /home/user/.config/systemd/user/sockets.target.wants/podman.socket
+            test "$(stat -c "%U:%G" /home/user/.config/containers/containers.conf)" = "user:user"
             unset CHROME_PATH PUPPETEER_EXECUTABLE_PATH PUPPETEER_SKIP_DOWNLOAD
             . /etc/profile.d/chrome-for-testing.sh
             test "$CHROME_PATH" = /usr/local/bin/chrome

@@ -222,6 +222,24 @@ plantuml -version
 pandoc --version
 ```
 
+### Podman の利用
+
+WSL rootfs には rootless Podman、Docker 互換の `docker`、および `podman-compose` が
+含まれます。既定ユーザー `user` の UID/GID マッピングと cgroup 設定は事前設定済みです。
+
+```bash
+podman run --rm quay.io/podman/hello
+docker --version
+podman-compose --version
+systemctl --user status podman.socket
+```
+
+Podman API socket を再度有効化する必要がある場合は、以下を実行します。
+
+```bash
+systemctl --user enable --now podman.socket
+```
+
 ## トラブルシューティング
 
 ### WSL2 が利用できない

@@ -51,6 +51,16 @@ RUN dnf install -y \
         dnf install -y "https://download1.rpmfusion.org/free/el/rpmfusion-free-release-${OL_VERSION}.noarch.rpm"; \
     fi && \
     dnf group install -y 'Development Tools' && \
+    if [ "${OL_VERSION}" = "8" ]; then \
+        dnf module install -y container-tools; \
+    else \
+        dnf install -y podman; \
+    fi && \
+    dnf install -y fuse-overlayfs podman-docker shadow-utils slirp4netns && \
+    test -x /usr/bin/newuidmap && \
+    test -x /usr/bin/newgidmap && \
+    chmod u+s /usr/bin/newuidmap /usr/bin/newgidmap && \
+    touch /etc/containers/nodocker && \
     # Node.js 24: OL8/OL9 はモジュール有効化、OL10 は NodeSource リポジトリを使用
     # (OL10 は RHEL 10 ベースのため DNF モジュールシステムが廃止されており使用不可)
     if [ "${OL_VERSION}" = "8" ] || [ "${OL_VERSION}" = "9" ]; then \
@@ -208,6 +218,7 @@ RUN dnf install -y \
     pip install \
         gcovr \
         hjson \
+        podman-compose \
         yamllint && \
     # ビルド時に有効化したリポジトリをデフォルト無効化
     if [ "${OL_VERSION}" = "8" ]; then \
@@ -522,6 +533,9 @@ RUN chown root:root /usr/local/bin/entrypoint.sh && \
     chmod 0755 /usr/local/bin/entrypoint.sh && \
     chown root:root /usr/local/bin/devcontainer-entrypoint.sh && \
     chmod 0755 /usr/local/bin/devcontainer-entrypoint.sh
+
+# 利用者による DNF 操作では明示的な -y を必要とする
+RUN dnf config-manager --save --setopt=assumeyes=False
 
 # エントリーポイントの設定
 ENTRYPOINT ["/bin/sh", "-c", "/usr/local/bin/entrypoint.sh 2>&1 | tee /var/log/entrypoint.log"]

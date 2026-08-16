@@ -10,6 +10,27 @@ set -eu
 # wheel グループの sudoers 設定はベースイメージ (Dockerfile) で実施済み。
 useradd -m -s /bin/bash -G wheel user
 
+# rootless Podman の UID/GID マッピング
+touch /etc/subuid /etc/subgid
+if ! grep -q '^user:' /etc/subuid; then
+    echo 'user:100000:65536' >> /etc/subuid
+fi
+if ! grep -q '^user:' /etc/subgid; then
+    echo 'user:100000:65536' >> /etc/subgid
+fi
+
+# rootless Podman のユーザー設定と API ソケット
+mkdir -p /home/user/.config/containers \
+         /home/user/.config/systemd/user/sockets.target.wants
+cp /usr/share/containers/containers.conf /home/user/.config/containers/containers.conf
+sed -i 's/^#cgroup_manager = "systemd"/cgroup_manager = "cgroupfs"/' \
+    /home/user/.config/containers/containers.conf
+cp /usr/lib/systemd/user/podman.socket \
+   /usr/lib/systemd/user/podman.service \
+   /home/user/.config/systemd/user/
+ln -s ../podman.socket \
+    /home/user/.config/systemd/user/sockets.target.wants/podman.socket
+
 # WSL 起動時のデフォルトユーザーを設定し、systemd を有効化する
 echo "[user]"        > /etc/wsl.conf
 echo "default=user" >> /etc/wsl.conf

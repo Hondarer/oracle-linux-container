@@ -142,6 +142,7 @@ podman pull hondarer/oracle-linux-10-dev:latest
 - **bubblewrap** (bwrap)
 - **ffmpeg** (RPM Fusion free)
 - **git**、**curl**、**wget**
+- **Podman**、**podman-compose**、Docker 互換の **docker** コマンド
 
 ### リポジトリ操作 CLI
 
@@ -427,6 +428,22 @@ wsl -d OracleLinux8-Dev
 ```
 
 詳細は [examples/import-wsl/README.md](examples/import-wsl/README.md) を参照してください。
+
+### WSL で Podman を利用する
+
+WSL 用 rootfs には rootless Podman、Docker 互換の `docker` コマンド、`podman-compose`
+が含まれます。既定ユーザー `user` は、rootless 実行に必要な UID/GID マッピングと
+`cgroupfs` 設定を事前に持ちます。
+
+```bash
+podman run --rm quay.io/podman/hello
+docker --version
+podman-compose --version
+systemctl --user status podman.socket
+```
+
+`podman.socket` は systemd user socket として有効化済みです。停止されている場合は
+`systemctl --user enable --now podman.socket` で起動できます。
 
 ## 関連ドキュメント
 

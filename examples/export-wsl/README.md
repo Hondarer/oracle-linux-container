@@ -10,11 +10,12 @@
 
 通常の開発用イメージをそのまま `podman export` するのではなく、いったん `src/Containerfile.wsl` で WSL 向け派生イメージを作ってから rootfs を出力します。
 
-この派生イメージでは `src/wsl/prepare-wsl-rootfs.sh` により、少なくとも以下の WSL 向け調整が入ります。
+この派生イメージでは `src/wsl/prepare-wsl-rootfs.sh` により、以下の WSL 向け調整が入ります。
 
 - `/etc/wsl.conf` の作成
 - 既定ユーザー `user` の前提設定
 - `systemd=true` の有効化
+- rootless Podman、Docker 互換コマンド、Compose のユーザー設定
 - コンテナ前提の不要ファイル除去
 
 そのため、WSL 用 rootfs を作る標準手順は「通常イメージを pull して直接 export」ではなく、「WSL 向け派生イメージを build して export」となります。
