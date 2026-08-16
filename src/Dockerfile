@@ -195,6 +195,7 @@ RUN dnf install -y \
     if [ "${OL_VERSION}" = "8" ]; then \
         alternatives --set java $(alternatives --display java 2>/dev/null | grep -E "java-17-openjdk.*bin/java" | head -1 | awk '{print $1}') && \
         alternatives --set python /usr/bin/python3.11 && \
+        alternatives --set python3 /usr/bin/python3.11 && \
         update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1 && \
         update-alternatives --install /usr/bin/pip pip /usr/bin/pip3.11 2; \
     elif [ "${OL_VERSION}" = "9" ]; then \

@@ -305,6 +305,16 @@ jobs:
           podman exec $CONTAINER_ID python --version
           PYTHON_MINOR=$(podman exec $CONTAINER_ID python -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
 
+          echo "=== python3 command resolution ==="
+          podman exec $CONTAINER_ID bash -c '
+            echo "python3 -> $(readlink -f "$(command -v python3)")"
+            python3 --version
+            if command -v alternatives >/dev/null 2>&1; then
+              alternatives --display python3 2>&1 || echo "(python3 is not managed by alternatives)"
+            fi
+          '
+          PYTHON3_MINOR=$(podman exec $CONTAINER_ID python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+
           case "${{ matrix.ol_version }}" in
             8)
               EXPECTED_JAVA=17
@@ -325,6 +335,7 @@ jobs:
 
           podman exec $CONTAINER_ID java --version 2>&1 | head -1 | grep -E "^openjdk ${EXPECTED_JAVA}([.[:space:]]|$)"
           test "$PYTHON_MINOR" = "$EXPECTED_PYTHON"
+          test "$PYTHON3_MINOR" = "$EXPECTED_PYTHON"
           podman exec $CONTAINER_ID python -m pip --version
 
           echo "=== GCC version ==="
