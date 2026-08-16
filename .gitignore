@@ -11,4 +11,6 @@
 
 /image
 /storage
-/prompts/
+
+## デバッグのために LLM に参照させるファイル群の一時置き場
+/prompt
