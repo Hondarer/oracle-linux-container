@@ -128,7 +128,7 @@ podman pull hondarer/oracle-linux-10-dev:latest
 ### 開発ライブラリ
 
 - **openssl-devel**、**libssh-devel**、**libcurl-devel**
-- **binutils-devel**、**systemd-devel**、**libX11-devel**、**libXt-devel**
+- **binutils-devel**、**elfutils-devel**、**systemd-devel**、**libX11-devel**、**libXt-devel**
 - **readline-devel**、**libedit-devel**
 - **glibc-static**、**libstdc++-static**
 
