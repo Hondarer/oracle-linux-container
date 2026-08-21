@@ -83,6 +83,7 @@ RUN dnf install -y \
         dejavu-sans-mono-fonts \
         desktop-file-utils \
         dotnet-sdk-10.0 \
+        elfutils-devel \
         expect \
         ffmpeg \
         glib-networking \
