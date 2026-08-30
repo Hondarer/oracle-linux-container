@@ -530,7 +530,7 @@ jobs:
           # WSL 用 rootfs のエクスポート
           echo "==> Exporting WSL rootfs..."
           CONTAINER_ID=$(podman create "$WSL_BUILD_IMAGE")
-          podman export $CONTAINER_ID | gzip > "$WSL_ROOTFS_FILE"
+          podman export $CONTAINER_ID | gzip -9 > "$WSL_ROOTFS_FILE"
           podman rm $CONTAINER_ID
 
           # ファイルサイズを記録
