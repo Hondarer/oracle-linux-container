@@ -104,6 +104,48 @@
 - **URL**: https://github.com/marp-team/marp-cli
 - **説明**: Markdown からスライド、PDF、PPTX、画像を生成するツール
 
+### Mermaid CLI
+- **バージョン**: 11.15.0
+- **ライセンス**: MIT License
+- **URL**: https://github.com/mermaid-js/mermaid-cli
+- **説明**: Mermaid 図を SVG、PNG、PDF へ変換する CLI
+
+### Widdershins
+- **バージョン**: 4.0.1
+- **ライセンス**: MIT License
+- **URL**: https://github.com/Mermade/widdershins
+- **説明**: OpenAPI 定義から Markdown を生成するツール
+
+### Puppeteer / puppeteer-core
+- **バージョン**: 24.43.1
+- **ライセンス**: Apache-2.0
+- **URL**: https://github.com/puppeteer/puppeteer
+- **説明**: Chrome DevTools Protocol によるブラウザー自動化。既定の実行ファイルは Chrome for Testing
+
+### MiniSearch
+- **バージョン**: 7.2.0
+- **ライセンス**: MIT License
+- **URL**: https://github.com/lucaong/minisearch
+- **説明**: クライアント側の全文検索ライブラリ
+
+### @plantuml/core
+- **バージョン**: 1.2026.7
+- **ライセンス**: MIT License
+- **URL**: https://www.npmjs.com/package/@plantuml/core
+- **説明**: ブラウザー上で PlantUML を描画する JavaScript / WebAssembly 配布
+
+### sharp
+- **バージョン**: 0.34.5
+- **ライセンス**: Apache-2.0
+- **URL**: https://github.com/lovell/sharp
+- **説明**: libvips を使った画像変換
+
+### minimist
+- **バージョン**: 1.2.8
+- **ライセンス**: MIT License
+- **URL**: https://github.com/minimistjs/minimist
+- **説明**: コマンドライン引数の解析
+
 ### Chrome for Testing
 - **バージョン**: 148.0.7778.97
 - **ライセンス**: Google Chrome and ChromeOS Additional Terms of Service および同梱サードパーティライセンス

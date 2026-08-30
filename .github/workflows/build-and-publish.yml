@@ -391,6 +391,28 @@ jobs:
               -o /tmp/marp-smoke.pdf
           podman exec $CONTAINER_ID test -s /tmp/marp-smoke.pdf
 
+          echo "=== Mermaid CLI smoke test ==="
+          podman exec --user testuser --env HOME=/home/testuser $CONTAINER_ID bash -lc '
+            test -f /etc/mermaid/puppeteer-config.json
+            mkdir -p /tmp/mermaid-smoke
+            printf "%s\\n" "flowchart LR" "  A[Client] --> B[Server]" > /tmp/mermaid-smoke/diagram.mmd
+            mmdc \
+              --puppeteerConfigFile /etc/mermaid/puppeteer-config.json \
+              -i /tmp/mermaid-smoke/diagram.mmd \
+              -o /tmp/mermaid-smoke/diagram.svg
+            test -s /tmp/mermaid-smoke/diagram.svg
+            grep -q "<svg" /tmp/mermaid-smoke/diagram.svg
+            widdershins --version >/dev/null
+          '
+
+          echo "=== Additional Node.js package smoke test ==="
+          podman exec --user testuser --env HOME=/home/testuser $CONTAINER_ID bash -lc '
+            test -d /usr/local/lib/node_modules/puppeteer-core
+            NODE_PATH=/usr/local/lib/node_modules node -e "const modules = [\"puppeteer-core\", \"minisearch\", \"sharp\", \"minimist\"]; for (const moduleName of modules) require(moduleName);"
+            PLANTUML_MODULE=/usr/local/lib/node_modules/@plantuml/core/plantuml.js \
+              node --input-type=module -e "await import(process.env.PLANTUML_MODULE);"
+          '
+
           echo "=== Puppeteer system Chrome smoke test ==="
           podman exec --user testuser --env HOME=/home/testuser $CONTAINER_ID bash -lc '
             test ! -d "$HOME/.cache/puppeteer"

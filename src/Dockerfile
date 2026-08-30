@@ -206,17 +206,35 @@ RUN dnf install -y \
         alternatives --install /usr/bin/python python /usr/bin/python3 1 && \
         alternatives --install /usr/bin/pip pip /usr/bin/pip3 1; \
     fi && \
-    npm install --global --prefix /usr/local \
+    PUPPETEER_SKIP_DOWNLOAD=true npm install --global --prefix /usr/local \
         @antfu/ni@30.1.0 \
         pnpm@11.3.0 \
-        @marp-team/marp-cli@4.4.0 && \
+        @marp-team/marp-cli@4.4.0 \
+        @mermaid-js/mermaid-cli@11.15.0 \
+        widdershins@4.0.1 \
+        puppeteer@24.43.1 \
+        puppeteer-core@24.43.1 \
+        minisearch@7.2.0 \
+        @plantuml/core@1.2026.7 \
+        sharp@0.34.5 \
+        minimist@1.2.8 && \
     npm cache clean --force && \
     test -d /usr/local/lib/node_modules/@antfu/ni && \
     test -d /usr/local/lib/node_modules/pnpm && \
     test -d /usr/local/lib/node_modules/@marp-team/marp-cli && \
+    test -d /usr/local/lib/node_modules/@mermaid-js/mermaid-cli && \
+    test -d /usr/local/lib/node_modules/widdershins && \
+    test -d /usr/local/lib/node_modules/puppeteer && \
+    test -d /usr/local/lib/node_modules/puppeteer-core && \
+    test -d /usr/local/lib/node_modules/minisearch && \
+    test -d /usr/local/lib/node_modules/@plantuml/core && \
+    test -d /usr/local/lib/node_modules/sharp && \
+    test -d /usr/local/lib/node_modules/minimist && \
     test -x /usr/local/bin/ni && \
     test -x /usr/local/bin/pnpm && \
     test -x /usr/local/bin/marp && \
+    test -x /usr/local/bin/mmdc && \
+    test -x /usr/local/bin/widdershins && \
     pip install \
         gcovr \
         hjson \
@@ -482,6 +500,17 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
 ENV CHROME_PATH="/usr/local/bin/chrome" \
     PUPPETEER_EXECUTABLE_PATH="/usr/local/bin/chrome" \
     PUPPETEER_SKIP_DOWNLOAD="true"
+
+# Mermaid CLI 用の Puppeteer 設定
+# コンテナ内では Chrome sandbox を利用できないため、既存 Chrome と no-sandbox を明示する
+RUN install -d /etc/mermaid && \
+    printf '%s\n' \
+        '{' \
+        '  "executablePath": "/usr/local/bin/chrome",' \
+        '  "args": ["--no-sandbox"]' \
+        '}' > /etc/mermaid/puppeteer-config.json && \
+    chmod 0644 /etc/mermaid/puppeteer-config.json
+
 RUN printf '%s\n' \
         'export CHROME_PATH=/usr/local/bin/chrome' \
         'export PUPPETEER_EXECUTABLE_PATH=/usr/local/bin/chrome' \

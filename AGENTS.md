@@ -112,7 +112,7 @@ ssh-keygen -R "[127.0.0.1]:40822"
 - **言語ランタイム**: Node.js 24、Java 17(OL8)/21(OL9/10)、.NET 10、Python 3.11(OL8)/3.9(OL9)/3.12(OL10)
 - **ビルドツール**: GCC、Make、CMake、automake、libtool、clang-format (LLVM 22.1.4)
 - **開発ライブラリ**: openssl-devel、libssh-devel、libcurl-devel、binutils-devel、elfutils-devel、readline-devel、libedit-devel
-- **ドキュメント**: Doxygen、doxybook2、PlantUML、Pandoc
+- **ドキュメント**: Doxygen、doxybook2、PlantUML、Pandoc、Marp CLI、Mermaid CLI、Widdershins
 - **ユーティリティ**: jq、tree、rsync、expect、cloc、time、editorconfig-checker
 - **リポジトリ操作 CLI**: gh (GitHub CLI)、glab (GitLab CLI)
 
