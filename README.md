@@ -117,6 +117,13 @@ podman pull hondarer/oracle-linux-10-dev:latest
 - **PlantUML**
 - **Pandoc** + pandoc-crossref
 - **Marp CLI** (v4.4.0)
+- **Mermaid CLI** (`mmdc`, v11.15.0)
+- **Widdershins** (v4.0.1)
+- **Puppeteer** / **puppeteer-core** (v24.43.1)
+- **MiniSearch** (v7.2.0)
+- **@plantuml/core** (v1.2026.7)
+- **sharp** (v0.34.5)
+- **minimist** (v1.2.8)
 - **Chrome for Testing** (v148.0.7778.97)
 - **Inkscape** (v1.4.4)
 
@@ -242,6 +249,10 @@ pandoc README.md -o README.pdf
 
 # Marp による PDF 変換（システムの Chrome for Testing を自動使用）
 marp slides.md -o slides.pdf
+
+# Mermaid 図の SVG 変換
+mmdc -i diagram.mmd -o diagram.svg \
+  --puppeteerConfigFile /etc/mermaid/puppeteer-config.json
 ```
 
 ### Chrome for Testing と Puppeteer
@@ -253,6 +264,8 @@ chrome --version
 ```
 
 `PUPPETEER_EXECUTABLE_PATH=/usr/local/bin/chrome` と `PUPPETEER_SKIP_DOWNLOAD=true` が設定済みのため、プロジェクトへ Puppeteer をインストールしてもブラウザは追加ダウンロードされません。
+
+Mermaid CLI で既存の Chrome for Testing を使う場合は、コンテナ用の Puppeteer 設定を指定してください。設定には Chrome の実行パスと `--no-sandbox` が含まれています。
 
 ```bash
 npm install puppeteer
