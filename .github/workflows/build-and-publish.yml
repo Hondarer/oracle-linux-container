@@ -480,7 +480,12 @@ jobs:
             test "$CHROME_PATH" = /usr/local/bin/chrome
             test "$PUPPETEER_EXECUTABLE_PATH" = /usr/local/bin/chrome
             test "$PUPPETEER_SKIP_DOWNLOAD" = true
+            test ! -e /var/cache/dnf
+            test ! -e /root/.cache/pip
+            test ! -e /root/.npm
             chrome --version
+            echo "=== WSL rootfs disk usage ==="
+            du -x -h -d 1 /usr /opt /var /root 2>/dev/null | sort -h
           '
 
       - name: Push container image
@@ -533,11 +538,16 @@ jobs:
           podman export $CONTAINER_ID | gzip -9 > "$WSL_ROOTFS_FILE"
           podman rm $CONTAINER_ID
 
+          # gzip と tar の整合性を確認
+          gzip -t "$WSL_ROOTFS_FILE"
+          tar -tzf "$WSL_ROOTFS_FILE" etc/wsl.conf > /dev/null
+
           # ファイルサイズを記録
           ls -lh "$WSL_ROOTFS_FILE"
 
           ROOTFS_SIZE_BYTES=$(stat -c%s "$WSL_ROOTFS_FILE")
           ROOTFS_SIZE_MIB=$((ROOTFS_SIZE_BYTES / 1024 / 1024))
+          echo "WSL rootfs size: ${ROOTFS_SIZE_BYTES} bytes (${ROOTFS_SIZE_MIB} MiB)"
           echo "WSL_ROOTFS_SIZE_BYTES=$ROOTFS_SIZE_BYTES" >> $GITHUB_ENV
 
           # GitHub Release asset は 1 ファイル 2 GiB 未満が上限

@@ -235,7 +235,7 @@ RUN dnf install -y \
     test -x /usr/local/bin/marp && \
     test -x /usr/local/bin/mmdc && \
     test -x /usr/local/bin/widdershins && \
-    pip install \
+    pip install --no-cache-dir \
         gcovr \
         hjson \
         podman-compose \
@@ -259,7 +259,7 @@ RUN dnf install -y \
     fi && \
     dnf clean all && \
     rm -f /var/log/dnf* /var/log/hawkey.log && \
-    rm -rf /var/cache/dnf
+    rm -rf /var/cache/dnf /root/.cache/pip /root/.npm
 
 # ロケールを設定
 ENV LANG=ja_JP.UTF-8
@@ -493,6 +493,9 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     /usr/local/bin/chrome --version && \
     rm -f "/tmp/${CHROME_ARCHIVE}" && \
     # clean up
+    dnf clean all && \
+    rm -f /var/log/dnf* /var/log/hawkey.log && \
+    rm -rf /var/cache/dnf /root/.cache/pip /root/.npm && \
     rm -f /tmp/*.tar.* /tmp/*.jar /tmp/*.zip /tmp/Inkscape-*.AppImage && \
     rm -rf /tmp/squashfs-root
 

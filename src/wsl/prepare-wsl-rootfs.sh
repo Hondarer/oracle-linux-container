@@ -55,3 +55,9 @@ mv /etc/container-release /etc/wsl-release
 # WSL では不要なコンテナ用エントリーポイントを削除する
 rm -f /usr/local/bin/entrypoint.sh
 rm -f /usr/local/bin/devcontainer-entrypoint.sh
+
+# ビルド中に再生成されるパッケージ管理キャッシュ・ログを最終清掃する
+dnf clean all
+rm -f /var/log/dnf* /var/log/hawkey.log
+rm -rf /var/cache/dnf /root/.cache/pip /root/.npm
+rm -rf /tmp/* /var/tmp/*
