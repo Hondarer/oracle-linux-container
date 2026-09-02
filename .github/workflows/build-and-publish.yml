@@ -528,7 +528,6 @@ jobs:
           readme-filepath: /tmp/dockerhub-readme.md
 
       - name: Export WSL rootfs and upload release asset
-        if: github.ref_type == 'tag'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -601,10 +600,10 @@ jobs:
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           if [ "${{ github.ref_type }}" = "tag" ]; then
             echo "$WSL_ROOTFS_FILE" >> $GITHUB_STEP_SUMMARY
-            echo "size: ${WSL_ROOTFS_SIZE_BYTES:-unknown} bytes" >> $GITHUB_STEP_SUMMARY
           else
-            echo "Skipped for non-tag builds" >> $GITHUB_STEP_SUMMARY
+            echo "Release upload skipped for non-tag builds" >> $GITHUB_STEP_SUMMARY
           fi
+          echo "size: ${WSL_ROOTFS_SIZE_BYTES:-unknown} bytes" >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Pull command (Container)" >> $GITHUB_STEP_SUMMARY
