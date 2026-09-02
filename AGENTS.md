@@ -113,7 +113,7 @@ ssh-keygen -R "[127.0.0.1]:40822"
 - **ビルドツール**: GCC、Make、CMake、automake、libtool、clang-format (LLVM 22.1.4)
 - **開発ライブラリ**: openssl-devel、libssh-devel、libcurl-devel、binutils-devel、elfutils-devel、readline-devel、libedit-devel
 - **ドキュメント**: Doxygen、doxybook2、PlantUML、Pandoc、Marp CLI、Mermaid CLI、Widdershins
-- **ユーティリティ**: jq、tree、rsync、expect、cloc、time、editorconfig-checker
+- **ユーティリティ**: jq、tree、rsync、expect、cloc、time、editorconfig-checker、textlint
 - **リポジトリ操作 CLI**: gh (GitHub CLI)、glab (GitLab CLI)
 
 ### パッケージ管理

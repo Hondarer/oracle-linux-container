@@ -217,7 +217,8 @@ RUN dnf install -y \
         minisearch@7.2.0 \
         @plantuml/core@1.2026.7 \
         sharp@0.34.5 \
-        minimist@1.2.8 && \
+        minimist@1.2.8 \
+        textlint@15.6.1 && \
     npm cache clean --force && \
     test -d /usr/local/lib/node_modules/@antfu/ni && \
     test -d /usr/local/lib/node_modules/pnpm && \
@@ -230,11 +231,13 @@ RUN dnf install -y \
     test -d /usr/local/lib/node_modules/@plantuml/core && \
     test -d /usr/local/lib/node_modules/sharp && \
     test -d /usr/local/lib/node_modules/minimist && \
+    test -d /usr/local/lib/node_modules/textlint && \
     test -x /usr/local/bin/ni && \
     test -x /usr/local/bin/pnpm && \
     test -x /usr/local/bin/marp && \
     test -x /usr/local/bin/mmdc && \
     test -x /usr/local/bin/widdershins && \
+    test -x /usr/local/bin/textlint && \
     pip install --no-cache-dir \
         gcovr \
         hjson \

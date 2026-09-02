@@ -146,6 +146,12 @@
 - **URL**: https://github.com/minimistjs/minimist
 - **説明**: コマンドライン引数の解析
 
+### textlint
+- **バージョン**: 15.6.1
+- **ライセンス**: MIT License
+- **URL**: https://github.com/textlint/textlint
+- **説明**: 自然言語テキスト (Markdown 等) のための pluggable lint ツール
+
 ### Chrome for Testing
 - **バージョン**: 148.0.7778.97
 - **ライセンス**: Google Chrome and ChromeOS Additional Terms of Service および同梱サードパーティライセンス
