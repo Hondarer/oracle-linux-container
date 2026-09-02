@@ -147,10 +147,22 @@
 - **説明**: コマンドライン引数の解析
 
 ### textlint
-- **バージョン**: 15.6.1
+- **バージョン**: 15.8.0
 - **ライセンス**: MIT License
 - **URL**: https://github.com/textlint/textlint
 - **説明**: 自然言語テキスト (Markdown 等) のための pluggable lint ツール
+
+### textlint-rule-preset-ja-technical-writing
+- **バージョン**: 12.0.2
+- **ライセンス**: MIT License
+- **URL**: https://github.com/textlint-ja/textlint-rule-preset-ja-technical-writing
+- **説明**: 技術文書向けの textlint ルールプリセット
+
+### textlint-rule-preset-ja-spacing
+- **バージョン**: 3.0.3
+- **ライセンス**: MIT License
+- **URL**: https://github.com/textlint-ja/textlint-rule-preset-ja-spacing
+- **説明**: 半角/全角スペースの表記を扱う textlint ルールプリセット
 
 ### Chrome for Testing
 - **バージョン**: 148.0.7778.97

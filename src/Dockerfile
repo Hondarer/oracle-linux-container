@@ -218,7 +218,9 @@ RUN dnf install -y \
         @plantuml/core@1.2026.7 \
         sharp@0.34.5 \
         minimist@1.2.8 \
-        textlint@15.6.1 && \
+        textlint@15.8.0 \
+        textlint-rule-preset-ja-technical-writing@12.0.2 \
+        textlint-rule-preset-ja-spacing@3.0.3 && \
     npm cache clean --force && \
     test -d /usr/local/lib/node_modules/@antfu/ni && \
     test -d /usr/local/lib/node_modules/pnpm && \
@@ -232,6 +234,8 @@ RUN dnf install -y \
     test -d /usr/local/lib/node_modules/sharp && \
     test -d /usr/local/lib/node_modules/minimist && \
     test -d /usr/local/lib/node_modules/textlint && \
+    test -d /usr/local/lib/node_modules/textlint-rule-preset-ja-technical-writing && \
+    test -d /usr/local/lib/node_modules/textlint-rule-preset-ja-spacing && \
     test -x /usr/local/bin/ni && \
     test -x /usr/local/bin/pnpm && \
     test -x /usr/local/bin/marp && \

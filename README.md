@@ -146,7 +146,7 @@ podman pull hondarer/oracle-linux-10-dev:latest
 - **expect**、**nkf**、**cloc**
 - **editorconfig-checker** (v3.6.1)
 - **yamllint** (YAML 構文・スタイルチェッカー)
-- **textlint** (v15.6.1、自然言語テキストの lint ツール)
+- **textlint** (v15.8.0)、**textlint-rule-preset-ja-technical-writing** (v12.0.2)、**textlint-rule-preset-ja-spacing** (v3.0.3)
 - **bubblewrap** (bwrap)
 - **ffmpeg** (RPM Fusion free)
 - **git**、**curl**、**wget**
