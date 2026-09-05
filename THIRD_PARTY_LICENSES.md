@@ -315,6 +315,12 @@
 - **URL**: https://gitlab.com/gitlab-org/cli
 - **説明**: GitLab の公式 CLI。リポジトリ・MR・issue・CI などをターミナルから操作
 
+### PowerShell
+- **バージョン**: 7.6.5
+- **ライセンス**: MIT License
+- **URL**: https://github.com/PowerShell/PowerShell
+- **説明**: クロスプラットフォームのコマンドラインシェルおよびスクリプト言語 (pwsh)
+
 ## グラフィックスとデスクトップライブラリ
 
 これらのライブラリは、PlantUML や Doxygen などのグラフィカルツールの依存関係として含まれています。
@@ -357,3 +363,4 @@
 ## 更新履歴
 
 - 2025-11-15: 初版作成 (実装に合わせてコンポーネントとライセンスを文書化)
+- 2026-09-06: pwsh (PowerShell) を追加
