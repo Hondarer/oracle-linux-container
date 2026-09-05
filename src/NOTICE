@@ -186,6 +186,11 @@ License: MIT License
 Copyright: GitLab B.V.
 URL: https://gitlab.com/gitlab-org/cli
 
+PowerShell 7.6.5
+License: MIT License
+Copyright: Microsoft Corporation
+URL: https://github.com/PowerShell/PowerShell
+
 ================================================================================
 FONTS
 ================================================================================

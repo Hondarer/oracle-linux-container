@@ -150,6 +150,7 @@ podman pull hondarer/oracle-linux-10-dev:latest
 - **bubblewrap** (bwrap)
 - **ffmpeg** (RPM Fusion free)
 - **git**、**curl**、**wget**
+- **pwsh** (v7.6.5、PowerShell)
 - **Podman**、**podman-compose**、Docker 互換の **docker** コマンド
 
 ### リポジトリ操作 CLI

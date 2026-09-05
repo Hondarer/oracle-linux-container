@@ -112,6 +112,10 @@ jobs:
             "glab_1.105.0_linux_amd64.rpm" \
             "https://gitlab.com/gitlab-org/cli/-/releases/v1.105.0/downloads/glab_1.105.0_linux_amd64.rpm"
 
+          download_package "pwsh 7.6.5" \
+            "powershell-7.6.5-1.rh.x86_64.rpm" \
+            "https://github.com/PowerShell/PowerShell/releases/download/v7.6.5/powershell-7.6.5-1.rh.x86_64.rpm"
+
           for ol_version in 8 9 10; do
             download_package "doxybook2 for el${ol_version}" \
               "doxybook2-linux-el${ol_version}-x64" \
@@ -355,6 +359,11 @@ jobs:
           echo "=== .NET version ==="
           podman exec $CONTAINER_ID dotnet --version
           podman exec $CONTAINER_ID dotnet --version | grep -E '^10\.'
+
+          echo "=== PowerShell version ==="
+          podman exec $CONTAINER_ID pwsh --version
+          podman exec $CONTAINER_ID pwsh -NoProfile -NoLogo -Command '$PSVersionTable.PSVersion.ToString()'
+          podman exec $CONTAINER_ID pwsh --version | grep -E '^PowerShell 7\.6\.'
 
           echo "=== Doxygen version ==="
           podman exec $CONTAINER_ID doxygen --version

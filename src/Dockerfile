@@ -487,6 +487,14 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     download_required "glab ${GLAB_VER}" "/tmp/${GLAB_RPM}" "https://gitlab.com/gitlab-org/cli/-/releases/v${GLAB_VER}/downloads/${GLAB_RPM}" "${GLAB_RPM}" && \
     dnf install -y "/tmp/${GLAB_RPM}" && \
     rm -f "/tmp/${GLAB_RPM}" && \
+    # pwsh (PowerShell)
+    PWSH_VER="7.6.5" && \
+    PWSH_RPM="powershell-${PWSH_VER}-1.rh.x86_64.rpm" && \
+    download_required "pwsh ${PWSH_VER}" "/tmp/${PWSH_RPM}" "https://github.com/PowerShell/PowerShell/releases/download/v${PWSH_VER}/${PWSH_RPM}" "${PWSH_RPM}" && \
+    dnf install -y "/tmp/${PWSH_RPM}" && \
+    rm -f "/tmp/${PWSH_RPM}" && \
+    test -x /usr/bin/pwsh && \
+    pwsh --version && \
     # Chrome for Testing (Marp CLI / Puppeteer)
     CHROME_ARCHIVE="chrome-linux64-${CHROME_FOR_TESTING_VERSION}.zip" && \
     CHROME_INSTALL_DIR="/opt/chrome-for-testing/${CHROME_FOR_TESTING_VERSION}" && \
