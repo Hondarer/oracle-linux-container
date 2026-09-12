@@ -145,7 +145,10 @@ podman pull hondarer/oracle-linux-10-dev:latest
 - **clang-format**、**git-clang-format** (LLVM 22.1.4)
 - **expect**、**nkf**、**cloc**
 - **editorconfig-checker** (v3.6.1)
+- **gcovr** (C/C++ カバレッジレポートツール)
 - **yamllint** (YAML 構文・スタイルチェッカー)
+- **pytest** / **pytest-cov** (Python テストフレームワーク・カバレッジ計測)
+- **hjson** (Human JSON パーサー)
 - **textlint** (v15.8.0)、**textlint-rule-preset-ja-technical-writing** (v12.0.2)、**textlint-rule-preset-ja-spacing** (v3.0.3)
 - **bubblewrap** (bwrap)
 - **ffmpeg** (RPM Fusion free)

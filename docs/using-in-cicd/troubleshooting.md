@@ -110,6 +110,29 @@ steps:
       sudo dnf install -y <package-name>
 ```
 
+### 問題: venv 内で pytest が見つからない
+
+```text
+bash: pytest: command not found
+```
+
+**解決方法**: 推奨方法は、`pytest` および `pytest-cov` を仮想環境内にインストールすることです。これにより、テスト対象の依存関係と同じ Python 環境で pytest が動作します。
+
+```bash
+python -m venv venv
+source venv/bin/activate
+python -m pip install pytest pytest-cov
+python -m pytest --version
+```
+
+システムに組み込み済みの pytest を再利用する場合は、システムの site-packages を引き継いだ仮想環境を作成し、必ず仮想環境の Python を経由して実行します。
+
+```bash
+python -m venv --system-site-packages venv
+source venv/bin/activate
+python -m pytest -v
+```
+
 ## ネットワークエラー
 
 ### 問題: イメージの pull に失敗する

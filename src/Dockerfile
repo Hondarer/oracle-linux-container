@@ -246,6 +246,8 @@ RUN dnf install -y \
         gcovr \
         hjson \
         podman-compose \
+        pytest \
+        pytest-cov \
         yamllint && \
     # ビルド時に有効化したリポジトリをデフォルト無効化
     if [ "${OL_VERSION}" = "8" ]; then \

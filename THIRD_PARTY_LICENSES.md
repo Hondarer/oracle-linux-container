@@ -60,6 +60,16 @@
 - **URL**: https://github.com/gcovr/gcovr
 - **説明**: コードカバレッジレポートツール
 
+### pytest
+- **ライセンス**: MIT License
+- **URL**: https://github.com/pytest-dev/pytest
+- **説明**: Python テストフレームワーク
+
+### pytest-cov
+- **ライセンス**: MIT License
+- **URL**: https://github.com/pytest-dev/pytest-cov
+- **説明**: pytest 向けカバレッジ計測プラグイン
+
 ### yamllint
 - **ライセンス**: GPL-3.0-or-later
 - **URL**: https://github.com/adrienverge/yamllint
@@ -364,3 +374,4 @@
 
 - 2025-11-15: 初版作成 (実装に合わせてコンポーネントとライセンスを文書化)
 - 2026-09-06: pwsh (PowerShell) を追加
+- 2026-09-12: pytest / pytest-cov を追加

@@ -342,6 +342,23 @@ jobs:
           test "$PYTHON3_MINOR" = "$EXPECTED_PYTHON"
           podman exec $CONTAINER_ID python -m pip --version
 
+          echo "=== pytest and coverage smoke test ==="
+          podman exec $CONTAINER_ID bash -lc '
+            set -eu
+            python -m pytest --version
+            python -m pip check
+            python -m venv --system-site-packages /tmp/pytest-smoke-venv
+            mkdir -p /tmp/pytest-smoke
+            cd /tmp/pytest-smoke
+            printf "%s\n" "def add(a, b):" "    return a + b" > sample.py
+            printf "%s\n" "from sample import add" "" "def test_add():" "    assert add(1, 2) == 3" > test_sample.py
+            /tmp/pytest-smoke-venv/bin/python -m pytest \
+              --cov=sample --cov-fail-under=100 \
+              --cov-report=term --cov-report=xml --cov-report=html
+            test -s coverage.xml
+            test -s htmlcov/index.html
+          '
+
           echo "=== GCC version ==="
           GCC_MAJOR=$(podman exec $CONTAINER_ID gcc -dumpversion | cut -d. -f1)
           test "$GCC_MAJOR" = "$EXPECTED_GCC"

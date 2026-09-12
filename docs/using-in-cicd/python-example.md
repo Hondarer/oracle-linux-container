@@ -54,6 +54,7 @@ jobs:
         run: |
           source venv/bin/activate
           pip install -r requirements.txt
+          # venv 内で使用する開発用ツールをインストール
           pip install pytest pytest-cov flake8 black mypy
 
       - name: Format check with black
@@ -75,7 +76,7 @@ jobs:
       - name: Run tests with coverage
         run: |
           source venv/bin/activate
-          pytest --cov=src --cov-report=xml --cov-report=html --cov-report=term
+          python -m pytest --cov=src --cov-report=xml --cov-report=html --cov-report=term
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
@@ -193,7 +194,7 @@ disallow_untyped_defs = True
 - name: Run tests
   run: |
     source venv/bin/activate
-    pytest -v
+    python -m pytest -v
 ```
 
 カバレッジ付きで実行：
@@ -202,7 +203,7 @@ disallow_untyped_defs = True
 - name: Run tests with coverage
   run: |
     source venv/bin/activate
-    pytest --cov=src --cov-report=xml --cov-report=html --cov-report=term
+    python -m pytest --cov=src --cov-report=xml --cov-report=html --cov-report=term
 ```
 
 `pytest.ini` 設定ファイルの例：
@@ -221,7 +222,9 @@ addopts =
 
 ## 複数の Python バージョンでテスト
 
-このコンテナには Python 3.11 がインストール済みですが、複数バージョンでテストする場合：
+このコンテナの既定の Python には `pytest` および `pytest-cov` が組み込まれています。ただし、`actions/setup-python` で別の Python バージョンを選択する場合は、選択した Python 環境へ `pytest` をインストールする必要があります。
+
+複数バージョンでテストする場合：
 
 ```yaml
 jobs:
@@ -241,10 +244,11 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          python -m pip install -r requirements.txt
+          python -m pip install pytest pytest-cov
 
       - name: Run tests
-        run: pytest
+        run: python -m pytest
 ```
 
 ## Poetry を使用する場合
@@ -321,7 +325,7 @@ steps:
       source venv/bin/activate
       export FLASK_APP=app.py
       export FLASK_ENV=testing
-      pytest
+      python -m pytest
 
   - name: Run application
     run: |
