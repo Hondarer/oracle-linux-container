@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# rootless podman-compose では、正しく UID のマッピングができない (userns が利用できない) ため、
-# podman を直接操作する
+# rootless podman-compose では UID のマッピングを正常に処理できない (userns が利用できない) ため、
+# podman を直接実行します。
 
 source "$(dirname "$0")/version-config.sh" "${1:-8}"
 

@@ -15,23 +15,23 @@ Oracle Linux 8、9、10 のマルチバージョンに対応しています。
 
 ## 利用シナリオ
 
-このコンテナは以下のシナリオで利用できます。
+このコンテナは、次のシナリオで利用できます。
 
 ### 🖥️ リモートサーバー開発（主用途）
 
 **サーバー上にコンテナを常駐させ、VS Code Remote SSH で接続するスタイルです。**
 
-コンテナ起動後は SSH サーバーが待ち受け状態となり、ローカルの VS Code から [Remote - SSH 拡張機能](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh) を通じて直接接続できます。  
+コンテナ起動後は SSH サーバーが待機状態となり、ローカルの VS Code から [Remote - SSH 拡張機能](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh) を通じて直接接続できます。
 ホームディレクトリとワークスペースはホストにマウントされるため、コンテナを再起動しても作業データは保持されます。
 
-```
+```text
 [ローカル PC の VS Code]
-        │  SSH 接続 (port 40822 / 40922 / 41022)
-        ▼
+        |  SSH 接続 (port 40822 / 40922 / 41022)
+        v
 [リモートサーバー上の Podman コンテナ]
-  ├── SSH サーバー（常駐）
-  ├── 開発ツール群
-  └── /workspace  ← ホストにマウント
+  +-- SSH サーバー (常駐)
+  +-- 開発ツール群
+  \-- /workspace  <- ホストにマウント
 ```
 
 この設計により、ローカルに開発ツールをインストールせず、複数人が同一サーバーのコンテナを個別インスタンスとして利用する構成も可能です。
@@ -47,17 +47,17 @@ Oracle Linux 8、9、10 のマルチバージョンに対応しています。
 cp -r examples/devcontainer/ol8 /your/project/.devcontainer
 ```
 
-VS Code で `Dev Containers: Reopen in Container` を実行すると、開発ツールが事前設定された環境が起動します。  
+VS Code で `Dev Containers: Reopen in Container` を実行すると、開発ツールが事前設定された環境が起動します。
 詳細は [examples/devcontainer/](examples/devcontainer/) および [docs-src/using-in-vscode/](docs-src/using-in-vscode/) を参照してください。
 
 ### 🪟 WSL2 ディストリビューションとして利用（Windows）
 
-GitHub Releases から取得した WSL 用 rootfs (`tar.gz`) を、Windows 標準の PowerShell のみで WSL2 にインポートできます。  
+GitHub Releases から取得した WSL 用 rootfs (`tar.gz`) を、Windows 標準の PowerShell のみで WSL2 にインポートできます。
 詳細は「[Windows 環境で WSL2 にインポート](#windows-環境で-wsl2-にインポート)」を参照してください。
 
 ### ⚙️ CI/CD での利用
 
-GitHub Actions 等のビルド・テスト環境としても利用できます。  
+GitHub Actions 等のビルド・テスト環境としても利用できます。
 詳細は [docs-src/using-in-cicd/](docs-src/using-in-cicd/) を参照してください。
 
 ---
@@ -166,7 +166,7 @@ podman pull hondarer/oracle-linux-10-dev:latest
 ### イメージビルド
 
 ```bash
-# OL8 をビルド (デフォルト)
+# OL8 をビルド (既定値)
 ./build-pod.sh 8
 
 # OL9 をビルド
@@ -179,7 +179,7 @@ podman pull hondarer/oracle-linux-10-dev:latest
 ### コンテナ起動
 
 ```bash
-# OL8 インスタンス1 を起動 (デフォルト)
+# OL8 インスタンス1 を起動 (既定値)
 ./start-pod.sh 8
 
 # OL9 インスタンス1 を起動
@@ -201,7 +201,7 @@ ssh -p 40922 user@127.0.0.1
 # OL10 SSH 接続 (ポート 41022)
 ssh -p 41022 user@127.0.0.1
 
-# 初回接続時、SSH キーキャッシュのクリア
+# 初回接続時、SSH 鍵キャッシュの破棄
 ssh-keygen -R "[127.0.0.1]:40822"
 ```
 
@@ -252,7 +252,7 @@ doxygen Doxyfile
 # Pandoc による文書変換
 pandoc README.md -o README.pdf
 
-# Marp による PDF 変換（システムの Chrome for Testing を自動使用）
+# Marp による PDF 変換 (システムの Chrome for Testing を自動使用)
 marp slides.md -o slides.pdf
 
 # Mermaid 図の SVG 変換
@@ -270,7 +270,7 @@ chrome --version
 
 `PUPPETEER_EXECUTABLE_PATH=/usr/local/bin/chrome` と `PUPPETEER_SKIP_DOWNLOAD=true` が設定済みのため、プロジェクトへ Puppeteer をインストールしてもブラウザは追加ダウンロードされません。
 
-Mermaid CLI で既存の Chrome for Testing を使う場合は、コンテナ用の Puppeteer 設定を指定してください。設定には Chrome の実行パスと `--no-sandbox` が含まれています。
+Mermaid CLI で既存の Chrome for Testing を使用する場合は、コンテナ用の Puppeteer 設定を指定してください。設定には Chrome の実行パスと `--no-sandbox` が含まれています。
 
 ```bash
 npm install puppeteer
@@ -319,7 +319,7 @@ Chrome for Testing はブラウザ自動化・テスト専用です。信頼で�
 
 ### 追加パッケージの事前配置
 
-`src/packages/` にパッケージファイルを配置すると、キャッシュとして動作します。  
+`src/packages/` にパッケージファイルを配置すると、キャッシュとして動作します。
 対象パッケージファイルは、`src/Dockerfile` を参照してください。
 
 ### カスタムフォントの追加
@@ -330,31 +330,31 @@ Chrome for Testing はブラウザ自動化・テスト専用です。信頼で�
 
 ```text
 .
-├── build-pod.sh          # イメージビルドスクリプト
-├── start-pod.sh          # コンテナ起動スクリプト
-├── stop-pod.sh           # コンテナ停止スクリプト
-├── save-pod.sh           # イメージ保存スクリプト
-├── load-pod.sh           # イメージ読み込みスクリプト
-├── src/                  # ビルドファイル
-│   ├── Dockerfile       # メインのビルド定義
-│   ├── entrypoint.sh    # コンテナ起動スクリプト
-│   ├── keys/            # SSH ホストキー (オプション)
-│   ├── fonts/           # 追加フォント (オプション)
-│   └── packages/        # 追加パッケージ (オプション)
-├── version-config.sh     # バージョン別共通設定
-├── storage/              # 永続化データ
-│   ├── 8/1/             # OL8 インスタンス1
-│   │   ├── home_${USER}/
-│   │   └── workspace/
-│   ├── 9/1/             # OL9 インスタンス1
-│   │   ├── home_${USER}/
-│   │   └── workspace/
-│   └── 10/1/            # OL10 インスタンス1
-│       ├── home_${USER}/
-│       └── workspace/
-├── image/                # イメージ保存場所
-├── CLAUDE.md             # Claude Code 用ガイド
-└── README.md             # このファイル
+|-- build-pod.sh          # イメージビルドスクリプト
+|-- start-pod.sh          # コンテナ起動スクリプト
+|-- stop-pod.sh           # コンテナ停止スクリプト
+|-- save-pod.sh           # イメージ保存スクリプト
+|-- load-pod.sh           # イメージ読み込みスクリプト
+|-- src/                  # ビルドファイル
+|   |-- Dockerfile       # メインのビルド定義
+|   |-- entrypoint.sh    # コンテナ起動スクリプト
+|   |-- keys/            # SSH ホストキー (任意)
+|   |-- fonts/           # 追加フォント (任意)
+|   \-- packages/        # 追加パッケージ (任意)
+|-- version-config.sh     # バージョン別共通設定
+|-- storage/              # 永続化データ
+|   |-- 8/1/             # OL8 インスタンス1
+|   |   |-- home_${USER}/
+|   |   \-- workspace/
+|   |-- 9/1/             # OL9 インスタンス1
+|   |   |-- home_${USER}/
+|   |   \-- workspace/
+|   \-- 10/1/            # OL10 インスタンス1
+|       |-- home_${USER}/
+|       \-- workspace/
+|-- image/                # イメージ保存場所
+|-- CLAUDE.md             # Claude Code 用ガイド
+\-- README.md             # このファイル
 ```
 
 ## 技術仕様
@@ -378,7 +378,7 @@ podman ps
 # コンテナログの確認 (OL8 の場合)
 podman logs oracle-linux-8_1
 
-# SSH キーキャッシュのクリア (OL8 の場合)
+# SSH 鍵キャッシュの破棄 (OL8 の場合)
 ssh-keygen -R "[127.0.0.1]:40822"
 ```
 
@@ -399,7 +399,7 @@ mkdir -p ./storage/8/1/{home_$(whoami),workspace}
 # 古いイメージの削除 (OL8 の場合)
 podman rmi oracle-linux-8
 
-# キャッシュクリア後の再ビルド
+# キャッシュ破棄後の再ビルド
 podman system prune -f
 ./build-pod.sh 8
 ```
@@ -412,7 +412,8 @@ podman system prune -f
 
 ```powershell
 # WSL2 のインストール (未インストールの場合)
-wsl --install
+# --no-distribution を指定しない場合は既定の Ubuntu がインストールされます
+wsl --install --no-distribution
 
 # 1. GitHub Releases から OL8 用 rootfs をダウンロード
 #    https://github.com/hondarer/oracle-linux-container/releases/latest
@@ -449,9 +450,8 @@ wsl -d OracleLinux8-Dev
 
 ### WSL で Podman を利用する
 
-WSL 用 rootfs には rootless Podman、Docker 互換の `docker` コマンド、`podman-compose`
-が含まれます。既定ユーザー `user` は、rootless 実行に必要な UID/GID マッピングと
-`cgroupfs` 設定を事前に持ちます。
+WSL 用 rootfs には rootless Podman、Docker 互換の `docker` コマンド、`podman-compose` が含まれます。
+既定ユーザー `user` は、rootless 実行に必要な UID/GID マッピングと `cgroupfs` 設定を事前に保持します。
 
 ```bash
 podman run --rm quay.io/podman/hello
@@ -460,8 +460,8 @@ podman-compose --version
 systemctl --user status podman.socket
 ```
 
-`podman.socket` は systemd user socket として有効化済みです。停止されている場合は
-`systemctl --user enable --now podman.socket` で起動できます。
+`podman.socket` は systemd user socket として有効化済みです。
+停止されている場合は `systemctl --user enable --now podman.socket` で起動できます。
 
 ## 関連ドキュメント
 
@@ -469,10 +469,10 @@ systemctl --user status podman.socket
 
 - [docs-src/](docs-src/) - 追加ドキュメント
   - [コンテナイメージ公開ガイド (GitHub / Docker Hub)](docs-src/publishing-to-github.md) - イメージの公開方法
-  - [VS Code Dev Container として使用する](docs-src/using-in-vscode/) - Dev Containers 拡張機能を使った開発環境のセットアップ
+  - [VS Code Dev Container として使用する](docs-src/using-in-vscode/) - Dev Containers 拡張機能を使用した開発環境のセットアップ
   - [CI/CD でのコンテナイメージ利用ガイド](docs-src/using-in-cicd/) - 他のプロジェクトでの利用方法
     - 言語別サンプル: [C/C++](docs-src/using-in-cicd/cpp-example.md)、[Node.js](docs-src/using-in-cicd/nodejs-example.md)、[Java](docs-src/using-in-cicd/java-example.md)、[Python](docs-src/using-in-cicd/python-example.md)、[.NET](docs-src/using-in-cicd/dotnet-example.md)
-- [examples/devcontainer/](examples/devcontainer/) - Dev Container サンプル設定ファイル（プロジェクトへコピーして利用）
+- [examples/devcontainer/](examples/devcontainer/) - Dev Container サンプル設定ファイル (プロジェクトへコピーして利用)
 - [CLAUDE.md](CLAUDE.md) - Claude Code を使用する際の詳細ガイド
 
 ### 外部リンク
@@ -490,16 +490,17 @@ systemctl --user status podman.socket
 
 - **ライセンス**: MIT License
 - **適用範囲**: ビルドスクリプト (build-pod.sh、start-pod.sh など)、ドキュメント、設定ファイル
-- **詳細**: [LICENSE](./LICENSE) を参照してください
+- **詳細**: [LICENSE](./LICENSE) を参照してください。
 
 ### コンテナイメージ
 
 - **ライセンス**: GPL-2.0、GPL-3.0-or-later、MIT、BSD-3-Clause、PSF、OFL-1.1 などの複合ライセンス
 - **適用範囲**: ビルドされるコンテナイメージとその内容
-- **ベースOS ライセンス条項**: [src/LICENSE-IMAGE](./src/LICENSE-IMAGE) を参照してください
-- **含まれるコンポーネント**: [src/NOTICE](./src/NOTICE) を参照してください
+- **ベースOS ライセンス条項**: [src/LICENSE-IMAGE](./src/LICENSE-IMAGE) を参照してください。
+- **含まれるコンポーネント**: [src/NOTICE](./src/NOTICE) を参照してください。
 
-コンテナイメージは Oracle Linux (GPL-2.0) をベースとしており、GCC・PlantUML・rsync 等の GPL-3.0 コンポーネントを含む多数のオープンソースソフトウェアから構成されています。イメージを再配布する場合は、含まれる各コンポーネントのライセンス条項（特に GPL の copyleft 条件）に従う必要があります。
+コンテナイメージは Oracle Linux (GPL-2.0) をベースとしており、GCC・PlantUML・rsync 等の GPL-3.0 コンポーネントを含む多数のオープンソースソフトウェアから構成されています。
+イメージを再配布する場合は、含まれる各コンポーネントのライセンス条項 (特に GPL の copyleft 条件) に従う必要があります。
 
 ### 主要コンポーネントのライセンス
 
@@ -516,6 +517,6 @@ systemctl --user status podman.socket
 - **FFmpeg**: LGPL-2.1+ / GPL-2.0+ components
 - **rsync**: GPL-3.0
 
-詳細なコンポーネントリストとライセンス情報は以下を参照してください：
-- [THIRD_PARTY_LICENSES.md](./THIRD_PARTY_LICENSES.md) - 包括的なライセンス情報（推奨）
+詳細なコンポーネントリストおよびライセンス情報は、次を参照してください。
+- [THIRD_PARTY_LICENSES.md](./THIRD_PARTY_LICENSES.md) - 包括的なライセンス情報 (推奨)
 - [src/NOTICE](./src/NOTICE) - コンテナイメージに含まれるサードパーティコンポーネント一覧

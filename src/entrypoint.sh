@@ -1,41 +1,41 @@
 #!/bin/bash
 
-# 環境変数からユーザー情報を取得
+# 環境変数からユーザー情報を取得します。
 HOST_USER=${HOST_USER:-user}
 HOST_UID=${HOST_UID:-1000}
 HOST_GID=${HOST_GID:-1000}
 
 echo "Creating user: ${HOST_USER} (UID: ${HOST_UID}, GID: ${HOST_GID})"
 
-# グループの作成 (存在しない場合)
+# グループが存在しない場合は新規作成します。
 if ! getent group "${HOST_GID}" >/dev/null 2>&1; then
     groupadd -g "${HOST_GID}" "${HOST_USER}"
     echo "Created group: ${HOST_USER} (GID: ${HOST_GID})"
 else
     EXISTING_GROUP=$(getent group "${HOST_GID}" | cut -d: -f1)
     echo "Group GID ${HOST_GID} already exists as: ${EXISTING_GROUP}"
-    # 既存グループ名が HOST_USER と異なる場合、グループ名を変更
+    # 既存グループ名が HOST_USER と一致しない場合はグループ名を変更します。
     if [ "${EXISTING_GROUP}" != "${HOST_USER}" ]; then
         groupmod -n "${HOST_USER}" "${EXISTING_GROUP}"
         echo "Renamed group ${EXISTING_GROUP} to ${HOST_USER}"
     fi
 fi
 
-# ユーザーの作成 (存在しない場合)
+# ユーザーが存在しない場合は新規作成します。
 if ! getent passwd "${HOST_UID}" >/dev/null 2>&1; then
     useradd -u "${HOST_UID}" -g "${HOST_GID}" -G wheel -d "/home/${HOST_USER}" -m -s /bin/bash "${HOST_USER}"
     echo "Created user: ${HOST_USER} (UID: ${HOST_UID})"
 else
     EXISTING_USER=$(getent passwd "${HOST_UID}" | cut -d: -f1)
     echo "User UID ${HOST_UID} already exists as: ${EXISTING_USER}"
-    # 既存ユーザー名が HOST_USER と異なる場合、ユーザー名を変更
+    # 既存ユーザー名が HOST_USER と一致しない場合はユーザー名を変更します。
     if [ "${EXISTING_USER}" != "${HOST_USER}" ]; then
         usermod -l "${HOST_USER}" "${EXISTING_USER}"
         usermod -d "/home/${HOST_USER}" -m "${HOST_USER}"
         echo "Renamed user ${EXISTING_USER} to ${HOST_USER}"
     fi
 
-    # wheel グループ所属チェックと追加
+    # wheel グループへの所属確認および追加を行います。
     if ! id -nG "${HOST_USER}" | grep -qw wheel; then
         usermod -aG wheel "${HOST_USER}"
         echo "Added ${HOST_USER} to wheel group"
@@ -46,7 +46,7 @@ fi
 echo "${HOST_USER}:${HOST_USER}_passwd" | chpasswd
 echo "Set password for ${HOST_USER}: ${HOST_USER}_passwd"
 
-# ホームディレクトリの所有権を確認・修正
+# ホームディレクトリの所有権を確認し、必要に応じて修正します。
 if [ -d "/home/${HOST_USER}" ]; then
     current_uid=$(stat -c "%u" "/home/${HOST_USER}")
     current_gid=$(stat -c "%g" "/home/${HOST_USER}")
@@ -55,7 +55,7 @@ if [ -d "/home/${HOST_USER}" ]; then
     fi
 fi
 
-# ワークスペースディレクトリの所有権を確認・修正
+# ワークスペースディレクトリの所有権を確認し、必要に応じて修正します。
 if [ -d "/workspace" ]; then
     current_uid=$(stat -c "%u" "/workspace")
     current_gid=$(stat -c "%g" "/workspace")
@@ -64,7 +64,7 @@ if [ -d "/workspace" ]; then
     fi
 fi
 
-# USER_HOME が空 (~/.ssh は評価対象から除く) の場合に初期ファイルを配置
+# ホームディレクトリが空 (~/.ssh ディレクトリを除く) の場合に初期設定ファイルを配置します。
 if [ -z "$(find /home/${HOST_USER} -mindepth 1 -not -path "/home/${HOST_USER}/.ssh/*" -not -name ".ssh" -print -quit 2>/dev/null)" ]; then
     echo "Initializing home for ${HOST_USER}..."
 
@@ -88,8 +88,8 @@ if [ -z "$(find /home/${HOST_USER} -mindepth 1 -not -path "/home/${HOST_USER}/.s
     rm -rf /tmp/temp_home
 fi
 
-# authorized_keys ファイルの存在チェック
-# ※ベースイメージの /etc/ssh/sshd_config が以下の前提
+# authorized_keys ファイルの存在確認
+# ※ベースイメージの /etc/ssh/sshd_config が次の設定であることを前提とします。
 #
 # #PubkeyAuthentication yes
 #
@@ -99,13 +99,13 @@ fi
 # PasswordAuthentication yes
 #
 if [ -f /home/${HOST_USER}/.ssh/authorized_keys ]; then
-    # authorized_keys ファイルが存在する場合
-    # SSH キー認証の有効化
+    # authorized_keys ファイルが存在する場合の設定
+    # SSH 公開鍵認証を有効化します。
     sed -i 's/^#\s*PubkeyAuthentication\s\+yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config
-    # SSH パスワード認証を無効化
+    # SSH パスワード認証を無効化します。
     sed -i 's/^\s*PasswordAuthentication\s\+yes/PasswordAuthentication no/' /etc/ssh/sshd_config
 fi
 
-# SSH を待ち受け (ここでブロックされる)
+# SSH デーモンをフォアグラウンドで起動して接続を待機します。
 echo "Starting sshd..."
 /usr/sbin/sshd -D

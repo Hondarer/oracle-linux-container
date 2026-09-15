@@ -23,14 +23,14 @@ GitHub Actions ワークフロー (`.github/workflows/build-and-publish.yml`) �
 
 ### GitHub Personal Access Token の作成
 
-1. GitHub にログイン
-2. Settings → Developer settings → Personal access tokens → Tokens (classic)
-3. "Generate new token (classic)" をクリック
-4. 以下の権限を付与:
+1. GitHub にログインします。
+2. Settings → Developer settings → Personal access tokens → Tokens (classic) を開きます。
+3. "Generate new token (classic)" をクリックします。
+4. 次の権限を付与します:
    - `write:packages` - パッケージのアップロード
    - `read:packages` - パッケージの読み取り
-   - `delete:packages` - パッケージの削除 (オプション)
-5. トークンを生成し、安全な場所に保存
+   - `delete:packages` - パッケージの削除 (任意)
+5. トークンを生成し、安全な場所に保存します。
 
 ### 環境変数の設定
 
@@ -79,7 +79,7 @@ podman tag oracle-linux-8-dev:latest \
 echo $GITHUB_TOKEN | podman login ghcr.io -u ${GITHUB_USER} --password-stdin
 ```
 
-成功すると以下のメッセージが表示されます:
+認証に成功すると、次のメッセージが表示されます。
 
 ```text
 Login Succeeded!
@@ -97,19 +97,20 @@ podman push ghcr.io/${GITHUB_USER}/${GITHUB_REPO}/oracle-linux-8-dev:v1.0.0
 
 ### 5. イメージの可視性設定
 
-デフォルトでは、公開されたイメージはプライベートです。パブリックにする場合:
+既定では、公開されたイメージはプライベートに設定されます。
+パブリックに変更する場合は、次の手順を実施します。
 
-1. GitHub リポジトリページに移動
-2. Packages セクションを開く
-3. 公開したイメージを選択
-4. "Package settings" → "Change visibility"
-5. "Public" を選択して確認
+1. GitHub リポジトリページに移動します。
+2. Packages セクションを開きます。
+3. 公開したイメージを選択します。
+4. "Package settings" → "Change visibility" を選択します。
+5. "Public" を選択して確認します。
 
 ## GitHub Actions による自動公開
 
 ### ワークフローファイルの作成
 
-`.github/workflows/build-and-publish.yml` を作成します:
+`.github/workflows/build-and-publish.yml` の構成例を次に示します。
 
 ```yaml
 name: Build and Publish Container Image
@@ -200,7 +201,7 @@ git push origin main
 
 ### タグベースのリリース
 
-バージョンタグを作成すると、自動的にそのバージョンでイメージが公開されます:
+バージョンタグを作成して push すると、自動的に該当バージョンでイメージが公開されます。
 
 ```bash
 # バージョンタグを作成
@@ -208,7 +209,7 @@ git tag v1.0.0
 git push origin v1.0.0
 ```
 
-以下のタグが自動的に作成されます:
+次のタグが自動的に生成されます:
 - `ghcr.io/<user>/<repo>/oracle-linux-8-dev:v1.0.0`
 - `ghcr.io/<user>/<repo>/oracle-linux-8-dev:1.0`
 - `ghcr.io/<user>/<repo>/oracle-linux-8-dev:1`
@@ -218,15 +219,15 @@ git push origin v1.0.0
 
 ### 1. Docker Hub アカウントと Access Token の準備
 
-1. [Docker Hub](https://hub.docker.com/) でアカウントを作成
-2. **Account settings** → **Personal access tokens** → **Generate new token**
+1. [Docker Hub](https://hub.docker.com/) でアカウントを作成します。
+2. **Account settings** → **Personal access tokens** → **Generate new token** を選択します。
    - Access permissions: `Read & Write`
-   - 生成されたトークンをコピー (一度しか表示されない)
-3. Docker Hub でリポジトリを作成 (名前: `oracle-linux-8-dev`、`oracle-linux-10-dev`)
+   - 生成されたトークンをコピーします (一度のみ表示されます)。
+3. Docker Hub でリポジトリを作成します (名前: `oracle-linux-8-dev`、`oracle-linux-10-dev`)。
 
 ### 2. GitHub Secrets への登録
 
-GitHub リポジトリの **Settings** → **Secrets and variables** → **Actions** で以下を追加:
+GitHub リポジトリの **Settings** → **Secrets and variables** → **Actions** で次の Secret を追加します。
 
 | Secret 名 | 値 |
 |-----------|-----|
@@ -235,7 +236,7 @@ GitHub リポジトリの **Settings** → **Secrets and variables** → **Actio
 
 ### 3. 動作確認
 
-Secrets 登録後に main ブランチへ push すると、`Push container image to Docker Hub` ステップが実行され、以下のイメージが公開されます。
+Secrets 登録後に main ブランチへ push すると、`Push container image to Docker Hub` ステップが実行され、次のイメージが公開されます。
 
 ```text
 <dockerhub-user>/oracle-linux-8-dev:main
@@ -310,7 +311,7 @@ spec:
   - name: ghcr-secret
 ```
 
-imagePullSecret の作成:
+imagePullSecret の作成コマンド例です。
 
 ```bash
 kubectl create secret docker-registry ghcr-secret \
@@ -342,7 +343,7 @@ podman inspect ghcr.io/${GITHUB_USER}/${GITHUB_REPO}/oracle-linux-8-dev:latest \
   --format '{{json .Config.Labels}}' | jq
 ```
 
-出力例:
+出力例を次に示します。
 
 ```json
 {
@@ -363,9 +364,9 @@ Error: unauthorized: authentication required
 ```
 
 **解決方法**:
-1. Personal Access Token が有効か確認
-2. トークンに `write:packages` 権限があるか確認
-3. 再度ログイン
+1. Personal Access Token の有効性の確認
+2. トークンへの `write:packages` 権限付与の確認
+3. 再度のログイン実行
 
 ```bash
 podman logout ghcr.io
@@ -379,9 +380,9 @@ Error: image not known
 ```
 
 **解決方法**:
-1. イメージ名とタグが正しいか確認
-2. リポジトリの可視性設定を確認 (プライベート/パブリック)
-3. 認証が必要な場合はログインしているか確認
+1. イメージ名およびタグの確認
+2. リポジトリの可視性設定の確認 (プライベート/パブリック)
+3. 認証が必要な場合におけるログイン状態の確認
 
 ### ビルドエラー
 
@@ -390,9 +391,9 @@ Error: error building at STEP ...
 ```
 
 **解決方法**:
-1. `src/Dockerfile` の構文エラーを確認
-2. ネットワーク接続を確認 (パッケージダウンロード時)
-3. ローカルでビルドが成功するか確認
+1. `src/Dockerfile` の構文エラーの確認
+2. ネットワーク接続の確認 (パッケージダウンロード時)
+3. ローカル環境でのビルド成功の確認
 
 ```bash
 cd src
@@ -402,9 +403,9 @@ podman build -t test-image .
 ### GitHub Actions ワークフローの失敗
 
 **解決方法**:
-1. GitHub の "Actions" タブでログを確認
-2. `GITHUB_TOKEN` の権限設定を確認
-3. ワークフローファイルの YAML 構文を確認
+1. GitHub の "Actions" タブでのログ確認
+2. `GITHUB_TOKEN` の権限設定の確認
+3. ワークフローファイルの YAML 構文の確認
 
 ## ベストプラクティス
 

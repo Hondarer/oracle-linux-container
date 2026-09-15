@@ -1,6 +1,6 @@
 # .NET プロジェクトのサンプル
 
-このドキュメントでは、.NET プロジェクトで Oracle Linux 開発用コンテナイメージを使用する GitHub Actions ワークフローの例を示します。
+このドキュメントでは、.NET プロジェクトにおいて Oracle Linux 開発用コンテナイメージを活用する GitHub Actions ワークフローの構築例を説明します。
 
 ## 完全なワークフロー例
 
@@ -71,7 +71,7 @@ jobs:
 
 ### 1. 環境変数の設定
 
-.NET の動作を最適化するための環境変数：
+.NET CLI の不要なテレメトリ送信や初回起動メッセージを無効化し、CI/CD 向けに動作を最適化します。
 
 ```yaml
 env:
@@ -83,14 +83,13 @@ env:
 
 ### 2. 依存関係の復元
 
+`dotnet restore` コマンドでプロジェクトの依存関係を復元します。
+NuGet パッケージのキャッシュを設定することでビルド時間を短縮できます。
+
 ```yaml
 - name: Restore dependencies
   run: dotnet restore
-```
 
-NuGet パッケージのキャッシュ：
-
-```yaml
 - name: Cache NuGet packages
   uses: actions/cache@v3
   with:
@@ -102,24 +101,30 @@ NuGet パッケージのキャッシュ：
 
 ### 3. ビルド
 
+プロジェクトをビルドします。
+依存関係の復元を事前に済ませている場合は `--no-restore` オプションを指定します。
+
 ```yaml
 - name: Build
   run: dotnet build --configuration Release --no-restore
 ```
 
-ビルド設定：
-- `--configuration Release`: リリースビルド
-- `--configuration Debug`: デバッグビルド
-- `--no-restore`: restore をスキップ（すでに実行済みの場合）
+#### 主なビルドオプション
+
+- `--configuration Release`: リリースビルド (最適化有効)
+- `--configuration Debug`: デバッグビルド (デバッグシンボル有効)
+- `--no-restore`: 依存関係の復元をスキップ (事前実行済みの場合)
 
 ### 4. テストの実行
+
+`dotnet test` コマンドでユニットテストを実行します。
 
 ```yaml
 - name: Run tests
   run: dotnet test --configuration Release --no-build --verbosity normal
 ```
 
-詳細な出力：
+詳細なログを出力する場合は、次のようにオプションを指定します。
 
 ```yaml
 - name: Run tests with detailed output
@@ -129,7 +134,9 @@ NuGet パッケージのキャッシュ：
       --logger "console;verbosity=detailed"
 ```
 
-### 5. コードカバレッジ
+### 5. コードカバレッジの測定
+
+テスト実行時にカバレッジデータを収集し、ReportGenerator などのツールで HTML レポートを出力します。
 
 ```yaml
 - name: Run tests with coverage
@@ -149,17 +156,18 @@ NuGet パッケージのキャッシュ：
 
 ### 6. アプリケーションの公開
 
+`dotnet publish` コマンドでアプリケーションを公開用ディレクトリに出力します。
+実行環境に .NET ランタイムが存在しない場合は、セルフコンテインド形式での出力も可能です。
+
 ```yaml
+# フレームワーク依存の公開 (既定)
 - name: Publish
   run: |
     dotnet publish --configuration Release --no-build \
       --output ./publish \
       --self-contained false
-```
 
-セルフコンテインド公開（.NET ランタイムを含む）：
-
-```yaml
+# セルフコンテインド公開 (.NET ランタイム同梱)
 - name: Publish self-contained
   run: |
     dotnet publish --configuration Release \
@@ -169,6 +177,8 @@ NuGet パッケージのキャッシュ：
 ```
 
 ## ASP.NET Core アプリケーション
+
+ASP.NET Core アプリケーションをビルド・公開し、コンテナ内での起動確認（ヘルスチェック）を行うワークフロー例です。
 
 ```yaml
 steps:
@@ -207,6 +217,8 @@ steps:
 
 ## ソリューションファイル (.sln) を使用する場合
 
+単一プロジェクトではなくソリューション全体を一括してビルド・テストする場合の設定例です。
+
 ```yaml
 steps:
   - uses: actions/checkout@v4
@@ -222,6 +234,8 @@ steps:
 ```
 
 ## NuGet パッケージの作成と公開
+
+ライブラリを NuGet パッケージとしてビルドし、NuGet ギャラリーへ発行する場合の設定例です。
 
 ```yaml
 jobs:
@@ -252,6 +266,8 @@ jobs:
 
 ## Entity Framework Core マイグレーション
 
+Entity Framework Core (EF Core) のマイグレーションを適用、または SQL スクリプトとして出力する場合の設定例です。
+
 ```yaml
 steps:
   - uses: actions/checkout@v4
@@ -276,6 +292,8 @@ steps:
 ```
 
 ## Docker イメージのビルド
+
+公開用バイナリから実行用コンテナイメージを作成し、レジストリへプッシュする例です。
 
 ```yaml
 steps:
@@ -309,7 +327,7 @@ ENTRYPOINT ["dotnet", "MyApp.dll"]
 
 ## マルチターゲットフレームワーク
 
-複数の .NET バージョンをターゲットにする場合：
+複数の .NET バージョンを対象にマトリクステストを実施する場合の設定例です。
 
 ```yaml
 jobs:
@@ -332,6 +350,8 @@ jobs:
 ```
 
 ## 静的コード解析
+
+コード品質やコーディング規約の遵守を検証するため、静的解析ツールをパイプラインに組み込みます。
 
 ### StyleCop Analyzers
 
@@ -359,6 +379,8 @@ jobs:
 ```
 
 ## Blazor WebAssembly アプリケーション
+
+Blazor WebAssembly アプリケーションをビルドし、静的ファイルとして出力・保存する例です。
 
 ```yaml
 steps:

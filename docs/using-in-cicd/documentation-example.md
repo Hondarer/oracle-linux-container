@@ -1,6 +1,6 @@
 # ドキュメント生成のサンプル
 
-このドキュメントでは、Doxygen、PlantUML、Pandoc を使用してドキュメントを自動生成する GitHub Actions ワークフローの例を示します。
+このドキュメントでは、Doxygen、PlantUML、Pandoc などのドキュメント生成ツールを活用し、GitHub Actions でドキュメントを自動生成・公開するワークフロー例を説明します。
 
 ## 完全なワークフロー例
 
@@ -121,19 +121,23 @@ HAVE_DOT               = NO
 
 ### ワークフローでの Doxygen 実行
 
+Doxygen を実行してソースコードから HTML および XML ドキュメントを生成します。
+
 ```yaml
 - name: Generate Doxygen documentation
   run: doxygen Doxyfile
 ```
 
-カスタム設定ファイルを使用：
+カスタム設定ファイルを指定して実行する場合は、次のように記述します。
 
 ```yaml
 - name: Generate Doxygen documentation
   run: doxygen custom.doxyfile
 ```
 
-### Doxygen 警告をエラーとして扱う
+### Doxygen の警告をエラーとして検知
+
+ドキュメントの記載漏れや構文不整合を検知するため、Doxygen の出力ログに含まれる警告（warning）をチェックしてワークフローを失敗させます。
 
 ```yaml
 - name: Generate Doxygen documentation
@@ -146,6 +150,8 @@ HAVE_DOT               = NO
 ```
 
 ## doxybook2 による Markdown 変換
+
+Doxygen が出力した XML ファイルを doxybook2 で Markdown に変換します。
 
 ### 設定ファイル (.doxybook/config.json)
 
@@ -171,6 +177,8 @@ HAVE_DOT               = NO
 ```
 
 ## PlantUML 図の生成
+
+PlantUML を使用して、テキスト定義ファイルから画像ファイルを生成します。
 
 ### PlantUML ファイルの例 (diagram.puml)
 
@@ -212,7 +220,7 @@ User "1" -- "*" Post : creates
     find ./docs -name "*.puml" -exec plantuml -tsvg {} \;
 ```
 
-特定のディレクトリのみ処理：
+特定のディレクトリ内のファイルのみを処理して別ディレクトリへ出力する場合は、次のように記述します。
 
 ```yaml
 - name: Generate diagrams in specific directory
@@ -220,6 +228,8 @@ User "1" -- "*" Post : creates
 ```
 
 ## Pandoc によるドキュメント変換
+
+Pandoc を使用して Markdown ファイルを PDF や HTML、Word 文書などの各種形式に変換します。
 
 ### Markdown から PDF への変換
 
@@ -235,6 +245,8 @@ User "1" -- "*" Post : creates
 ```
 
 ### 日本語ドキュメントの生成
+
+日本語フォントや見出し番号、目次を指定して PDF を出力します。
 
 ```yaml
 - name: Generate Japanese PDF
@@ -256,6 +268,8 @@ User "1" -- "*" Post : creates
 
 ### 複数形式への変換
 
+単一の Markdown ソースから複数のフォーマットを同時に生成します。
+
 ```yaml
 - name: Convert to multiple formats
   run: |
@@ -274,6 +288,8 @@ User "1" -- "*" Post : creates
 
 ## GitHub Pages へのデプロイ
 
+生成した HTML ドキュメントを GitHub Pages にデプロイして Web 上に公開します。
+
 ### 基本的なデプロイ
 
 ```yaml
@@ -287,6 +303,8 @@ User "1" -- "*" Post : creates
 
 ### カスタムドメインの設定
 
+独自ドメインを割り当てる場合は、`cname` パラメータを指定します。
+
 ```yaml
 - name: Deploy to GitHub Pages with custom domain
   uses: peaceiris/actions-gh-pages@v3
@@ -297,6 +315,8 @@ User "1" -- "*" Post : creates
 ```
 
 ### デプロイ前の処理
+
+デプロイ前に成果物ディレクトリを整え、設定ファイルやクローラー制御ファイルを配置します。
 
 ```yaml
 - name: Prepare for deployment
@@ -314,6 +334,8 @@ User "1" -- "*" Post : creates
 ```
 
 ## MkDocs を使用する場合
+
+Python 製の静的サイトジェネレーターである MkDocs（Material for MkDocs）を使用する場合の設定例です。
 
 ```yaml
 steps:
@@ -339,6 +361,8 @@ steps:
 
 ## Sphinx を使用する場合 (Python)
 
+Python プロジェクトの標準的なドキュメントツールである Sphinx を使用する場合の設定例です。
+
 ```yaml
 steps:
   - uses: actions/checkout@v4
@@ -362,9 +386,9 @@ steps:
       path: docs/_build/html/
 ```
 
-## ドキュメントバージョニング
+## ドキュメントのバージョニング
 
-バージョンごとにドキュメントを保存する例：
+リリースバージョンごとにドキュメントを保持・公開する場合の設定例です。
 
 ```yaml
 - name: Generate versioned documentation
@@ -382,7 +406,9 @@ steps:
     keep_files: true  # 既存のバージョンを保持
 ```
 
-## ドキュメントリンクチェック
+## ドキュメントのリンク検証
+
+ドキュメント内のリンク切れを自動検出するため、markdown-link-check などのツールを実行します。
 
 ```yaml
 - name: Check links in documentation
@@ -393,6 +419,8 @@ steps:
 ```
 
 ## API ドキュメントの生成
+
+各プログラミング言語の専用ツールを使用して API ドキュメントを生成する例です。
 
 ### TypeScript/JavaScript (TypeDoc)
 

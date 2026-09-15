@@ -1,6 +1,6 @@
 # VS Code Dev Container として使用する
 
-このドキュメントでは、公開されている Oracle Linux 開発用コンテナイメージを、あなたのプロジェクトで VS Code の Dev Container として使用する方法を説明します。
+このドキュメントでは、公開されている Oracle Linux 開発用コンテナイメージを、対象プロジェクトで VS Code の Dev Container として使用する方法を説明します。
 
 ## 目次
 
@@ -14,7 +14,7 @@
 
 ## 概要
 
-公開されているコンテナイメージ (`ghcr.io/hondarer/oracle-linux-container/oracle-linux-8-dev` または Docker Hub の `<dockerhub-user>/oracle-linux-8-dev`、OL10 は `-10-dev`) を VS Code の Dev Container として使用することで、以下の利点が得られます：
+公開されているコンテナイメージ (`ghcr.io/hondarer/oracle-linux-container/oracle-linux-8-dev` または Docker Hub の `<dockerhub-user>/oracle-linux-8-dev`、OL10 は `-10-dev`) を VS Code の Dev Container として使用することで、次の利点が得られます。
 
 - **一貫した開発環境**: 開発ツールとライブラリが事前設定済み
 - **簡単なセットアップ**: 設定ファイルをコピーするだけ
@@ -28,12 +28,10 @@
 
 1. **Visual Studio Code**
    - [公式サイト](https://code.visualstudio.com/)からダウンロード・インストール
-
 2. **Dev Containers 拡張機能**
    - VS Code で `ms-vscode-remote.remote-containers` をインストール
    - または、[こちら](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)からインストール
-
-3. **コンテナエンジン**（以下のいずれか）
+3. **コンテナエンジン** (次のいずれか)
    - **Docker Desktop** (推奨)
      - Windows/Mac: [Docker Desktop](https://www.docker.com/products/docker-desktop/)
      - Linux: [Docker Engine](https://docs.docker.com/engine/install/)
@@ -43,24 +41,24 @@
 ### 推奨
 
 - Git クライアント
-- 十分なディスクスペース（イメージサイズ: 約 5GB）
-- 最低 8GB のメモリ（推奨: 16GB 以上）
+- 十分なディスクスペース (イメージサイズ: 約 5GB)
+- 最低 8GB のメモリ (推奨: 16GB 以上)
 
 ## クイックスタート
 
 ### 1. サンプル設定のコピー
 
-[examples/devcontainer/](../../examples/devcontainer/) から設定ファイルをあなたのプロジェクトにコピー：
+[examples/devcontainer/](../../examples/devcontainer/) から設定ファイルを対象プロジェクトへコピーします。
 
 ```bash
-# あなたのプロジェクトディレクトリで
+# プロジェクトディレクトリで実行
 cd /path/to/your/project
 
 # サンプル設定をコピー
 cp -r /path/to/oracle-linux-container/examples/devcontainer .devcontainer
 ```
 
-または、手動で `.devcontainer/devcontainer.json` を作成：
+または、手動で `.devcontainer/devcontainer.json` を作成します。
 
 ```json
 {
@@ -90,16 +88,16 @@ code /path/to/your/project
 
 ### 3. Dev Container で再度開く
 
-VS Code が起動したら：
+VS Code の起動後、次の手順を実施します。
 
-1. コマンドパレットを開く（`Ctrl+Shift+P` / `Cmd+Shift+P`）
+1. コマンドパレットを開く (`Ctrl+Shift+P` / `Cmd+Shift+P`)
 2. `Dev Containers: Reopen in Container` を選択
-3. 初回はイメージのダウンロードに数分かかります（進行状況が表示されます）
+3. 初回はイメージのダウンロードに数分かかります (進行状況が表示されます)
 4. ダウンロード完了後、コンテナ内で VS Code が起動します
 
 ### 4. 開発を開始
 
-ターミナルを開いて、開発ツールが利用可能なことを確認：
+ターミナルを開き、開発ツールが利用可能であることを確認します。
 
 ```bash
 # バージョン確認
@@ -124,7 +122,7 @@ gcc --version
 
 #### イメージの指定
 
-公開されたイメージを使用：
+公開されたイメージを使用する場合:
 
 ```json
 {
@@ -142,21 +140,21 @@ gcc --version
 
 #### ユーザー設定
 
-コンテナ内のユーザーは、ホストのユーザー名とUID/GIDに基づいて自動的に作成されます：
+コンテナ内のユーザーは、ホストのユーザー名と UID/GID に基づいて自動的に作成されます。
 
 - `postCreateCommand` でユーザーセットアップスクリプトを実行
 - `remoteUser` でコンテナ内で使用するユーザーを指定
-- `containerUser` を `root` に設定（ユーザー作成のため）
+- `containerUser` を `root` に設定 (ユーザー作成のため)
 
 #### マウント設定
 
 - **ワークスペース**: プロジェクトのルートディレクトリが `/workspace` にマウント
-- **ホームディレクトリ**: Docker volume として永続化（コンテナ削除後も保持）
+- **ホームディレクトリ**: Docker volume として永続化 (コンテナ削除後も保持)
 - **SSH 認証情報**: ホストの `~/.ssh` が `/tmp/host-ssh` に読み取り専用でマウント
 
 #### VS Code 拡張機能
 
-サンプル設定には以下の拡張機能が含まれています：
+サンプル設定には次の拡張機能が含まれています。
 
 ```json
 {
@@ -181,11 +179,11 @@ gcc --version
 
 ### 環境変数
 
-以下の環境変数がコンテナ内で設定されます：
+次の環境変数がコンテナ内で設定されます。
 
 - `LANG`: `ja_JP.UTF-8` (日本語ロケール)
 
-追加の環境変数は `containerEnv` で設定：
+追加の環境変数は `containerEnv` で設定します。
 
 ```json
 {
@@ -256,7 +254,7 @@ gcc --version
 
 ### ポート転送
 
-開発サーバーのポートを自動的に転送：
+開発サーバーのポートを自動的に転送する場合の設定例です。
 
 ```json
 {
@@ -309,7 +307,7 @@ gcc --version
    ```
 3. または、Git 認証に HTTPS + トークンを使用
 
-### パフォーマンスが遅い
+### パフォーマンスが低下する場合
 
 **症状**: ファイル操作やビルドが遅い
 
@@ -323,7 +321,7 @@ gcc --version
 
 ## Podman を使用する場合
 
-Docker の代わりに Podman を使用する場合の手順：
+Docker の代わりに Podman を使用する場合の手順は次のとおりです。
 
 ### 1. Podman のインストール
 
@@ -343,14 +341,14 @@ brew install podman
 #### Linux の場合
 
 ```bash
-# Podman ソケットを有効化（Docker 互換モード）
+# Podman ソケットを有効化 (Docker 互換モード)
 systemctl --user enable --now podman.socket
 
 # 環境変数を設定
 export DOCKER_HOST=unix:///run/user/$UID/podman/podman.sock
 ```
 
-VS Code の設定（`settings.json`）に追加：
+VS Code の設定 (`settings.json`) に追加します。
 
 ```json
 {
@@ -370,7 +368,7 @@ podman machine start
 podman machine set --rootful
 ```
 
-VS Code の設定（`settings.json`）に追加：
+VS Code の設定 (`settings.json`) に追加します。
 
 ```json
 {
@@ -380,7 +378,7 @@ VS Code の設定（`settings.json`）に追加：
 
 ### 3. devcontainer.json の調整
 
-Podman 使用時は `runArgs` を調整する場合があります：
+Podman 使用時は `runArgs` を調整する場合があります。
 
 ```json
 {

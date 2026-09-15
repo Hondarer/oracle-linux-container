@@ -4,7 +4,7 @@
 
 ## ナビゲーション
 
-- [CI/CD でのコンテナイメージ利用ガイド](../using-in-cicd.md) - メインガイド
+- [CI/CD でのコンテナイメージ利用ガイド](./README.md) - メインガイド
 - [トラブルシューティング](./troubleshooting.md) - よくある問題と解決方法
 - [ベストプラクティス](./best-practices.md) - 推奨される運用方法
 
@@ -22,12 +22,12 @@
 
 このコンテナは、ホストとコンテナ間でファイル権限を保持するために UID/GID マッピングを使用します。
 
-### GitHub Actions でのデフォルト UID/GID
+### GitHub Actions での既定の UID/GID
 
 ```yaml
 container:
   env:
-    # GitHub Actions のデフォルト値
+    # GitHub Actions の既定値
     HOST_USER: runner
     HOST_UID: 1001
     HOST_GID: 121
@@ -173,7 +173,7 @@ jobs:
 
 ## 関連ドキュメント
 
-- [CI/CD でのコンテナイメージ利用ガイド](../using-in-cicd.md) - メインガイド
+- [CI/CD でのコンテナイメージ利用ガイド](./README.md) - メインガイド
 - [トラブルシューティング](./troubleshooting.md) - よくある問題と解決方法
 - [ベストプラクティス](./best-practices.md) - 推奨される運用方法
 - [GitHub Container Registry への公開ガイド](../publishing-to-github.md) - イメージの公開方法

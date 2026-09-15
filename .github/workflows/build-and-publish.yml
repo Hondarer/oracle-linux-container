@@ -206,7 +206,7 @@ jobs:
 
       - name: Prepare build context (docs)
         run: |
-          # README の相対リンクを GitHub 絶対 URL に変換して src/ へ配置
+          # README の相対リンクを GitHub の絶対 URL に変換し、src/ へ配置
           BASE_BLOB="https://github.com/${{ github.repository }}/blob/main"
           BASE_TREE="https://github.com/${{ github.repository }}/tree/main"
           sed \
@@ -220,12 +220,12 @@ jobs:
             -e "s|](CLAUDE\.md)|](${BASE_BLOB}/CLAUDE.md)|g" \
             README.md > src/README.md
 
-          # LICENSE をビルドコンテキストにコピー
+          # LICENSE をビルドコンテキストへコピー
           cp LICENSE src/LICENSE
 
       - name: Build container image
         run: |
-          # 必要なディレクトリを作成
+          # 必要なディレクトリの作成
           mkdir -p src/keys src/packages src/fonts
 
           # container-release の作成
@@ -517,7 +517,7 @@ jobs:
       - name: Push container image
         if: github.event_name != 'pull_request'
         run: |
-          # メタデータから生成されたタグをすべて適用して push
+          # メタデータから生成されたすべてのタグを付与してプッシュ
           TAGS="${{ steps.meta.outputs.tags }}"
           for tag in $TAGS; do
             echo "Tagging and pushing: $tag"
@@ -540,7 +540,7 @@ jobs:
       - name: Update Docker Hub description
         if: github.event_name != 'pull_request' && steps.dockerhub-check.outputs.available == 'true'
         run: |
-          # src/README.md (リンク変換済み) を Docker Hub description 用にコピー
+          # リンク変換済みの src/README.md を Docker Hub の description 用にコピー
           cp src/README.md /tmp/dockerhub-readme.md
 
       - name: Push Docker Hub description
@@ -563,11 +563,11 @@ jobs:
           podman export $CONTAINER_ID | gzip -9 > "$WSL_ROOTFS_FILE"
           podman rm $CONTAINER_ID
 
-          # gzip と tar の整合性を確認
+          # gzip および tar アーカイブの整合性を確認
           gzip -t "$WSL_ROOTFS_FILE"
           tar -tzf "$WSL_ROOTFS_FILE" etc/wsl.conf > /dev/null
 
-          # ファイルサイズを記録
+          # ファイルサイズの記録
           ls -lh "$WSL_ROOTFS_FILE"
 
           ROOTFS_SIZE_BYTES=$(stat -c%s "$WSL_ROOTFS_FILE")
@@ -575,7 +575,7 @@ jobs:
           echo "WSL rootfs size: ${ROOTFS_SIZE_BYTES} bytes (${ROOTFS_SIZE_MIB} MiB)"
           echo "WSL_ROOTFS_SIZE_BYTES=$ROOTFS_SIZE_BYTES" >> $GITHUB_ENV
 
-          # GitHub Release asset は 1 ファイル 2 GiB 未満が上限
+          # GitHub Releases のアセット上限 (1 ファイルあたり 2 GiB 未満) を確認
           if [ "$ROOTFS_SIZE_BYTES" -ge 2147483648 ]; then
             echo "WSL rootfs exceeds GitHub Release asset limit: ${ROOTFS_SIZE_BYTES} bytes"
             exit 1

@@ -18,7 +18,7 @@
 ### マルチバージョン設計
 
 - `version-config.sh`: 全スクリプトが source する共通設定ファイル
-- 引数: `$1` = OL_VERSION (8, 9, or 10)、`$2` = INSTANCE_NUM (デフォルト: 1)
+- 引数: `$1` = OL_VERSION (8, 9, or 10)、`$2` = INSTANCE_NUM (既定値: 1)
 - ポート番号: `40000 + (OL_VERSION * 100) + (21 + INSTANCE_NUM)` (例: OL8#1=40822, OL10#1=41022)
 - コンテナ名: `oracle-linux-{ver}_{instance}` (例: `oracle-linux-8_1`)
 
@@ -82,7 +82,7 @@ ssh -p 40922 user@127.0.0.1
 # OL10 SSH 接続 (ポート 41022)
 ssh -p 41022 user@127.0.0.1
 
-# SSH 鍵キャッシュのクリア (新規ビルド後)
+# SSH 鍵キャッシュの破棄 (新規ビルド後)
 ssh-keygen -R "[127.0.0.1]:40822"
 ```
 
@@ -90,10 +90,10 @@ ssh-keygen -R "[127.0.0.1]:40822"
 
 ### SSH 認証
 
-- `~/.ssh/id_rsa.pub` が存在する場合、自動的に `authorized_keys` に設定
-- 公開鍵認証が有効な場合、パスワード認証は自動的に無効化
-- SSH ホストキーは `src/keys/` に保存して再利用可能
-- sshd は root 権限で起動し、作成されたユーザーでログイン
+- `~/.ssh/id_rsa.pub` が存在する場合、自動的に `authorized_keys` に設定されます。
+- 公開鍵認証が有効な場合、パスワード認証は自動的に無効化されます。
+- SSH ホストキーは `src/keys/` に保存して再利用が可能です。
+- sshd は root 権限で起動し、作成されたユーザーでログインします。
 
 ### マウント設定
 
@@ -121,7 +121,7 @@ ssh-keygen -R "[127.0.0.1]:40822"
 
 - **Node.js**: npm (ユーザーローカルプレフィックス設定済み)
 - **Python**: pip (システムとユーザー両方利用可能)
-- **Java**: OpenJDK 17(OL8) / 21(OL9/10) がデフォルト
+- **Java**: OpenJDK 17 (OL8) / 21 (OL9/10) が既定値
 - **.NET**: SDK 10
 
 ### カスタムインストール処理
@@ -133,20 +133,20 @@ ssh-keygen -R "[127.0.0.1]:40822"
 ## ファイル配置規則
 
 - `version-config.sh`: バージョン別共通設定 (全スクリプトが source)
-- `src/keys/`: SSH ホストキー (オプション)
-- `src/fonts/`: 追加フォントファイル (オプション)
-- `src/packages/`: 追加パッケージの事前ダウンロード (オプション)
+- `src/keys/`: SSH ホストキー (任意)
+- `src/fonts/`: 追加フォントファイル (任意)
+- `src/packages/`: 追加パッケージの事前ダウンロード (任意)
 - `src/container-release`: ビルド時刻の記録 (自動生成)
 
 ## エンコーディング規則
 
-- `.ps1` ファイルは **BOM あり UTF-8** (UTF-8 with BOM) で保存すること
-  - Windows 標準の PowerShell は BOM なし UTF-8 を正しく認識しない場合があるため
+- `.ps1` ファイルは **BOM あり UTF-8** (UTF-8 with BOM) で保存します。
+  - Windows 標準の PowerShell は BOM なし UTF-8 を正常に認識しない場合があるためです。
 
 ## 注意事項
 
-- rootless Podman を使用するため、システムレベルの特権操作は制限される
-- コンテナ内で sudo は利用可能 (wheel グループ、NOPASSWD 設定)
-- UID/GID マッピングにより、ホストとコンテナ間でファイル所有権が保持される
-- イメージはポータブルで、異なる環境での使い回しが可能
-- entrypoint.sh は root で実行され、動的にユーザー作成や環境設定を実行
+- rootless Podman を使用するため、システムレベルの特権操作は制限されます。
+- コンテナ内での sudo の実行は可能です (wheel グループ、NOPASSWD 設定)。
+- UID/GID マッピングにより、ホストとコンテナ間でファイル所有権が保持されます。
+- イメージはポータブル設計であり、異なる環境間での再利用が可能です。
+- entrypoint.sh は root 権限で実行され、動的にユーザー作成や環境設定を実行します。

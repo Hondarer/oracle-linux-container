@@ -2,12 +2,12 @@
 set -eu
 
 # WSL2 用 rootfs カスタマイズスクリプト
-# Containerfile.wsl からビルド時に root として実行される。
-# Podman 運用時の entrypoint.sh に相当する初期設定を静的に行う。
+# Containerfile.wsl のビルド時に root 権限で実行されます。
+# Podman 運用時の entrypoint.sh に相当する初期設定を静的に行います。
 
-# ディレクトリ・ユーザーの設定
-# そのままでは root ユーザーで実行されるため、普段利用する非 root ユーザーを作成する。
-# wheel グループの sudoers 設定はベースイメージ (Dockerfile) で実施済み。
+# ディレクトリおよびユーザーの設定
+# 既定では root ユーザーで実行されるため、通常利用する非 root ユーザーを作成します。
+# wheel グループの sudoers 設定はベースイメージ (Dockerfile) で実施済みです。
 useradd -m -s /bin/bash -G wheel user
 
 # rootless Podman の UID/GID マッピング
@@ -31,7 +31,7 @@ cp /usr/lib/systemd/user/podman.socket \
 ln -s ../podman.socket \
     /home/user/.config/systemd/user/sockets.target.wants/podman.socket
 
-# WSL 起動時のデフォルトユーザーを設定し、systemd を有効化する
+# WSL 起動時の既定ユーザーを設定し、systemd を有効化します。
 echo "[user]"        > /etc/wsl.conf
 echo "default=user" >> /etc/wsl.conf
 echo "[boot]"       >> /etc/wsl.conf
@@ -40,23 +40,23 @@ echo "systemd=true" >> /etc/wsl.conf
 # ロケールの設定
 echo 'export LANG=ja_JP.UTF-8' >> /home/user/.bashrc
 
-# Node.js のグローバルインストール先 (npm install -g) をユーザー単位にする
+# Node.js のグローバルインストール先 (npm install -g) をユーザー単位に設定します。
 echo 'export PATH="$HOME/.node_modules/bin:$PATH"' >> /home/user/.bashrc
 echo 'prefix=/home/user/.node_modules'             >> /home/user/.npmrc
 mkdir -p /home/user/.node_modules/bin
 
-# ホームディレクトリの所有権とパーミッションを調整
+# ホームディレクトリの所有権と権限の調整
 chown -R user:user /home/user
 chmod 700 /home/user
 
-# リリース情報ファイルをコンテナ用から WSL 用に置き換える
+# リリース情報ファイルをコンテナ用から WSL 用に変更します。
 mv /etc/container-release /etc/wsl-release
 
-# WSL では不要なコンテナ用エントリーポイントを削除する
+# WSL では不要なコンテナ用エントリーポイントを削除します。
 rm -f /usr/local/bin/entrypoint.sh
 rm -f /usr/local/bin/devcontainer-entrypoint.sh
 
-# ビルド中に再生成されるパッケージ管理キャッシュ・ログを最終清掃する
+# ビルド中に再生成されたパッケージ管理キャッシュおよびログを削除します。
 dnf clean all
 rm -f /var/log/dnf* /var/log/hawkey.log
 rm -rf /var/cache/dnf /root/.cache/pip /root/.npm

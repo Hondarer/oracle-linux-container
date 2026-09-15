@@ -44,7 +44,7 @@ podman pull ghcr.io/<user>/<repo>/oracle-linux-8-dev:latest
 # バージョンタグを指定して取得
 podman pull ghcr.io/<user>/<repo>/oracle-linux-8-dev:v1.0.0
 
-# SHA タグを指定して取得（再現性を確保）
+# SHA タグを指定して取得 (再現性の確保)
 podman pull ghcr.io/<user>/<repo>/oracle-linux-8-dev:sha-abc1234
 ```
 
@@ -75,7 +75,7 @@ podman run -it --rm \
   ghcr.io/<user>/<repo>/oracle-linux-8-dev:latest
 ```
 
-**注意**: `:Z` オプションは SELinux のコンテキストを適切に設定します（SELinux が有効な環境で必要）。
+**注意**: `:Z` オプションは SELinux のコンテキストを適切に設定します (SELinux が有効な環境で必要)。
 
 ### バックグラウンドで起動
 
@@ -96,7 +96,7 @@ ssh -p 2222 developer@localhost
 
 ## 環境変数
 
-コンテナ起動時に以下の環境変数を設定できます：
+コンテナ起動時に次の環境変数を設定できます。
 
 ### HOST_USER
 
@@ -106,7 +106,7 @@ ssh -p 2222 developer@localhost
 -e HOST_USER=myuser
 ```
 
-- **デフォルト値**: `user`
+- **既定値**: `user`
 - **用途**: コンテナ内のユーザー名を設定
 
 ### HOST_UID
@@ -117,7 +117,7 @@ ssh -p 2222 developer@localhost
 -e HOST_UID=1000
 ```
 
-- **デフォルト値**: `1000`
+- **既定値**: `1000`
 - **用途**: ホストとコンテナ間でファイル権限を保持
 - **推奨**: ホストユーザーの UID と同じ値 (`$(id -u)`)
 
@@ -129,7 +129,7 @@ ssh -p 2222 developer@localhost
 -e HOST_GID=1000
 ```
 
-- **デフォルト値**: `1000`
+- **既定値**: `1000`
 - **用途**: ホストとコンテナ間でファイル権限を保持
 - **推奨**: ホストユーザーの GID と同じ値 (`$(id -g)`)
 
@@ -149,7 +149,7 @@ podman run -it --rm \
 
 ### 最小限のワークフロー
 
-以下は、このコンテナイメージを使用する最もシンプルなワークフローです。
+このコンテナイメージを使用する最もシンプルなワークフロー例を次に示します。
 
 ```yaml
 name: Build and Test
@@ -227,7 +227,7 @@ jobs:
       - run: make test
 ```
 
-**注意**: GitHub Actions の ubuntu-latest ランナーでは、デフォルトで UID=1001、GID=121 です。
+**注意**: GitHub Actions の ubuntu-latest ランナーでは、既定値として UID=1001、GID=121 が設定されています。
 
 ### ツールバージョンの確認
 
@@ -364,7 +364,7 @@ podman history ghcr.io/<user>/<repo>/oracle-linux-8-dev:latest
 
 ## 次のステップ
 
-基本的な使い方を理解したら、以下のドキュメントを参照して具体的なユースケースを確認してください：
+基本的な使い方を確認した後は、次のドキュメントを参照して具体的なユースケースを確認してください。
 
 ### 言語・フレームワーク別サンプル
 

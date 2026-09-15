@@ -7,9 +7,9 @@
 ### 将来計画
 
 - [Oracle Linux 10 移行検討](./oracle-linux-10-migration.md)
-  - 移行の難易度評価（Medium）
+  - 移行の難易度評価 (Medium)
   - 互換性の問題点と対応策
-  - 移行手順（4フェーズ）
+  - 移行手順 (4フェーズ)
   - リスク要因と対策
 
 ### コンテナイメージの管理
@@ -24,7 +24,7 @@
 
 - [コンテナイメージ公開ガイド (GitHub Container Registry / Docker Hub)](./publishing-to-github.md)
   - GitHub Container Registry (ghcr.io) へのイメージ公開方法
-  - Docker Hub への公開設定 (オプション: Secrets 設定時に自動 push)
+  - Docker Hub への公開設定 (任意: Secrets 設定時に自動 push)
   - GitHub Actions による自動ビルド・公開
   - イメージの利用方法
   - トラブルシューティング
@@ -64,5 +64,5 @@
 - [README.md (プロジェクトルート)](../README.md) - プロジェクトの概要とクイックスタート
 - [CLAUDE.md](../CLAUDE.md) - Claude Code を使用する際の詳細ガイド
 - [LICENSE](../LICENSE) - プロジェクトスクリプトのライセンス (MIT)
-- [src/LICENSE-IMAGE](../src/LICENSE-IMAGE) - Oracle Linux ライセンス条項（ベースOS）
+- [src/LICENSE-IMAGE](../src/LICENSE-IMAGE) - Oracle Linux ライセンス条項 (ベース OS)
 - [src/NOTICE](../src/NOTICE) - 含まれるコンポーネントのライセンス情報

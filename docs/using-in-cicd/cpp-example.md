@@ -1,6 +1,6 @@
 # C/C++ プロジェクトのサンプル
 
-このドキュメントでは、C/C++ プロジェクトで Oracle Linux 開発用コンテナイメージを使用する GitHub Actions ワークフローの例を示します。
+このドキュメントでは、C/C++ プロジェクトにおいて Oracle Linux 開発用コンテナイメージを活用する GitHub Actions ワークフローの構築例を説明します。
 
 ## 完全なワークフロー例
 
@@ -111,7 +111,7 @@ jobs:
 
 ### 1. 依存関係のインストール
 
-プロジェクトで追加のライブラリが必要な場合は、インストールします。
+プロジェクト固有の追加ライブラリが必要な場合は、`dnf` コマンドでインストールします。
 
 ```yaml
 - name: Install additional dependencies
@@ -124,7 +124,7 @@ jobs:
 
 ### 2. CMake による設定
 
-CMake でビルドシステムを設定します。
+CMake を使用してビルド構成を設定します。
 
 ```yaml
 - name: Configure with CMake
@@ -138,16 +138,16 @@ CMake でビルドシステムを設定します。
           ..
 ```
 
-#### よく使う CMake オプション
+#### 代表的な CMake オプション
 
-- `-DCMAKE_BUILD_TYPE=Release`: リリースビルド（最適化あり）
-- `-DCMAKE_BUILD_TYPE=Debug`: デバッグビルド（デバッグ情報あり）
-- `-DBUILD_TESTING=ON`: テストをビルド
-- `-DCMAKE_CXX_FLAGS`: コンパイラフラグを追加
+- `-DCMAKE_BUILD_TYPE=Release`: リリースビルド (最適化有効)
+- `-DCMAKE_BUILD_TYPE=Debug`: デバッグビルド (デバッグシンボル有効)
+- `-DBUILD_TESTING=ON`: テストターゲットのビルドを有効化
+- `-DCMAKE_CXX_FLAGS`: コンパイラオプションの追加指定
 
 ### 3. ビルド
 
-並列ビルドで高速化します。
+`make -j` オプションにより並列ビルドを実行し、ビルド時間を短縮します。
 
 ```yaml
 - name: Build
@@ -158,7 +158,7 @@ CMake でビルドシステムを設定します。
 
 ### 4. テストの実行
 
-CTest でテストを実行します。
+CTest を使用してユニットテストを実行します。
 
 ```yaml
 - name: Run tests
@@ -167,16 +167,16 @@ CTest でテストを実行します。
     ctest --output-on-failure --verbose
 ```
 
-#### CTest のオプション
+#### 代表的な CTest オプション
 
-- `--output-on-failure`: 失敗したテストの出力を表示
-- `--verbose`: 詳細な出力
-- `-j$(nproc)`: 並列実行
-- `-R <pattern>`: パターンに一致するテストのみ実行
+- `--output-on-failure`: テスト失敗時の詳細ログを出力
+- `--verbose`: テスト実行時の詳細ログを出力
+- `-j$(nproc)`: テストの並列実行
+- `-R <pattern>`: 指定した正規表現パターンに一致するテストのみ実行
 
 ### 5. コードカバレッジの測定
 
-gcovr を使用してカバレッジを測定します。
+コンパイルオプションにカバレッジフラグを指定し、gcovr を使用してカバレッジレポートを出力します。
 
 ```yaml
 - name: Configure with coverage
@@ -200,6 +200,8 @@ gcovr を使用してカバレッジを測定します。
 
 ### 6. Doxygen ドキュメント生成
 
+Doxygen を実行してソースコードから API ドキュメントを自動生成します。
+
 ```yaml
 - name: Generate Doxygen documentation
   run: doxygen Doxyfile
@@ -207,7 +209,7 @@ gcovr を使用してカバレッジを測定します。
 
 ## Makefile を使用する場合
 
-CMake ではなく Makefile を直接使用する場合の例です。
+CMake を使用せず、既存の Makefile を直接実行する場合の設定例です。
 
 ```yaml
 jobs:
@@ -234,7 +236,7 @@ jobs:
 
 ## 静的解析の追加
 
-コード品質を向上させるために静的解析を追加できます。
+コード品質の向上や潜在的な不具合の早期検出を目的として、静的解析ツールをパイプラインに組み込むことができます。
 
 ```yaml
 - name: Run cppcheck
@@ -248,9 +250,9 @@ jobs:
     clang-tidy src/*.cpp -- -Iinclude/
 ```
 
-## メモリリークチェック
+## メモリリーク検証
 
-Valgrind でメモリリークをチェックします。
+Valgrind を使用して動的なメモリリーク検証を実行します。
 
 ```yaml
 - name: Install Valgrind
@@ -269,7 +271,7 @@ Valgrind でメモリリークをチェックします。
 
 ## マルチコンパイラテスト
 
-複数のコンパイラでテストする場合は、マトリクスを使用します。
+複数のコンパイラやビルド構成を網羅して検証する場合は、マトリクスビルドを使用します。
 
 ```yaml
 jobs:

@@ -35,11 +35,11 @@ RUN echo "Listing users with UID >= 1000:"; \
     done
 
 # パッケージのインストール
-# dnf update -y は、ベースイメージが最新の場合、ビルド時間を増やすだけであり不要。
+# ベースイメージが最新である場合、dnf update -y はビルド時間のみを増加させるため実行しません。
 RUN dnf install -y \
         oracle-epel-release-el${OL_VERSION} \
         dnf-plugins-core && \
-    # リポジトリの有効化 (OL10 では EPEL は oracle-epel-release-el10 により自動有効化済み)
+    # リポジトリの有効化 (OL10 では oracle-epel-release-el10 により EPEL が自動的に有効化されます)
     dnf config-manager --enable \
         ol${OL_VERSION}_codeready_builder && \
     if [ "${OL_VERSION}" = "8" ] || [ "${OL_VERSION}" = "9" ]; then \
@@ -61,8 +61,8 @@ RUN dnf install -y \
     test -x /usr/bin/newgidmap && \
     chmod u+s /usr/bin/newuidmap /usr/bin/newgidmap && \
     touch /etc/containers/nodocker && \
-    # Node.js 24: OL8/OL9 はモジュール有効化、OL10 は NodeSource リポジトリを使用
-    # (OL10 は RHEL 10 ベースのため DNF モジュールシステムが廃止されており使用不可)
+    # Node.js 24: OL8/OL9 はモジュールを有効化し、OL10 は NodeSource リポジトリを使用します。
+    # (OL10 は RHEL 10 ベースであり、DNF モジュールシステムが廃止されているため利用できません)
     if [ "${OL_VERSION}" = "8" ] || [ "${OL_VERSION}" = "9" ]; then \
         dnf module -y enable nodejs:24; \
     else \
@@ -249,7 +249,7 @@ RUN dnf install -y \
         pytest \
         pytest-cov \
         yamllint && \
-    # ビルド時に有効化したリポジトリをデフォルト無効化
+    # ビルド時に有効化したリポジトリを既定で無効化
     if [ "${OL_VERSION}" = "8" ]; then \
         dnf config-manager --disable ol8_codeready_builder 2>/dev/null || true; \
         dnf config-manager --disable ol8_developer_EPEL 2>/dev/null || true; \
@@ -522,7 +522,7 @@ ENV CHROME_PATH="/usr/local/bin/chrome" \
     PUPPETEER_SKIP_DOWNLOAD="true"
 
 # Mermaid CLI 用の Puppeteer 設定
-# コンテナ内では Chrome sandbox を利用できないため、既存 Chrome と no-sandbox を明示する
+# コンテナ内部では Chrome sandbox を利用できないため、インストール済みの Chrome パスと --no-sandbox を明示的に指定します。
 RUN install -d /etc/mermaid && \
     printf '%s\n' \
         '{' \
@@ -543,9 +543,9 @@ RUN echo "Processing manual pages with mandb..."; \
     mandb > /dev/null 2>&1
 
 # SSH ホストキーの配置または生成
-# keys にssh_host_*_key* が存在する場合は、ファイルを /etc/ssh にコピーし適切なオーナー、パーミッションを設定
-# 存在しない場合は、SSH ホストキーの生成
-# SSH ホストキー生成後の再接続時は `ssh-keygen -R "[127.0.0.1]:40822"` などを行い過去のホストキーをクリアすること
+# keys/ に ssh_host_*_key* が存在する場合は /etc/ssh へコピーし、所有者と権限を設定します。
+# 存在しない場合は SSH ホストキーを新規生成します。
+# ホストキーの再生成後に接続する場合は、ssh-keygen -R "[127.0.0.1]:40822" を実行して過去のホストキーキャッシュを破棄してください。
 ADD keys /tmp/keys/
 RUN if [ -n "$(ls -A /tmp/keys/ssh_host_*_key* 2>/dev/null)" ]; then \
         echo "Using existing SSH host keys"; \
@@ -585,7 +585,7 @@ RUN chown root:root /usr/local/bin/entrypoint.sh && \
     chown root:root /usr/local/bin/devcontainer-entrypoint.sh && \
     chmod 0755 /usr/local/bin/devcontainer-entrypoint.sh
 
-# 利用者による DNF 操作では明示的な -y を必要とする
+# 利用者による DNF 操作時に明示的な -y 指定を必須化します。
 RUN dnf config-manager --save --setopt=assumeyes=False
 
 # エントリーポイントの設定

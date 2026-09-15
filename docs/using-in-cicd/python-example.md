@@ -1,6 +1,6 @@
 # Python プロジェクトのサンプル
 
-このドキュメントでは、Python プロジェクトで Oracle Linux 開発用コンテナイメージを使用する GitHub Actions ワークフローの例を示します。
+このドキュメントでは、Python プロジェクトにおいて Oracle Linux 開発用コンテナイメージを活用する GitHub Actions ワークフローの構築例を説明します。
 
 ## 完全なワークフロー例
 
@@ -95,7 +95,7 @@ jobs:
 
 ### 1. 仮想環境の作成
 
-Python の依存関係を分離するために仮想環境を使用します。
+システム環境とプロジェクト固有のライブラリを分離するため、`venv` を用いて仮想環境を作成します。
 
 ```yaml
 - name: Create virtual environment
@@ -107,6 +107,8 @@ Python の依存関係を分離するために仮想環境を使用します。
 
 ### 2. 依存関係のインストール
 
+`pip` コマンドを使用してプロジェクトの依存パッケージをインストールします。
+
 ```yaml
 - name: Install dependencies
   run: |
@@ -114,7 +116,7 @@ Python の依存関係を分離するために仮想環境を使用します。
     pip install -r requirements.txt
 ```
 
-開発用の依存関係を含む場合：
+開発用の依存パッケージを別ファイルで管理している場合は、追加でインストールします。
 
 ```yaml
 - name: Install dependencies
@@ -126,6 +128,8 @@ Python の依存関係を分離するために仮想環境を使用します。
 
 ### 3. コードフォーマットチェック (Black)
 
+Black を使用してコードのフォーマットを検証します。
+
 ```yaml
 - name: Format check with black
   run: |
@@ -133,7 +137,7 @@ Python の依存関係を分離するために仮想環境を使用します。
     black --check src/ tests/
 ```
 
-自動修正する場合：
+フォーマットの自動修正を実行する場合は、次のように記述します。
 
 ```yaml
 - name: Format code with black
@@ -142,7 +146,9 @@ Python の依存関係を分離するために仮想環境を使用します。
     black src/ tests/
 ```
 
-### 4. リンター (flake8)
+### 4. リンターによる検証 (flake8)
+
+flake8 を使用して構文エラーやスタイル違反を静的検査します。
 
 ```yaml
 - name: Lint with flake8
@@ -169,7 +175,9 @@ exclude =
     dist
 ```
 
-### 5. 型チェック (mypy)
+### 5. 静的型チェック (mypy)
+
+mypy を使用して静的型チェックを実行します。
 
 ```yaml
 - name: Type check with mypy
@@ -190,6 +198,8 @@ disallow_untyped_defs = True
 
 ### 6. テストの実行 (pytest)
 
+pytest を使用してユニットテストを実行し、テスト結果やコードカバレッジを出力します。
+
 ```yaml
 - name: Run tests
   run: |
@@ -197,7 +207,7 @@ disallow_untyped_defs = True
     python -m pytest -v
 ```
 
-カバレッジ付きで実行：
+カバレッジ計測を含めて実行する場合：
 
 ```yaml
 - name: Run tests with coverage
@@ -220,11 +230,9 @@ addopts =
     --tb=short
 ```
 
-## 複数の Python バージョンでテスト
+## 複数の Python バージョンでの検証
 
-このコンテナの既定の Python には `pytest` および `pytest-cov` が組み込まれています。ただし、`actions/setup-python` で別の Python バージョンを選択する場合は、選択した Python 環境へ `pytest` をインストールする必要があります。
-
-複数バージョンでテストする場合：
+当コンテナの既定の Python 環境には `pytest` および `pytest-cov` がプリインストールされています。マトリクスビルド等で `actions/setup-python` を用いて別の Python バージョンを選択する場合は、対象環境へ別途 `pytest` をインストールする必要があります。
 
 ```yaml
 jobs:
@@ -253,6 +261,8 @@ jobs:
 
 ## Poetry を使用する場合
 
+パッケージおよび依存関係管理ツールとして Poetry を使用する場合の設定例です。
+
 ```yaml
 steps:
   - uses: actions/checkout@v4
@@ -279,6 +289,8 @@ steps:
 ```
 
 ## Django プロジェクト
+
+Django アプリケーションのマイグレーション、テスト、静的ファイル収集を行う設定例です。
 
 ```yaml
 steps:
@@ -310,6 +322,8 @@ steps:
 
 ## Flask アプリケーション
 
+Flask アプリケーションのテストおよび動作検証を行う設定例です。
+
 ```yaml
 steps:
   - uses: actions/checkout@v4
@@ -335,9 +349,11 @@ steps:
       curl -f http://localhost:5000/health || exit 1
 ```
 
-## セキュリティチェック
+## セキュリティ検証
 
-### Safety で脆弱性チェック
+### Safety による脆弱性検証
+
+Safety を使用してインストール済みパッケージに既知の脆弱性が存在しないかを検証します。
 
 ```yaml
 - name: Check for security vulnerabilities
@@ -347,7 +363,9 @@ steps:
     safety check
 ```
 
-### Bandit で静的解析
+### Bandit による静的セキュリティ解析
+
+Bandit を使用して Python ソースコード内の一般的なセキュリティ問題を静的解析します。
 
 ```yaml
 - name: Run Bandit security linter
@@ -359,7 +377,7 @@ steps:
 
 ## パッケージのビルドと公開
 
-### PyPI への公開
+Python パッケージを wheel / sdist 形式にビルドし、PyPI へ公開する場合の設定例です。
 
 ```yaml
 jobs:
@@ -392,7 +410,9 @@ jobs:
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
 ```
 
-## Jupyter Notebook のテスト
+## Jupyter Notebook の実行検証
+
+nbconvert を使用して Jupyter Notebook ファイルがエラーなく実行できるかを検証する設定例です。
 
 ```yaml
 - name: Install nbconvert

@@ -2,7 +2,8 @@
 
 ## 概要
 
-リポジトリ `oracle-linux-container` は Oracle Linux 8、9、10 に対応しており、将来のバージョン追加も容易な構造となっている。マルチインスタンス対応と組み合わせ、`./storage/{version}/{instance}/` の階層構造でデータを管理する。
+リポジトリ `oracle-linux-container` は Oracle Linux 8、9、10 に対応しており、将来のバージョン追加も容易な構造となっています。
+マルチインスタンス対応と組み合わせ、`./storage/{version}/{instance}/` の階層構造でデータを管理します。
 
 ## 設計方針
 
@@ -17,7 +18,7 @@
 
 ## ポート番号体系
 
-```
+```text
 OL8  インスタンス1: 40822  インスタンス2: 40823  インスタンス3: 40824 ...
 OL9  インスタンス1: 40922  インスタンス2: 40923  インスタンス3: 40924 ...
 OL10 インスタンス1: 41022  インスタンス2: 41023  インスタンス3: 41024 ...
@@ -25,16 +26,17 @@ OL10 インスタンス1: 41022  インスタンス2: 41023  インスタンス3
 
 計算式: `40000 + (OL_VERSION * 100) + (21 + INSTANCE_NUM)`
 
-複数インスタンス (1〜9) の同時起動が可能であり、バージョン間のポート衝突も発生しない。
+複数インスタンス (1〜9) の同時起動が可能であり、バージョン間のポート衝突も発生しません。
 
 ## 実装詳細
 
 ### `version-config.sh` — 共通設定ファイル
 
-全スクリプトから `source` される共通設定ファイル。バージョンとインスタンス番号に基づいて以下の変数を設定する。
+全スクリプトから `source` される共通設定ファイルです。
+バージョンとインスタンス番号に基づいて次の変数を設定します。
 
-```
-引数: $1 = OL_VERSION (デフォルト: 8), $2 = INSTANCE_NUM (デフォルト: 1)
+```text
+引数: $1 = OL_VERSION (既定値: 8), $2 = INSTANCE_NUM (既定値: 1)
 
 設定される変数:
 - OL_VERSION         バージョン番号 (8, 9, or 10)
@@ -46,11 +48,12 @@ OL10 インスタンス1: 41022  インスタンス2: 41023  インスタンス3
 - BASE_IMAGE         OCI ベースイメージ (例: oraclelinux:8)
 ```
 
-冪等性を考慮し、変数 (`CONTAINER_INSTANCE`) が設定済みの場合は再設定をスキップする。バージョンは 8、9、10 のみ受け付け、それ以外はエラーとなる。
+冪等性を考慮し、変数 (`CONTAINER_INSTANCE`) が設定済みの場合は再設定をスキップします。
+バージョンは 8、9、10 のみ受け付け、それ以外はエラーとなります。
 
 ### `src/Dockerfile` — マルチバージョン対応
 
-単一の Dockerfile で `ARG OL_VERSION` による条件分岐を行い、OL8/OL9/OL10 をサポートする。
+単一の Dockerfile で `ARG OL_VERSION` による条件分岐を行い、OL8/OL9/OL10 をサポートします。
 
 **ベースイメージ**:
 
@@ -73,19 +76,19 @@ ARG OL_VERSION
 | doxybook2 | `linux-el8-x64` | `linux-el9-x64` | `linux-el10-x64` |
 | OL8互換ライブラリ | あり | 不要 | 不要 |
 
-条件分岐は RUN ブロック内でOL8、OL9、OL10を明示して実装している。
+条件分岐は RUN ブロック内で OL8、OL9、OL10 を明示して実装しています。
 
 **alternatives 設定**:
 
-Java と Python の alternatives はバージョンに応じたパターンで設定し、`java`、`javac`、`python3`、`pip3` コマンドが適切なバージョンを指すようにしている。
+Java と Python の alternatives はバージョンに応じたパターンで設定し、`java`、`javac`、`python3`、`pip3` コマンドが適切なバージョンを指すようにしています。
 
 **doxybook2**:
 
-GitHub リポジトリ (`Hondarer/doxybook2-bin`) から `linux-el${OL_VERSION}-x64` のバイナリを取得してインストールする。
+GitHub リポジトリ (`Hondarer/doxybook2-bin`) から `linux-el${OL_VERSION}-x64` のバイナリを取得してインストールします。
 
 ### シェルスクリプト — バージョン指定による操作
 
-全スクリプトは先頭で `version-config.sh` を source し、第1引数でバージョンを指定する。
+全スクリプトは先頭で `version-config.sh` を source し、第1引数でバージョンを指定します。
 
 #### `build-pod.sh`
 
@@ -105,7 +108,7 @@ GitHub リポジトリ (`Hondarer/doxybook2-bin`) から `linux-el${OL_VERSION}-
   - `-p ${SSH_HOST_PORT}:22` でバージョン別ポートを割り当て
   - 環境変数 `HOST_USER`、`HOST_UID`、`HOST_GID` でユーザー情報を渡す
 
-**ストレージ移行ガイダンス**: 旧構造 (`./storage/1/`) が検出された場合、新構造 (`./storage/8/1/`) への移行メッセージを表示する。
+**ストレージ移行案内**: 旧構造 (`./storage/1/`) が検出された場合、新構造 (`./storage/8/1/`) への移行メッセージを表示します。
 
 #### `stop-pod.sh`
 
@@ -119,7 +122,7 @@ GitHub リポジトリ (`Hondarer/doxybook2-bin`) から `linux-el${OL_VERSION}-
 
 ### GitHub Actions ワークフロー — マトリックスビルド
 
-`.github/workflows/build-and-publish.yml` にて、`strategy.matrix.ol_version: ["8", "9", "10"]` により OL8、OL9、OL10 を並列にビルド・テスト・公開する。
+`.github/workflows/build-and-publish.yml` にて、`strategy.matrix.ol_version: ["8", "9", "10"]` により OL8、OL9、OL10 を並列にビルド・テスト・公開します。
 
 - **イメージ名**: `oracle-linux-{8|9|10}-dev`
 - **ビルド引数**: `--build-arg OL_VERSION=${{ matrix.ol_version }}`
@@ -131,20 +134,20 @@ GitHub リポジトリ (`Hondarer/doxybook2-bin`) から `linux-el${OL_VERSION}-
 
 ### Dev Container 設定 — バージョン別構成
 
-`examples/devcontainer/` に OL8、OL9、OL10 の個別設定を配置している。
+`examples/devcontainer/` に OL8、OL9、OL10 の個別設定を配置しています。
 
-```
+```text
 examples/devcontainer/
-├── README.md
-├── ol8/
-│   └── devcontainer.json
-├── ol9/
-│   └── devcontainer.json
-└── ol10/
-    └── devcontainer.json
+|-- README.md
+|-- ol8/
+|   \-- devcontainer.json
+|-- ol9/
+|   \-- devcontainer.json
+\-- ol10/
+    \-- devcontainer.json
 ```
 
-両バージョン共通の設定:
+全バージョン共通の設定:
 - イメージ: `ghcr.io/hondarer/oracle-linux-container/oracle-linux-{8|9|10}-dev:latest`
 - postCreateCommand: `devcontainer-entrypoint.sh` を root で実行し、動的にユーザーを作成
 - SSH 鍵: ホストの `~/.ssh` を読み取り専用でマウント
@@ -153,12 +156,12 @@ examples/devcontainer/
 
 ### WSL インポートスクリプト — バージョンパラメータ対応
 
-`examples/import-wsl/import-wsl.ps1` は GitHub Releases から取得した WSL rootfs を WSL2 にインポートする。
+`examples/import-wsl/import-wsl.ps1` は GitHub Releases から取得した WSL rootfs を WSL2 にインポートします。
 
 - **標準入力**: GitHub Releases から取得した `tar.gz` を `-RootFsPath` で指定
 - **ディストリビューション名**: `-WslDistroName` で指定 (必須)
 - **処理フロー**: ローカル rootfs 指定 → WSL インポート → 動作テスト
-- **安全性**: 既存ディストリビューションがある場合、データ消失の警告を表示
+- **安全性**: 既存ディストリビューションが存在する場合、データ消失の警告を表示
 
 ## OL8、OL9、OL10 のパッケージ差分
 
@@ -174,11 +177,11 @@ examples/devcontainer/
 
 ## バージョン拡張
 
-新しい Oracle Linux バージョン (例: OL11) を追加する場合:
+新しい Oracle Linux バージョン (例: OL11) を追加する場合は、次の手順を実施します。
 
-1. `version-config.sh` のバージョンバリデーションに追加
+1. `version-config.sh` のバージョン検証処理に追加
 2. `src/Dockerfile` にパッケージの条件分岐を追加
 3. GitHub Actions のマトリックスにバージョンを追加
 4. `examples/devcontainer/` にバージョン別設定を追加
 
-シェルスクリプト (`build-pod.sh` 等) は `version-config.sh` 経由でバージョンを受け取るため、変更不要である。
+シェルスクリプト (`build-pod.sh` 等) は `version-config.sh` 経由でバージョンを受け取るため、変更は不要です。

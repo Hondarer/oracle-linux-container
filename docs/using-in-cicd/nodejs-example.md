@@ -1,6 +1,6 @@
 # Node.js プロジェクトのサンプル
 
-このドキュメントでは、Node.js プロジェクトで Oracle Linux 開発用コンテナイメージを使用する GitHub Actions ワークフローの例を示します。
+このドキュメントでは、Node.js プロジェクトにおいて Oracle Linux 開発用コンテナイメージを活用する GitHub Actions ワークフローの構築例を説明します。
 
 ## 完全なワークフロー例
 
@@ -79,7 +79,7 @@ jobs:
 
 ### 1. キャッシュの設定
 
-依存関係のインストール時間を短縮するためにキャッシュを活用します。
+パッケージインストール時間を短縮するため、キャッシュアクションを活用します。
 
 ```yaml
 - name: Cache Node.js modules
@@ -93,25 +93,26 @@ jobs:
       ${{ runner.os }}-node-
 ```
 
-**注意**: このコンテナでは npm のプレフィックスが `~/.node_modules` に設定されています。
+> [!NOTE]
+> 当コンテナでは npm のプレフィックスが `~/.node_modules` に設定されています。
 
 ### 2. 依存関係のインストール
 
-`npm ci` を使用してクリーンインストールします。
+再現性のある依存関係インストールのために `npm ci` を使用します。
 
 ```yaml
 - name: Install dependencies
   run: npm ci
 ```
 
-`npm install` との違い：
-- `npm ci` は package-lock.json に厳密に従う
-- より高速で再現性が高い
-- CI/CD 環境に推奨
+`npm ci` と `npm install` の相違点：
+- `package-lock.json` に厳密に従ってインストールを実行
+- 既存の `node_modules` を削除してからインストールするため、ビルド再現性が高い
+- 差分解決のオーバーヘッドがなく高速なため、CI/CD パイプラインでの利用に最適
 
 ### 3. コード品質チェック
 
-ESLint でコードをチェックします。
+ESLint を使用して静的コード解析を実行します。
 
 ```yaml
 - name: Lint code
@@ -133,7 +134,7 @@ ESLint でコードをチェックします。
 
 ### 4. TypeScript のビルド
 
-TypeScript プロジェクトの場合のビルド設定です。
+TypeScript プロジェクトにおいて JavaScript へのトランスパイルを行う設定例です。
 
 ```yaml
 - name: Build TypeScript
@@ -156,7 +157,7 @@ TypeScript プロジェクトの場合のビルド設定です。
 
 ### 5. テストの実行
 
-Jest を使用したテストの例です。
+Jest を使用してユニットテストを実行し、カバレッジを測定する設定例です。
 
 ```yaml
 - name: Run tests with coverage
@@ -198,6 +199,8 @@ module.exports = {
 
 ## Mocha/Chai を使用する場合
 
+テストフレームワークとして Mocha / Chai を使用する場合の設定例です。
+
 ```yaml
 steps:
   - uses: actions/checkout@v4
@@ -226,9 +229,9 @@ steps:
 }
 ```
 
-## 複数の Node.js バージョンでテスト
+## 複数の Node.js バージョンでの検証
 
-複数のバージョンでテストする場合（このコンテナには Node.js 24 がインストール済み）：
+マトリクスビルドを使用して複数の Node.js バージョンで検証する場合の記述例です。
 
 ```yaml
 jobs:
@@ -249,11 +252,12 @@ jobs:
       - run: npm test
 ```
 
-**注意**: このコンテナイメージを使用する場合は Node.js 24 が固定されるため、複数バージョンのテストには `setup-node` アクションを使用するか、別のコンテナイメージを使用してください。
+> [!NOTE]
+> 当コンテナイメージには Node.js 24 がプリインストールされています。異なるバージョンでテストを実施する場合は、`actions/setup-node` を使用するか、対象バージョンのコンテナイメージを指定してください。
 
 ## パッケージの公開
 
-npm パッケージを公開する例です。
+ビルドしたパッケージを npm レジストリへ公開する場合の設定例です。
 
 ```yaml
 jobs:
@@ -276,7 +280,9 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
-## フロントエンドプロジェクト (React/Vue/Angular)
+## フロントエンドプロジェクト (React / Vue / Angular)
+
+React や Vue.js などのフロントエンドアプリケーションをビルド・テストする場合の設定例です。
 
 ### React プロジェクト
 
@@ -321,7 +327,9 @@ steps:
       path: dist/
 ```
 
-## E2E テスト (Playwright/Cypress)
+## E2E テスト (Playwright / Cypress)
+
+Playwright や Cypress を使用した End-to-End (E2E) テストの実行例です。
 
 ### Playwright の例
 
@@ -371,6 +379,8 @@ steps:
 
 ## セキュリティ監査
 
+プロジェクト依存関係の脆弱性検査およびパッケージの更新状態確認を行う設定例です。
+
 ```yaml
 steps:
   - uses: actions/checkout@v4
@@ -384,7 +394,7 @@ steps:
 
 ## Docker イメージのビルド
 
-Node.js アプリケーションを Docker イメージとしてビルドする場合：
+Node.js アプリケーションを実行用コンテナイメージとしてビルドし、レジストリへプッシュする例です。
 
 ```yaml
 steps:

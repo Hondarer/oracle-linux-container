@@ -1,10 +1,10 @@
 # トラブルシューティング
 
-このドキュメントでは、Oracle Linux 開発用コンテナイメージを CI/CD パイプラインで使用する際によくある問題と解決方法を説明します。
+このドキュメントでは、Oracle Linux 開発用コンテナイメージを CI/CD パイプラインで運用する際に発生しやすい問題と、その解決方法を説明します。
 
 ## ナビゲーション
 
-- [CI/CD でのコンテナイメージ利用ガイド](../using-in-cicd.md) - メインガイド
+- [CI/CD でのコンテナイメージ利用ガイド](./README.md) - メインガイド
 - [高度な設定](./advanced-configuration.md) - 高度な設定オプション
 - [ベストプラクティス](./best-practices.md) - 推奨される運用方法
 
@@ -26,7 +26,7 @@
 Error: useradd: UID 1000 is not unique
 ```
 
-**解決方法**: 既存の UID と競合しています。別の UID を指定してください。
+**解決策**: 既存の UID と競合しています。コンテナ環境内で重複しない別の UID を指定します。
 
 ```yaml
 container:
@@ -41,7 +41,7 @@ container:
 Error: sshd: no hostkeys available
 ```
 
-**解決方法**: SSH ホストキーが正しく配置されていることを確認してください。コンテナイメージには事前に SSH ホストキーが含まれています。
+**解決策**: SSH ホストキーが正しく配置されているか確認します。コンテナイメージには事前に SSH ホストキーが含まれていますが、独自の設定で上書きしている場合はパーミッションや配置先を確認してください。
 
 ## 権限エラー
 
@@ -51,7 +51,7 @@ Error: sshd: no hostkeys available
 Error: Permission denied
 ```
 
-**解決方法**: UID/GID が正しく設定されているか確認してください。
+**解決策**: ホストまたはランナー環境と整合するよう、UID/GID の設定値を確認・調整します。
 
 ```yaml
 container:
@@ -68,7 +68,7 @@ container:
 Error: user is not in the sudoers file
 ```
 
-**解決方法**: entrypoint.sh が正常に実行され、ユーザーが wheel グループに追加されていることを確認してください。
+**解決策**: `entrypoint.sh` が正常に実行され、対象ユーザーが `wheel` グループに追加されているか確認します。
 
 ```yaml
 steps:
@@ -86,7 +86,7 @@ steps:
 Error: virtual memory exhausted: Cannot allocate memory
 ```
 
-**解決方法**: 並列ビルドの数を制限するか、より大きなランナーを使用してください。
+**解決策**: 並列ビルド数（`-j` オプション）を制限するか、より大きなメモリリソースを持つランナーインスタンスを使用します。
 
 ```yaml
 steps:
@@ -101,7 +101,7 @@ steps:
 Error: command not found
 ```
 
-**解決方法**: 必要なパッケージをインストールしてください。
+**解決策**: 実行に必要なパッケージを `dnf` でインストールします。
 
 ```yaml
 steps:
@@ -116,7 +116,7 @@ steps:
 bash: pytest: command not found
 ```
 
-**解決方法**: 推奨方法は、`pytest` および `pytest-cov` を仮想環境内にインストールすることです。これにより、テスト対象の依存関係と同じ Python 環境で pytest が動作します。
+**解決策**: 推奨される対処方法は、`pytest` および `pytest-cov` を仮想環境内にインストールすることです。これにより、テスト対象の依存関係と同一の Python 環境で pytest が動作します。
 
 ```bash
 python -m venv venv
@@ -141,7 +141,7 @@ python -m pytest -v
 Error: unauthorized: authentication required
 ```
 
-**解決方法**: 認証情報が正しく設定されているか確認してください。
+**解決策**: レジストリに対する認証情報（トークンや権限）が正しく設定されているか確認します。
 
 ```yaml
 container:
@@ -150,11 +150,13 @@ container:
     password: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-プライベートイメージの場合は、適切な権限を持つトークンを使用してください。
+プライベートイメージを利用する場合は、パッケージの読み取り権限（`read:packages`）を持つトークンを設定します。
 
 ## デバッグ方法
 
-### コンテナ内の状態を確認
+### コンテナ内の状態確認
+
+問題発生時にコンテナ環境の詳細情報を出力して原因を切り分けます。
 
 ```yaml
 steps:
@@ -185,7 +187,9 @@ steps:
       cat /proc/cpuinfo | grep "model name" | head -1
 ```
 
-### entrypoint.sh のログを確認
+### entrypoint.sh のログ確認
+
+`entrypoint.sh` の詳細な実行ログを確認し、ユーザー作成や権限設定の失敗原因を調査します。
 
 ```yaml
 steps:
@@ -198,14 +202,14 @@ steps:
 
 ## 関連ドキュメント
 
-- [CI/CD でのコンテナイメージ利用ガイド](../using-in-cicd.md) - メインガイド
+- [CI/CD でのコンテナイメージ利用ガイド](./README.md) - メインガイド
 - [高度な設定](./advanced-configuration.md) - 高度な設定オプション
 - [ベストプラクティス](./best-practices.md) - 推奨される運用方法
 - [GitHub Container Registry への公開ガイド](../publishing-to-github.md) - イメージの公開方法
 
 ## サポート
 
-問題が発生した場合は、以下のリソースを参照してください：
+問題が解決しない場合は、次のリソースを参照してください。
 
 - [GitHub Issues](https://github.com/<user>/<repo>/issues) - バグ報告や機能リクエスト
 - [GitHub Actions ドキュメント](https://docs.github.com/en/actions) - GitHub Actions の公式ドキュメント

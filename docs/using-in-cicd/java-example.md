@@ -1,6 +1,6 @@
 # Java プロジェクトのサンプル
 
-このドキュメントでは、Java プロジェクト（Maven）で Oracle Linux 開発用コンテナイメージを使用する GitHub Actions ワークフローの例を示します。
+このドキュメントでは、Java プロジェクトにおいて Oracle Linux 開発用コンテナイメージを活用する GitHub Actions ワークフロー（Maven / Gradle）の構築例を説明します。
 
 ## 完全なワークフロー例 (Maven)
 
@@ -75,6 +75,8 @@ jobs:
 
 ### 1. Maven のインストール
 
+コンテナ環境で Maven を使用するため、`dnf` コマンドでパッケージをインストールします。
+
 ```yaml
 - name: Install Maven
   run: sudo dnf install -y maven
@@ -82,7 +84,7 @@ jobs:
 
 ### 2. キャッシュの設定
 
-Maven の依存関係をキャッシュして高速化します。
+Maven の依存関係（ローカルリポジトリ）をキャッシュし、ビルド時間を短縮します。
 
 ```yaml
 - name: Cache Maven packages
@@ -96,33 +98,40 @@ Maven の依存関係をキャッシュして高速化します。
 
 ### 3. ビルド
 
+`mvn package` コマンドでアプリケーションをビルドおよびパッケージングします。
+
 ```yaml
 - name: Build with Maven
   run: mvn clean package -DskipTests
 ```
 
-よく使う Maven フェーズ：
-- `clean`: ビルド成果物をクリーンアップ
+#### 主な Maven ライフサイクルフェーズ
+
+- `clean`: 以前のビルド成果物を削除
 - `compile`: ソースコードをコンパイル
-- `test`: テストを実行
-- `package`: JAR/WAR を作成
-- `install`: ローカルリポジトリにインストール
+- `test`: ユニットテストを実行
+- `package`: JAR/WAR などのアーカイブ形式にパッケージング
+- `install`: パッケージをローカルリポジトリへ登録
 
 ### 4. テストの実行
+
+`mvn test` コマンドでユニットテストを実行します。
 
 ```yaml
 - name: Run tests
   run: mvn test
 ```
 
-特定のテストクラスのみ実行：
+特定のテストクラスのみを実行する場合は、次のように `-Dtest` オプションを指定します。
 
 ```yaml
 - name: Run specific tests
   run: mvn test -Dtest=MyTestClass
 ```
 
-### 5. コードカバレッジ (JaCoCo)
+### 5. コードカバレッジの測定 (JaCoCo)
+
+JaCoCo プラグインを使用してテスト実行時のカバレッジレポートを生成し、外部サービスへ送信します。
 
 ```yaml
 - name: Run tests with coverage
@@ -164,6 +173,8 @@ Maven の依存関係をキャッシュして高速化します。
 
 ## Gradle を使用する場合
 
+ビルドツールとして Gradle を使用する場合の設定例です。Gradle Wrapper (`gradlew`) やキャッシュの設定を含みます。
+
 ```yaml
 jobs:
   build-and-test:
@@ -204,6 +215,8 @@ jobs:
 
 ## Spring Boot アプリケーション
 
+Spring Boot アプリケーションをビルドし、コンテナ内でのスモークテスト（起動確認とヘルスチェック）を行うワークフロー例です。
+
 ```yaml
 steps:
   - uses: actions/checkout@v4
@@ -227,7 +240,7 @@ steps:
       java -jar target/*.jar &
       APP_PID=$!
 
-      # アプリケーションの起動を待つ
+      # アプリケーションの起動を待機
       sleep 30
 
       # ヘルスチェック
@@ -238,6 +251,8 @@ steps:
 ```
 
 ## マルチモジュールプロジェクト
+
+マルチモジュール構成のプロジェクトを一括ビルド・テストする場合の設定例です。
 
 ```yaml
 steps:
@@ -264,7 +279,9 @@ steps:
         module2/target/*.jar
 ```
 
-## 静的解析 (SpotBugs, Checkstyle)
+## 静的コード解析 (SpotBugs, Checkstyle)
+
+コード品質とコーディング規約を検証するため、SpotBugs や Checkstyle プラグインを実行します。
 
 ```yaml
 - name: Run static analysis
@@ -292,7 +309,9 @@ steps:
 </build>
 ```
 
-## デプロイ
+## パッケージのデプロイ
+
+ビルドした成果物を各種パッケージリポジトリへ配布する場合の設定例です。
 
 ### Maven Central へのデプロイ
 

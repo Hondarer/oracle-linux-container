@@ -1,10 +1,10 @@
 ﻿# Oracle Linux 開発環境を WSL2 にインポートする PowerShell スクリプト
 #
-# このスクリプトは、GitHub Releases から取得した WSL2 用 rootfs (tar.gz または tar) を使って、
+# このスクリプトは、GitHub Releases から取得した WSL2 用 rootfs (tar.gz または tar) を使用し、
 # WSL2 ディストリビューションとしてインポートします。
 #
 # 前提条件:
-# - Windows 10 (1803以降) または Windows 11
+# - Windows 10 バージョン 2004 以降 (ビルド 19041 以降) または Windows 11
 # - WSL2 がインストール済み
 #
 # 使用する Windows 標準機能:
@@ -119,8 +119,8 @@ function Prompt-ReimportMode {
     Write-WarningMsg "警告: 既存のディストリビューション '$DistroName' が見つかりました"
     Write-Host ""
     Write-WarningMsg "  このディストリビューションを削除すると、現在の登録は置き換えられます:"
-    Write-Host "  - クリーン再作成を選ぶと、既存のホームディレクトリ内データは失われます"
-    Write-Host "  - 移行を選ぶと、/home 配下を tar.gz で圧縮退避してから復元します"
+    Write-Host "  - クリーンな再作成を選択した場合、既存のホームディレクトリ内のデータは失われます"
+    Write-Host "  - 移行を選択した場合、/home 配下を tar.gz 形式で圧縮退避してから復元します"
     Write-Host "  - /home ディレクトリ自体は置き換えず、配下のファイルとディレクトリを移行します"
     Write-Host ""
     Write-Host "再作成方法を選択してください:"
@@ -298,13 +298,13 @@ function Main {
     Write-Host ""
 
     try {
-        # 前提条件チェック
+        # 前提条件の確認
         Write-Step "前提条件をチェック中"
 
         # WSL2 の確認
         $wslVersion = wsl --version 2>&1
         if ($LASTEXITCODE -ne 0) {
-            throw "WSL2 がインストールされていません。'wsl --install' を実行してください。"
+            throw "WSL2 がインストールされていません。'wsl --install --no-distribution' を実行してください。"
         }
         Write-Success "WSL2 が利用可能です"
 
@@ -319,7 +319,7 @@ function Main {
             throw "rootfs ファイルのパスを -RootFsPath で指定してください。GitHub Releases から WSL 用 rootfs (tar.gz または tar) をダウンロードして指定してください。"
         }
         if (-not $hasExplicitWslDistroName) {
-            throw "RootFsPath を使ってインストールする場合は -WslDistroName を指定してください"
+            throw "RootFsPath を使用してインストールする場合は -WslDistroName を指定してください"
         }
         if ([string]::IsNullOrEmpty($InstallLocation) -and -not [string]::IsNullOrEmpty($WslDistroName)) {
             $InstallLocation = "$env:LOCALAPPDATA\WSL\$WslDistroName"
@@ -346,7 +346,7 @@ function Main {
         Write-Host "次のコマンドでディストリビューションを起動できます:"
         Write-Output "  wsl -d $WslDistroName"
         Write-Host ""
-        Write-Host "デフォルトのディストリビューションに設定する場合:"
+        Write-Host "既定のディストリビューションに設定する場合:"
         Write-Output "  wsl --set-default $WslDistroName"
         Write-Host ""
         Write-Host "WSL 用 rootfs には既定ユーザー 'user' が事前作成されています。"
@@ -359,12 +359,12 @@ function Main {
         Write-Host "トラブルシューティング:"
         Write-Host "  - RootFsPath で指定した rootfs ファイルが存在するか確認してください"
         Write-Host "  - 持ち込んだ rootfs が WSL 用 tar.gz または tar であることを確認してください"
-        Write-Host "  - RootFsPath を使う場合は -WslDistroName を指定してください"
+        Write-Host "  - RootFsPath を使用する場合は -WslDistroName を指定してください"
         Write-Host "  - WSL2 が正しくインストールされているか確認してください"
         Write-Host ""
         exit 1
     } finally {
-        # クリーンアップの提案
+        # 一時ファイルの削除案内
         if (Test-Path $TempDir) {
             Write-Host ""
             Write-Host "一時ファイルをクリーンアップする場合:"
@@ -374,5 +374,5 @@ function Main {
     }
 }
 
-# スクリプト実行
+# スクリプトの実行
 Main

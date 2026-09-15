@@ -6,14 +6,14 @@
 #   source ./version-config.sh [OL_VERSION] [INSTANCE_NUM]
 #
 # 引数:
-#   OL_VERSION   - Oracle Linux バージョン (デフォルト: 8)
-#   INSTANCE_NUM - インスタンス番号 (デフォルト: 1)
+#   OL_VERSION   - Oracle Linux バージョン (既定値: 8)
+#   INSTANCE_NUM - インスタンス番号 (既定値: 1)
 #
 # 設定される変数:
 #   OL_VERSION, INSTANCE_NUM, CONTAINER_NAME, CONTAINER_INSTANCE,
 #   SSH_HOST_PORT, STORAGE_DIR, BASE_IMAGE
 
-# 既に設定済みの場合はスキップ (build-pod.sh から stop-pod.sh を source する場合など)
+# 設定済みの場合は処理をスキップします (build-pod.sh から stop-pod.sh を source する場合など)。
 if [ -n "${CONTAINER_NAME}" ] && [ -z "${1}" ]; then
     return 0 2>/dev/null || true
 fi
