@@ -108,23 +108,23 @@ podman pull hondarer/oracle-linux-10-dev:latest
 
 ### Node.js パッケージマネージャー支援
 
-- **@antfu/ni** (v30.1.0)
-- **pnpm** (v11.3.0)
+- **@antfu/ni** (v30.5.0)
+- **pnpm** (v12.5.1)
 
 ### ドキュメント・図版生成
 
-- **Doxygen** + doxybook2
-- **PlantUML**
-- **Pandoc** + pandoc-crossref
-- **Marp CLI** (v4.4.0)
-- **Mermaid CLI** (`mmdc`, v11.15.0)
+- **Doxygen** (v1.18.0) + doxybook2 (v1.6.1)
+- **PlantUML** (v1.2026.8)
+- **Pandoc** (v3.11) + pandoc-crossref (v0.3.25a)
+- **Marp CLI** (v4.5.1)
+- **Mermaid CLI** (`mmdc`, v11.17.0)
 - **Widdershins** (v4.0.1)
-- **Puppeteer** / **puppeteer-core** (v24.43.1)
+- **Puppeteer** / **puppeteer-core** (v25.11.0)
 - **MiniSearch** (v7.2.0)
-- **@plantuml/core** (v1.2026.7)
-- **sharp** (v0.34.5)
+- **@plantuml/core** (v1.2026.8)
+- **sharp** (v0.35.4)
 - **minimist** (v1.2.8)
-- **Chrome for Testing** (v148.0.7778.97)
+- **Chrome for Testing** (v153.0.8010.36)
 - **Inkscape** (v1.4.4)
 
 ### テスト・ビルドツール
@@ -142,24 +142,24 @@ podman pull hondarer/oracle-linux-10-dev:latest
 ### ユーティリティ
 
 - **jq**、**tree**、**rsync**、**time**
-- **clang-format**、**git-clang-format** (LLVM 22.1.4)
-- **expect**、**nkf**、**cloc**
-- **editorconfig-checker** (v3.6.1)
+- **clang-format**、**git-clang-format** (LLVM 23.1.1)
+- **expect**、**nkf**、**cloc** (v2.10)
+- **editorconfig-checker** (v3.7.0)
 - **gcovr** (C/C++ カバレッジレポートツール)
-- **yamllint** (YAML 構文・スタイルチェッカー)
+- **yamllint** (v1.38.0。Python 3.9 の OL9 は互換上限の v1.37.1、YAML 構文・スタイルチェッカー)
 - **pytest** / **pytest-cov** (Python テストフレームワーク・カバレッジ計測)
 - **hjson** (Human JSON パーサー)
 - **textlint** (v15.8.0)、**textlint-rule-preset-ja-technical-writing** (v12.0.2)、**textlint-rule-preset-ja-spacing** (v3.0.3)
 - **bubblewrap** (bwrap)
 - **ffmpeg** (RPM Fusion free)
 - **git**、**curl**、**wget**
-- **pwsh** (v7.6.5、PowerShell)
+- **pwsh** (v7.6.6、PowerShell)
 - **Podman**、**podman-compose**、Docker 互換の **docker** コマンド
 
 ### リポジトリ操作 CLI
 
-- **gh** (v2.95.0) — GitHub CLI
-- **glab** (v1.105.0) — GitLab CLI
+- **gh** (v2.101.0) — GitHub CLI
+- **glab** (v1.118.0) — GitLab CLI
 
 ## クイックスタート
 
@@ -262,7 +262,7 @@ mmdc -i diagram.mmd -o diagram.svg \
 
 ### Chrome for Testing と Puppeteer
 
-Chrome for Testing は `/opt/chrome-for-testing/148.0.7778.97/` に配置され、`chrome` コマンドで利用できます。
+Chrome for Testing は `/opt/chrome-for-testing/153.0.8010.36/` に配置され、`chrome` コマンドで利用できます。
 
 ```bash
 chrome --version

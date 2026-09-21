@@ -21,12 +21,12 @@ License: MIT License
 Copyright: OpenJS Foundation and contributors
 URL: https://github.com/nodejs/node
 
-@antfu/ni 30.1.0
+@antfu/ni 30.5.0
 License: MIT License
 Copyright: Anthony Fu and contributors
 URL: https://github.com/antfu-collective/ni
 
-pnpm 11.3.0
+pnpm 12.5.1
 License: MIT License
 Copyright: pnpm contributors
 URL: https://github.com/pnpm/pnpm
@@ -60,28 +60,28 @@ URL: https://cmake.org/
 DOCUMENTATION AND DIAGRAM TOOLS
 ================================================================================
 
-Doxygen 1.14.0
+Doxygen 1.18.0
 License: GNU General Public License v2.0 (GPL-2.0)
 Copyright: Dimitri van Heesch
 URL: https://www.doxygen.nl/
-Source: https://doxygen.nl/files/doxygen-1.14.0.src.tar.gz
+Source: https://doxygen.nl/files/doxygen-1.18.0.src.tar.gz
 
 doxybook2 1.6.1
 License: MIT License
 Copyright: Contributors
 URL: https://github.com/Hondarer/doxybook2-bin
 
-PlantUML 1.2025.4
+PlantUML 1.2026.8
 License: GNU General Public License v3.0 (GPL-3.0)
 Copyright: PlantUML Contributors
 URL: https://plantuml.com/
 
-Pandoc 3.9.0.2
+Pandoc 3.11
 License: GNU General Public License v2.0 or later (GPL-2.0+)
 Copyright: John MacFarlane
 URL: https://pandoc.org/
 
-pandoc-crossref 0.3.24a
+pandoc-crossref 0.3.25a
 License: GNU General Public License v2.0 or later (GPL-2.0+)
 Copyright: Nikolay Yakimov
 URL: https://github.com/lierdakil/pandoc-crossref
@@ -116,7 +116,7 @@ License: MIT License
 Copyright: Christian Zangl
 URL: https://github.com/hjson/hjson-py
 
-yamllint
+yamllint 1.38.0 (OL8/10) / 1.37.1 (OL9, Python 3.9 compatibility limit)
 License: GPL-3.0-or-later
 Copyright: Adrien Vergé and contributors
 URL: https://github.com/adrienverge/yamllint
@@ -160,33 +160,33 @@ License: BSD-like License
 Copyright: Itaru Ichikawa
 URL: https://osdn.net/projects/nkf/
 
-clang-format / LLVM 22.1.4
+clang-format / LLVM 23.1.1
 License: Apache License 2.0 with LLVM Exceptions
 Copyright: LLVM Contributors
 URL: https://github.com/llvm/llvm-project
-Source: https://github.com/llvm/llvm-project/releases/tag/llvmorg-22.1.4
+Source: https://github.com/llvm/llvm-project/releases/tag/llvmorg-23.1.1
 
-cloc (Count Lines of Code) 2.04
+cloc (Count Lines of Code) 2.10
 License: GNU General Public License v2.0 (GPL-2.0)
 Copyright: Al Danial
 URL: https://github.com/AlDanial/cloc
 
-editorconfig-checker 3.6.1
+editorconfig-checker 3.7.0
 License: MIT License
 Copyright: EditorConfig Checker Contributors
 URL: https://github.com/editorconfig-checker/editorconfig-checker
 
-gh (GitHub CLI) 2.95.0
+gh (GitHub CLI) 2.101.0
 License: MIT License
 Copyright: GitHub, Inc.
 URL: https://github.com/cli/cli
 
-glab (GitLab CLI) 1.105.0
+glab (GitLab CLI) 1.118.0
 License: MIT License
 Copyright: GitLab B.V.
 URL: https://gitlab.com/gitlab-org/cli
 
-PowerShell 7.6.5
+PowerShell 7.6.6
 License: MIT License
 Copyright: Microsoft Corporation
 URL: https://github.com/PowerShell/PowerShell
@@ -225,7 +225,7 @@ Original: https://github.com/yuru7/udev-gothic
 JAPANESE LANGUAGE SUPPORT
 ================================================================================
 
-man-pages-ja (Japanese Manual Pages) 20251115
+man-pages-ja (Japanese Manual Pages) 20260115
 License: Various (GPL, BSD, MIT, and others)
 Copyright: JM Project (Japanese Manual Project)
 URL: https://github.com/linux-jm/manual

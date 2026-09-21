@@ -66,16 +66,16 @@ jobs:
             "https://github.com/linux-jm/manual/releases/download/v20260115/man-pages-ja-20260115.tar.gz"
 
           download_package "pandoc" \
-            "pandoc-3.9.0.2-linux-amd64.tar.gz" \
-            "https://github.com/jgm/pandoc/releases/download/3.9.0.2/pandoc-3.9.0.2-linux-amd64.tar.gz"
+            "pandoc-3.11-linux-amd64.tar.gz" \
+            "https://github.com/jgm/pandoc/releases/download/3.11/pandoc-3.11-linux-amd64.tar.gz"
 
           download_package "pandoc-crossref" \
-            "pandoc-crossref-0.3.24a-Linux-X64.tar.xz" \
-            "https://github.com/lierdakil/pandoc-crossref/releases/download/v0.3.24a/pandoc-crossref-Linux-X64.tar.xz"
+            "pandoc-crossref-0.3.25a-Linux-X64.tar.xz" \
+            "https://github.com/lierdakil/pandoc-crossref/releases/download/v0.3.25a/pandoc-crossref-Linux-X64.tar.xz"
 
           download_package "plantuml" \
-            "plantuml-1.2026.2.jar" \
-            "https://github.com/plantuml/plantuml/releases/download/v1.2026.2/plantuml-1.2026.2.jar"
+            "plantuml-1.2026.8.jar" \
+            "https://github.com/plantuml/plantuml/releases/download/v1.2026.8/plantuml-1.2026.8.jar"
 
           download_package "inkscape" \
             "Inkscape-1.4.4.AppImage" \
@@ -83,38 +83,42 @@ jobs:
             "https://inkscape.org/gallery/item/59506/Inkscape-1.4.4.AppImage"
           echo "d217fe05c92faaed5c3af46856b6299c98933dc722819cb5bc2ca052c5522166  src/packages/Inkscape-1.4.4.AppImage" | sha256sum -c -
 
-          download_package "Chrome for Testing 148.0.7778.97" \
-            "chrome-linux64-148.0.7778.97.zip" \
-            "https://storage.googleapis.com/chrome-for-testing-public/148.0.7778.97/linux64/chrome-linux64.zip"
+          download_package "Chrome for Testing 153.0.8010.36" \
+            "chrome-linux64-153.0.8010.36.zip" \
+            "https://storage.googleapis.com/chrome-for-testing-public/153.0.8010.36/linux64/chrome-linux64.zip"
 
           download_package "cloc" \
-            "cloc-2.08.pl" \
-            "https://github.com/AlDanial/cloc/releases/download/v2.08/cloc-2.08.pl"
+            "cloc-2.10.pl" \
+            "https://github.com/AlDanial/cloc/releases/download/v2.10/cloc-2.10.pl"
 
           download_package "editorconfig-checker" \
-            "ec-linux-amd64-v3.6.1.tar.gz" \
-            "https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v3.6.1/ec-linux-amd64.tar.gz"
+            "ec-linux-amd64-v3.7.0.tar.gz" \
+            "https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v3.7.0/ec-linux-amd64.tar.gz"
 
           download_package "doxygen" \
-            "doxygen-1.15.0.src.tar.gz" \
-            "https://github.com/doxygen/doxygen/releases/download/Release_1_15_0/doxygen-1.15.0.src.tar.gz" \
-            "https://doxygen.nl/files/doxygen-1.15.0.src.tar.gz"
+            "doxygen-1.18.0.src.tar.gz" \
+            "https://github.com/doxygen/doxygen/releases/download/Release_1_18_0/doxygen-1.18.0.src.tar.gz" \
+            "https://doxygen.nl/files/doxygen-1.18.0.src.tar.gz"
+
+          download_package "flex 2.6.3 (OL8 Doxygen build dependency)" \
+            "flex-2.6.3.tar.gz" \
+            "https://github.com/westes/flex/releases/download/v2.6.3/flex-2.6.3.tar.gz"
 
           download_package "llvm-project" \
-            "llvm-project-22.1.4.src.tar.xz" \
-            "https://github.com/llvm/llvm-project/releases/download/llvmorg-22.1.4/llvm-project-22.1.4.src.tar.xz"
+            "llvm-project-23.1.1.src.tar.xz" \
+            "https://github.com/llvm/llvm-project/releases/download/llvmorg-23.1.1/llvm-project-23.1.1.src.tar.xz"
 
-          download_package "gh 2.95.0" \
-            "gh_2.95.0_linux_amd64.rpm" \
-            "https://github.com/cli/cli/releases/download/v2.95.0/gh_2.95.0_linux_amd64.rpm"
+          download_package "gh 2.101.0" \
+            "gh_2.101.0_linux_amd64.rpm" \
+            "https://github.com/cli/cli/releases/download/v2.101.0/gh_2.101.0_linux_amd64.rpm"
 
-          download_package "glab 1.105.0" \
-            "glab_1.105.0_linux_amd64.rpm" \
-            "https://gitlab.com/gitlab-org/cli/-/releases/v1.105.0/downloads/glab_1.105.0_linux_amd64.rpm"
+          download_package "glab 1.118.0" \
+            "glab_1.118.0_linux_amd64.rpm" \
+            "https://gitlab.com/gitlab-org/cli/-/releases/v1.118.0/downloads/glab_1.118.0_linux_amd64.rpm"
 
-          download_package "pwsh 7.6.5" \
-            "powershell-7.6.5-1.rh.x86_64.rpm" \
-            "https://github.com/PowerShell/PowerShell/releases/download/v7.6.5/powershell-7.6.5-1.rh.x86_64.rpm"
+          download_package "pwsh 7.6.6" \
+            "powershell-7.6.6-1.rh.x86_64.rpm" \
+            "https://github.com/PowerShell/PowerShell/releases/download/v7.6.6/powershell-7.6.6-1.rh.x86_64.rpm"
 
           for ol_version in 8 9 10; do
             download_package "doxybook2 for el${ol_version}" \
@@ -363,6 +367,18 @@ jobs:
           GCC_MAJOR=$(podman exec $CONTAINER_ID gcc -dumpversion | cut -d. -f1)
           test "$GCC_MAJOR" = "$EXPECTED_GCC"
 
+          echo "=== Development CLI versions ==="
+          podman exec $CONTAINER_ID clang-format --version | grep -F 'clang-format version 23.1.1'
+          podman exec $CONTAINER_ID cloc --version | grep -Fx '2.10'
+          podman exec $CONTAINER_ID editorconfig-checker --version | grep -F '3.7.0'
+          if [ "${{ matrix.ol_version }}" = "9" ]; then
+            podman exec $CONTAINER_ID yamllint --version | grep -F 'yamllint 1.37.1'
+          else
+            podman exec $CONTAINER_ID yamllint --version | grep -F 'yamllint 1.38.0'
+          fi
+          podman exec $CONTAINER_ID gh --version | head -1 | grep -F 'gh version 2.101.0'
+          podman exec $CONTAINER_ID glab --version | grep -F '1.118.0'
+
           echo "=== Python 3.11 version ==="
           if podman exec $CONTAINER_ID which python3.11 > /dev/null 2>&1; then
             podman exec $CONTAINER_ID python3.11 --version
@@ -380,13 +396,55 @@ jobs:
           echo "=== PowerShell version ==="
           podman exec $CONTAINER_ID pwsh --version
           podman exec $CONTAINER_ID pwsh -NoProfile -NoLogo -Command '$PSVersionTable.PSVersion.ToString()'
-          podman exec $CONTAINER_ID pwsh --version | grep -E '^PowerShell 7\.6\.'
+          podman exec $CONTAINER_ID pwsh --version | grep -Fx 'PowerShell 7.6.6'
+
+          echo "=== Pandoc and pandoc-crossref versions ==="
+          podman exec $CONTAINER_ID pandoc --version | head -1 | grep -Fx 'pandoc 3.11'
+          podman exec $CONTAINER_ID pandoc-crossref --version | grep -F 'built with Pandoc v3.11'
+
+          echo "=== Pandoc cross-reference smoke test ==="
+          podman exec $CONTAINER_ID bash -lc '
+            set -eu
+            mkdir -p /tmp/pandoc-smoke
+            cd /tmp/pandoc-smoke
+            printf "%s\n" \
+              "![Caption](image.png){#fig:test}" \
+              "" \
+              "See [@fig:test]." > input.md
+            pandoc --filter pandoc-crossref --from markdown --to native input.md > output.native
+            test -s output.native
+            grep -q "fig:test" output.native
+          '
 
           echo "=== Doxygen version ==="
-          podman exec $CONTAINER_ID doxygen --version
+          podman exec $CONTAINER_ID doxygen --version | grep -Fx '1.18.0'
+
+          echo "=== Doxygen smoke test ==="
+          podman exec $CONTAINER_ID bash -lc '
+            set -eu
+            mkdir -p /tmp/doxygen-smoke
+            printf "%s\n" "/** Documented function. */" "int answer(void);" > /tmp/doxygen-smoke/sample.h
+            printf "%s\n" \
+              "PROJECT_NAME = smoke" \
+              "OUTPUT_DIRECTORY = /tmp/doxygen-smoke/out" \
+              "INPUT = /tmp/doxygen-smoke/sample.h" \
+              "QUIET = YES" \
+              "GENERATE_LATEX = NO" | doxygen -
+            test -s /tmp/doxygen-smoke/out/html/index.html
+          '
 
           echo "=== PlantUML version ==="
-          podman exec $CONTAINER_ID plantuml -version
+          podman exec $CONTAINER_ID plantuml -version | grep -F 'PlantUML version 1.2026.8'
+
+          echo "=== PlantUML smoke test ==="
+          podman exec $CONTAINER_ID bash -lc '
+            set -eu
+            mkdir -p /tmp/plantuml-smoke
+            printf "%s\n" "@startuml" "Alice -> Bob: test" "@enduml" > /tmp/plantuml-smoke/diagram.puml
+            plantuml -tsvg /tmp/plantuml-smoke/diagram.puml
+            test -s /tmp/plantuml-smoke/diagram.svg
+            grep -q "<svg" /tmp/plantuml-smoke/diagram.svg
+          '
 
           echo "=== doxybook2 version ==="
           podman exec $CONTAINER_ID doxybook2 --help
@@ -399,7 +457,7 @@ jobs:
           fi
 
           echo "=== Chrome for Testing version ==="
-          podman exec --user testuser --env HOME=/home/testuser $CONTAINER_ID chrome --version
+          podman exec --user testuser --env HOME=/home/testuser $CONTAINER_ID chrome --version | grep -F '153.0.8010.36'
 
           echo "=== Chrome for Testing environment ==="
           podman exec --user testuser --env HOME=/home/testuser $CONTAINER_ID bash -lc '
@@ -434,6 +492,10 @@ jobs:
           echo "=== Additional Node.js package smoke test ==="
           podman exec --user testuser --env HOME=/home/testuser $CONTAINER_ID bash -lc '
             test -d /usr/local/lib/node_modules/puppeteer-core
+            test "$(pnpm --version)" = "12.5.1"
+            test "$(marp --version | sed -n "s/^@marp-team\/marp-cli v\([^ ]*\).*/\1/p")" = "4.5.1"
+            test "$(mmdc --version)" = "11.17.0"
+            NODE_PATH=/usr/local/lib/node_modules node -e "const expected = {\"@antfu/ni\": \"30.5.0\", puppeteer: \"25.11.0\", \"puppeteer-core\": \"25.11.0\", minisearch: \"7.2.0\", \"@plantuml/core\": \"1.2026.8\", sharp: \"0.35.4\", minimist: \"1.2.8\", textlint: \"15.8.0\"}; for (const [name, version] of Object.entries(expected)) { const actual = require(\"/usr/local/lib/node_modules/\" + name + \"/package.json\").version; if (actual !== version) throw new Error(name + \": expected \" + version + \", got \" + actual); }"
             NODE_PATH=/usr/local/lib/node_modules node -e "const modules = [\"puppeteer-core\", \"minisearch\", \"sharp\", \"minimist\"]; for (const moduleName of modules) require(moduleName);"
             PLANTUML_MODULE=/usr/local/lib/node_modules/@plantuml/core/plantuml.js \
               node --input-type=module -e "await import(process.env.PLANTUML_MODULE);"
@@ -445,7 +507,7 @@ jobs:
             mkdir /tmp/puppeteer-smoke
             cd /tmp/puppeteer-smoke
             npm init -y >/dev/null
-            npm install --no-audit --no-fund puppeteer@24.43.1
+            npm install --no-audit --no-fund puppeteer@25.11.0
             test ! -d "$HOME/.cache/puppeteer"
             node -e '\''
               const puppeteer = require("puppeteer");

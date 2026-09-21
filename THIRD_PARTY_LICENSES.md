@@ -19,13 +19,13 @@
 - **説明**: JavaScript/TypeScript ランタイム環境
 
 ### @antfu/ni
-- **バージョン**: 30.1.0
+- **バージョン**: 30.5.0
 - **ライセンス**: MIT License
 - **URL**: https://github.com/antfu-collective/ni
 - **説明**: ロックファイル等から適切な Node.js パッケージマネージャーを選択する CLI
 
 ### pnpm
-- **バージョン**: 11.3.0
+- **バージョン**: 12.5.1
 - **ライセンス**: MIT License
 - **URL**: https://pnpm.io/
 - **説明**: 高速でディスク効率の良い Node.js パッケージマネージャー
@@ -71,6 +71,7 @@
 - **説明**: pytest 向けカバレッジ計測プラグイン
 
 ### yamllint
+- **バージョン**: 1.38.0 (OL8/10) / 1.37.1 (OL9、Python 3.9 互換上限)
 - **ライセンス**: GPL-3.0-or-later
 - **URL**: https://github.com/adrienverge/yamllint
 - **説明**: YAML ファイルの構文・スタイルチェッカー
@@ -78,7 +79,7 @@
 ## ドキュメント生成ツール
 
 ### Doxygen
-- **バージョン**: 1.14.0
+- **バージョン**: 1.18.0
 - **ライセンス**: GPLv2
 - **URL**: https://www.doxygen.nl/
 - **説明**: ソースコードドキュメント生成ツール
@@ -91,31 +92,31 @@
 - **説明**: Doxygen XML を Markdown に変換するツール
 
 ### PlantUML
-- **バージョン**: 1.2026.2
+- **バージョン**: 1.2026.8
 - **ライセンス**: GPLv3 or later
 - **URL**: https://plantuml.com/
 - **説明**: UML 図作成ツール
 
 ### Pandoc
-- **バージョン**: 3.9.0.2
+- **バージョン**: 3.11
 - **ライセンス**: GPLv2 or later
 - **URL**: https://pandoc.org/
 - **説明**: ドキュメント変換ツール
 
 ### pandoc-crossref
-- **バージョン**: 0.3.24a
+- **バージョン**: 0.3.25a
 - **ライセンス**: GPLv2
 - **URL**: https://github.com/lierdakil/pandoc-crossref
 - **説明**: Pandoc の相互参照フィルター
 
 ### Marp CLI
-- **バージョン**: 4.4.0
+- **バージョン**: 4.5.1
 - **ライセンス**: MIT License
 - **URL**: https://github.com/marp-team/marp-cli
 - **説明**: Markdown からスライド、PDF、PPTX、画像を生成するツール
 
 ### Mermaid CLI
-- **バージョン**: 11.15.0
+- **バージョン**: 11.17.0
 - **ライセンス**: MIT License
 - **URL**: https://github.com/mermaid-js/mermaid-cli
 - **説明**: Mermaid 図を SVG、PNG、PDF へ変換する CLI
@@ -127,7 +128,7 @@
 - **説明**: OpenAPI 定義から Markdown を生成するツール
 
 ### Puppeteer / puppeteer-core
-- **バージョン**: 24.43.1
+- **バージョン**: 25.11.0
 - **ライセンス**: Apache-2.0
 - **URL**: https://github.com/puppeteer/puppeteer
 - **説明**: Chrome DevTools Protocol によるブラウザー自動化。既定の実行ファイルは Chrome for Testing
@@ -139,13 +140,13 @@
 - **説明**: クライアント側の全文検索ライブラリ
 
 ### @plantuml/core
-- **バージョン**: 1.2026.7
+- **バージョン**: 1.2026.8
 - **ライセンス**: MIT License
 - **URL**: https://www.npmjs.com/package/@plantuml/core
 - **説明**: ブラウザー上で PlantUML を描画する JavaScript / WebAssembly 配布
 
 ### sharp
-- **バージョン**: 0.34.5
+- **バージョン**: 0.35.4
 - **ライセンス**: Apache-2.0
 - **URL**: https://github.com/lovell/sharp
 - **説明**: libvips を使った画像変換
@@ -175,11 +176,11 @@
 - **説明**: 半角/全角スペースの表記を扱う textlint ルールプリセット
 
 ### Chrome for Testing
-- **バージョン**: 148.0.7778.97
+- **バージョン**: 153.0.8010.36
 - **ライセンス**: Google Chrome and ChromeOS Additional Terms of Service および同梱サードパーティライセンス
 - **URL**: https://googlechromelabs.github.io/chrome-for-testing/
 - **利用規約**: https://www.google.com/chrome/terms/
-- **同梱通知**: `/opt/chrome-for-testing/148.0.7778.97/chrome-linux64/ABOUT`
+- **同梱通知**: `/opt/chrome-for-testing/153.0.8010.36/chrome-linux64/ABOUT`
 - **説明**: Marp CLI と Puppeteer が使用するブラウザ自動化・テスト専用の Chrome
 
 ### Inkscape
@@ -236,7 +237,7 @@
 - **説明**: Linux マニュアルページ
 
 ### man-pages-ja (日本語マニュアルページ)
-- **バージョン**: 20251115
+- **バージョン**: 20260115
 - **ライセンス**: BSD License, GPLv2, and other free licenses
 - **URL**: https://github.com/linux-jm/manual
 - **説明**: Linux マニュアルページの日本語翻訳
@@ -261,7 +262,7 @@
 - **説明**: クロスプラットフォームビルドシステム
 
 ### clang-format / LLVM
-- **バージョン**: 22.1.4
+- **バージョン**: 23.1.1
 - **ライセンス**: Apache License 2.0 with LLVM Exceptions
 - **URL**: https://github.com/llvm/llvm-project
 - **説明**: C/C++/Java/JavaScript などのコードフォーマットツール (git-clang-format を含む)
@@ -302,31 +303,31 @@
 - **説明**: ZIP アーカイブ展開ツール
 
 ### cloc (Count Lines of Code)
-- **バージョン**: 2.04
+- **バージョン**: 2.10
 - **ライセンス**: GPLv2
 - **URL**: https://github.com/AlDanial/cloc
 - **説明**: ソースコードの行数計測ツール
 
 ### editorconfig-checker
-- **バージョン**: 3.6.1
+- **バージョン**: 3.7.0
 - **ライセンス**: MIT License
 - **URL**: https://github.com/editorconfig-checker/editorconfig-checker
 - **説明**: `.editorconfig` 違反 (インデント、改行コード、末尾空白等) を検出するチェッカー
 
 ### gh (GitHub CLI)
-- **バージョン**: 2.95.0
+- **バージョン**: 2.101.0
 - **ライセンス**: MIT License
 - **URL**: https://github.com/cli/cli
 - **説明**: GitHub の公式 CLI。リポジトリ・PR・issue・workflow などをターミナルから操作
 
 ### glab (GitLab CLI)
-- **バージョン**: 1.105.0
+- **バージョン**: 1.118.0
 - **ライセンス**: MIT License
 - **URL**: https://gitlab.com/gitlab-org/cli
 - **説明**: GitLab の公式 CLI。リポジトリ・MR・issue・CI などをターミナルから操作
 
 ### PowerShell
-- **バージョン**: 7.6.5
+- **バージョン**: 7.6.6
 - **ライセンス**: MIT License
 - **URL**: https://github.com/PowerShell/PowerShell
 - **説明**: クロスプラットフォームのコマンドラインシェルおよびスクリプト言語 (pwsh)

@@ -110,7 +110,7 @@ ssh-keygen -R "[127.0.0.1]:40822"
 ### インストール済みツール
 
 - **言語ランタイム**: Node.js 24、Java 17(OL8)/21(OL9/10)、.NET 10、Python 3.11(OL8)/3.9(OL9)/3.12(OL10)
-- **ビルドツール**: GCC、Make、CMake、automake、libtool、clang-format (LLVM 22.1.4)
+- **ビルドツール**: GCC、Make、CMake、automake、libtool、clang-format (LLVM 23.1.1)
 - **開発ライブラリ**: openssl-devel、libssh-devel、libcurl-devel、binutils-devel、elfutils-devel、readline-devel、libedit-devel
 - **ドキュメント**: Doxygen、doxybook2、PlantUML、Pandoc、Marp CLI、Mermaid CLI、Widdershins
 - **Python パッケージ (システム)**: pytest、pytest-cov、gcovr、hjson、yamllint、podman-compose

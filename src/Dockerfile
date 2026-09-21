@@ -1,7 +1,7 @@
 ARG OL_VERSION=8
 FROM oraclelinux:${OL_VERSION}
 ARG OL_VERSION
-ARG CHROME_FOR_TESTING_VERSION=148.0.7778.97
+ARG CHROME_FOR_TESTING_VERSION=153.0.8010.36
 
 # メタデータラベル
 LABEL org.opencontainers.image.title="Oracle Linux ${OL_VERSION} Development Container"
@@ -207,16 +207,16 @@ RUN dnf install -y \
         alternatives --install /usr/bin/pip pip /usr/bin/pip3 1; \
     fi && \
     PUPPETEER_SKIP_DOWNLOAD=true npm install --global --prefix /usr/local \
-        @antfu/ni@30.1.0 \
-        pnpm@11.3.0 \
-        @marp-team/marp-cli@4.4.0 \
-        @mermaid-js/mermaid-cli@11.15.0 \
+        @antfu/ni@30.5.0 \
+        pnpm@12.5.1 \
+        @marp-team/marp-cli@4.5.1 \
+        @mermaid-js/mermaid-cli@11.17.0 \
         widdershins@4.0.1 \
-        puppeteer@24.43.1 \
-        puppeteer-core@24.43.1 \
+        puppeteer@25.11.0 \
+        puppeteer-core@25.11.0 \
         minisearch@7.2.0 \
-        @plantuml/core@1.2026.7 \
-        sharp@0.34.5 \
+        @plantuml/core@1.2026.8 \
+        sharp@0.35.4 \
         minimist@1.2.8 \
         textlint@15.8.0 \
         textlint-rule-preset-ja-technical-writing@12.0.2 \
@@ -242,13 +242,15 @@ RUN dnf install -y \
     test -x /usr/local/bin/mmdc && \
     test -x /usr/local/bin/widdershins && \
     test -x /usr/local/bin/textlint && \
+    YAMLLINT_VERSION="1.38.0" && \
+    if [ "${OL_VERSION}" = "9" ]; then YAMLLINT_VERSION="1.37.1"; fi && \
     pip install --no-cache-dir \
         gcovr \
         hjson \
         podman-compose \
         pytest \
         pytest-cov \
-        yamllint && \
+        "yamllint==${YAMLLINT_VERSION}" && \
     # ビルド時に有効化したリポジトリを既定で無効化
     if [ "${OL_VERSION}" = "8" ]; then \
         dnf config-manager --disable ol8_codeready_builder 2>/dev/null || true; \
@@ -362,9 +364,9 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     cp /tmp/doxybook2 /usr/local/bin/ && \
     rm -f /tmp/doxybook2 && \
     # pandoc
-    download_required "pandoc" "/tmp/pandoc-3.9.0.2-linux-amd64.tar.gz" "https://github.com/jgm/pandoc/releases/download/3.9.0.2/pandoc-3.9.0.2-linux-amd64.tar.gz" "pandoc-3.9.0.2-linux-amd64.tar.gz" && \
-    tar xfz pandoc-3.9.0.2-linux-amd64.tar.gz && \
-    BASE="pandoc-3.9.0.2" && \
+    download_required "pandoc" "/tmp/pandoc-3.11-linux-amd64.tar.gz" "https://github.com/jgm/pandoc/releases/download/3.11/pandoc-3.11-linux-amd64.tar.gz" "pandoc-3.11-linux-amd64.tar.gz" && \
+    tar xfz pandoc-3.11-linux-amd64.tar.gz && \
+    BASE="pandoc-3.11" && \
     install -d /usr/local/bin /usr/local/share/man/man1 && \
     install -m 0755 "$BASE/bin/pandoc" /usr/local/bin/pandoc && \
     ln -s /usr/local/bin/pandoc /usr/local/bin/pandoc-server && \
@@ -374,8 +376,8 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     install -m 0644 "$BASE/share/man/man1/pandoc-lua.1.gz" /usr/local/share/man/man1/pandoc-lua.1.gz && \
     rm -rf "$BASE" && \
     # pandoc-crossref
-    download_required "pandoc-crossref" "/tmp/pandoc-crossref-0.3.24a-Linux-X64.tar.xz" "https://github.com/lierdakil/pandoc-crossref/releases/download/v0.3.24a/pandoc-crossref-Linux-X64.tar.xz" "pandoc-crossref-0.3.24a-Linux-X64.tar.xz" && \
-    tar xfJ pandoc-crossref-0.3.24a-Linux-X64.tar.xz && \
+    download_required "pandoc-crossref" "/tmp/pandoc-crossref-0.3.25a-Linux-X64.tar.xz" "https://github.com/lierdakil/pandoc-crossref/releases/download/v0.3.25a/pandoc-crossref-Linux-X64.tar.xz" "pandoc-crossref-0.3.25a-Linux-X64.tar.xz" && \
+    tar xfJ pandoc-crossref-0.3.25a-Linux-X64.tar.xz && \
     gzip -9n pandoc-crossref.1 && \
     install -d /usr/local/bin /usr/local/share/man/man1 && \
     install -m 0755 "pandoc-crossref" /usr/local/bin/pandoc-crossref && \
@@ -383,11 +385,11 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     rm -f pandoc-crossref pandoc-crossref.1.gz && \
     # plantuml
     cd /tmp && \
-    download_required "plantuml" "/tmp/plantuml-1.2026.2.jar" "https://github.com/plantuml/plantuml/releases/download/v1.2026.2/plantuml-1.2026.2.jar" "plantuml-1.2026.2.jar" && \
-    chown root:root plantuml-1.2026.2.jar && \
-    chmod 0755 plantuml-1.2026.2.jar && \
-    cp plantuml-1.2026.2.jar /usr/local/bin/ && \
-    cd /usr/local/bin && ln -s plantuml-1.2026.2.jar plantuml.jar && \
+    download_required "plantuml" "/tmp/plantuml-1.2026.8.jar" "https://github.com/plantuml/plantuml/releases/download/v1.2026.8/plantuml-1.2026.8.jar" "plantuml-1.2026.8.jar" && \
+    chown root:root plantuml-1.2026.8.jar && \
+    chmod 0755 plantuml-1.2026.8.jar && \
+    cp plantuml-1.2026.8.jar /usr/local/bin/ && \
+    cd /usr/local/bin && ln -s plantuml-1.2026.8.jar plantuml.jar && \
     echo '#!/bin/bash' > /usr/local/bin/plantuml && \
     echo 'export LANG=ja_JP.UTF-8' >> /usr/local/bin/plantuml && \
     echo '/usr/bin/java -Djava.io.tmpdir=/var/tmp -Djava.awt.headless=true -jar /usr/local/bin/plantuml.jar -charset UTF-8 "$@"' >> /usr/local/bin/plantuml && \
@@ -430,10 +432,10 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     rm -rf UDEVGothic_HSRF_EM_v2.2.0.1 && \
     # cloc
     cd /tmp && \
-    download_required "cloc" "/usr/local/bin/cloc" "https://github.com/AlDanial/cloc/releases/download/v2.08/cloc-2.08.pl" "cloc-2.08.pl" && \
+    download_required "cloc" "/usr/local/bin/cloc" "https://github.com/AlDanial/cloc/releases/download/v2.10/cloc-2.10.pl" "cloc-2.10.pl" && \
     chmod +x /usr/local/bin/cloc && \
     # editorconfig-checker
-    EC_VER="3.6.1" && \
+    EC_VER="3.7.0" && \
     EC_TARBALL_CACHE="ec-linux-amd64-v${EC_VER}.tar.gz" && \
     EC_TARBALL_DL="ec-linux-amd64.tar.gz" && \
     cd /tmp && \
@@ -441,24 +443,38 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     tar xzf "${EC_TARBALL_DL}" && \
     install -m 0755 ./bin/ec-linux-amd64 /usr/local/bin/editorconfig-checker && \
     rm -rf /tmp/bin && \
+    # Doxygen 1.18.0 の scanner は OL8 標準の flex 2.6.1 では生成できないため、ビルド時だけ 2.6.3 を使用する。
+    DOXYGEN_FLEX_ARG="" && \
+    if [ "${OL_VERSION}" = "8" ]; then \
+        cd /tmp && \
+        download_required "flex" "/tmp/flex-2.6.3.tar.gz" "https://github.com/westes/flex/releases/download/v2.6.3/flex-2.6.3.tar.gz" "flex-2.6.3.tar.gz" && \
+        tar xfz flex-2.6.3.tar.gz && \
+        cd flex-2.6.3 && \
+        ./configure --prefix=/tmp/flex-2.6.3-install && \
+        make -j"$(nproc)" && \
+        make install && \
+        DOXYGEN_FLEX_ARG="-DFLEX_EXECUTABLE=/tmp/flex-2.6.3-install/bin/flex"; \
+    fi && \
     # doxygen
     cd /tmp && \
-    download_required "doxygen" "/tmp/doxygen-1.15.0.src.tar.gz" "https://doxygen.nl/files/doxygen-1.15.0.src.tar.gz" "doxygen-1.15.0.src.tar.gz" "https://github.com/doxygen/doxygen/releases/download/Release_1_15_0/doxygen-1.15.0.src.tar.gz" && \
-    tar xfz doxygen-1.15.0.src.tar.gz && \
-    cd doxygen-1.15.0 && \
+    download_required "doxygen" "/tmp/doxygen-1.18.0.src.tar.gz" "https://doxygen.nl/files/doxygen-1.18.0.src.tar.gz" "doxygen-1.18.0.src.tar.gz" "https://github.com/doxygen/doxygen/releases/download/Release_1_18_0/doxygen-1.18.0.src.tar.gz" && \
+    tar xfz doxygen-1.18.0.src.tar.gz && \
+    cd doxygen-1.18.0 && \
     mkdir build && \
     cd build && \
     cmake -G "Unix Makefiles" \
         -D CMAKE_BUILD_TYPE=Release \
         -D CMAKE_INSTALL_PREFIX=/usr/local \
         -D build_wizard=OFF \
+        ${DOXYGEN_FLEX_ARG} \
         -W no-dev .. && \
-    make -j"$(nproc)" && \
+    # flex/m4 による scanner 生成の既知の不安定性を避けるため、Doxygen は直列ビルドする。
+    make -j1 && \
     make install && \
     cd /tmp && \
-    rm -rf doxygen-1.15.0 && \
-    # clang-format (LLVM 22.1.4 ソースビルド)
-    LLVM_VER="22.1.4" && \
+    rm -rf doxygen-1.18.0 flex-2.6.3 flex-2.6.3-install && \
+    # clang-format (LLVM 23.1.1 ソースビルド)
+    LLVM_VER="23.1.1" && \
     LLVM_TARBALL="llvm-project-${LLVM_VER}.src.tar.xz" && \
     cd /tmp && \
     download_required "llvm-project" "/tmp/${LLVM_TARBALL}" "https://github.com/llvm/llvm-project/releases/download/llvmorg-${LLVM_VER}/${LLVM_TARBALL}" "${LLVM_TARBALL}" && \
@@ -478,19 +494,19 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     cd /tmp && rm -rf "llvm-project-${LLVM_VER}.src" && \
     # gh (GitHub CLI)
     cd /tmp && \
-    GH_VER="2.95.0" && \
+    GH_VER="2.101.0" && \
     GH_RPM="gh_${GH_VER}_linux_amd64.rpm" && \
     download_required "gh ${GH_VER}" "/tmp/${GH_RPM}" "https://github.com/cli/cli/releases/download/v${GH_VER}/${GH_RPM}" "${GH_RPM}" && \
     dnf install -y "/tmp/${GH_RPM}" && \
     rm -f "/tmp/${GH_RPM}" && \
     # glab (GitLab CLI)
-    GLAB_VER="1.105.0" && \
+    GLAB_VER="1.118.0" && \
     GLAB_RPM="glab_${GLAB_VER}_linux_amd64.rpm" && \
     download_required "glab ${GLAB_VER}" "/tmp/${GLAB_RPM}" "https://gitlab.com/gitlab-org/cli/-/releases/v${GLAB_VER}/downloads/${GLAB_RPM}" "${GLAB_RPM}" && \
     dnf install -y "/tmp/${GLAB_RPM}" && \
     rm -f "/tmp/${GLAB_RPM}" && \
     # pwsh (PowerShell)
-    PWSH_VER="7.6.5" && \
+    PWSH_VER="7.6.6" && \
     PWSH_RPM="powershell-${PWSH_VER}-1.rh.x86_64.rpm" && \
     download_required "pwsh ${PWSH_VER}" "/tmp/${PWSH_RPM}" "https://github.com/PowerShell/PowerShell/releases/download/v${PWSH_VER}/${PWSH_RPM}" "${PWSH_RPM}" && \
     dnf install -y "/tmp/${PWSH_RPM}" && \
