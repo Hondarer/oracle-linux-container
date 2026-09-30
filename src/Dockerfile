@@ -554,6 +554,13 @@ RUN printf '%s\n' \
         > /etc/profile.d/chrome-for-testing.sh && \
     chmod 0644 /etc/profile.d/chrome-for-testing.sh
 
+# Git 2.56.0 (OL8/9/10 共通のソースビルド、補完・man ページを含む)
+# COPY によりインストーラー変更時にビルドキャッシュを無効化する。
+COPY install-git.sh /tmp/install-git.sh
+RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
+    bash /tmp/install-git.sh "${OL_VERSION}" && \
+    rm -f /tmp/install-git.sh
+
 # mandb
 RUN echo "Processing manual pages with mandb..."; \
     mandb > /dev/null 2>&1
@@ -578,7 +585,9 @@ RUN if [ -n "$(ls -A /tmp/keys/ssh_host_*_key* 2>/dev/null)" ]; then \
 RUN rm -rf /tmp/*
 
 # wheel グループの sudo 設定
-RUN echo "%wheel ALL=(ALL) NOPASSWD: ALL" >/etc/sudoers.d/wheel
+RUN echo "%wheel ALL=(ALL) NOPASSWD: ALL" >/etc/sudoers.d/wheel && \
+    chmod 0440 /etc/sudoers.d/wheel && \
+    visudo -c
 
 # container-release の配置
 ADD container-release /etc
@@ -587,8 +596,10 @@ ADD container-release /etc
 RUN mkdir -p /usr/share/doc/oracle-linux-dev-container
 ADD README.md /usr/share/doc/oracle-linux-dev-container/README.md
 ADD LICENSE /usr/share/doc/oracle-linux-dev-container/LICENSE
+ADD NOTICE /usr/share/doc/oracle-linux-dev-container/NOTICE
 RUN chmod 0644 /usr/share/doc/oracle-linux-dev-container/README.md \
-               /usr/share/doc/oracle-linux-dev-container/LICENSE
+               /usr/share/doc/oracle-linux-dev-container/LICENSE \
+               /usr/share/doc/oracle-linux-dev-container/NOTICE
 
 # 作業用ディレクトリの作成
 WORKDIR /workspace

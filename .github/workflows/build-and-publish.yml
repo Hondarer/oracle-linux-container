@@ -61,6 +61,16 @@ jobs:
             fi
           }
 
+          download_package "Git 2.56.0" \
+            "git-2.56.0.tar.xz" \
+            "https://www.kernel.org/pub/software/scm/git/git-2.56.0.tar.xz"
+          echo "26c56c296b38c0695b26fa95f475f1d01704d2d38e73465ca30b0b2f5dc789d3  src/packages/git-2.56.0.tar.xz" | sha256sum -c -
+
+          download_package "Git 2.56.0 man pages" \
+            "git-manpages-2.56.0.tar.xz" \
+            "https://www.kernel.org/pub/software/scm/git/git-manpages-2.56.0.tar.xz"
+          echo "1f62a7fabaa36a0469c4d51fe247d12e7e246b890d2b8b49aec91df610f417c7  src/packages/git-manpages-2.56.0.tar.xz" | sha256sum -c -
+
           download_package "man-pages-ja" \
             "man-pages-ja-20260115.tar.gz" \
             "https://github.com/linux-jm/manual/releases/download/v20260115/man-pages-ja-20260115.tar.gz"
@@ -290,6 +300,10 @@ jobs:
           echo "=== Oracle Linux version ==="
           OS_MAJOR=$(podman exec $CONTAINER_ID bash -c '. /etc/os-release; echo "${VERSION_ID%%.*}"')
           test "$OS_MAJOR" = "${{ matrix.ol_version }}"
+
+          echo "=== Git 2.56.0 integration test ==="
+          podman cp tests/verify-git.sh "$CONTAINER_ID:/tmp/verify-git.sh"
+          podman exec "$CONTAINER_ID" bash /tmp/verify-git.sh
 
           echo "=== Node.js version ==="
           podman exec $CONTAINER_ID node --version

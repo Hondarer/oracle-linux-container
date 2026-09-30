@@ -105,6 +105,7 @@ node --version    # Node.js 24
 java -version     # OpenJDK 17
 dotnet --version  # .NET 10.0
 python --version  # Python 3.11
+git --version     # Git 2.56.0 (OL8/9/10 共通)
 
 # ドキュメント生成ツール
 doxygen --version

@@ -27,7 +27,7 @@
 Dockerfile は `ARG OL_VERSION` により、OL8/OL9/OL10 をサポートします。
 
 1. Oracle Linux パッケージの更新と開発ツールの導入
-2. 開発環境 (Node.js 24、Java 17/21、.NET 10、Python 3.9/3.11/3.12)
+2. 開発環境 (Git 2.56.0、Node.js 24、Java 17/21、.NET 10、Python 3.9/3.11/3.12)
 3. ドキュメント生成ツール (Doxygen、PlantUML、Pandoc 系)
 4. 日本語環境とフォント設定
 5. SSH サーバーと認証キー設定
@@ -115,7 +115,7 @@ ssh-keygen -R "[127.0.0.1]:40822"
 - **ドキュメント**: Doxygen、doxybook2、PlantUML、Pandoc、Marp CLI、Mermaid CLI、Widdershins
 - **Python パッケージ (システム)**: pytest、pytest-cov、gcovr、hjson、yamllint、podman-compose
 - **ユーティリティ**: jq、tree、rsync、expect、cloc、time、editorconfig-checker、textlint (preset-ja-technical-writing、preset-ja-spacing)、pwsh (PowerShell)
-- **リポジトリ操作 CLI**: gh (GitHub CLI)、glab (GitLab CLI)
+- **リポジトリ操作 CLI**: Git 2.56.0 (OL8/9/10 共通)、gh (GitHub CLI)、glab (GitLab CLI)
 
 ### パッケージ管理
 
@@ -126,6 +126,9 @@ ssh-keygen -R "[127.0.0.1]:40822"
 
 ### カスタムインストール処理
 
+- Git: `src/install-git.sh` で公式ソースから `/usr/local` に導入。`NO_RUST=YesPlease`、`USE_LIBPCRE2=YesPlease`、`sysconfdir=/etc` を指定し、同版の Bash 補完・man ページを配置。sudo の `secure_path` でも `/usr/local/bin` を優先します。
+- Git 更新時はインストーラーのバージョン・SHA256、GitHub Actions の事前ダウンロード設定、`tests/verify-git.sh` の期待バージョン、関連ドキュメント・ライセンス通知を揃えて更新し、3 OS の一時コンテナ内で `bash tests/verify-git.sh` を root として実行します。`dnf update` ではソース導入した Git は更新されません。
+- `build-pod.sh` は `podman rmi --no-prune` により親イメージを保持し、再ビルドでキャッシュを利用します。Git インストーラーの変更は Dockerfile の `COPY` によりキャッシュへ反映されます。
 - 日本語マニュアルページ: `man-pages-ja-auto-installer.sh` で自動インストール
 - フォント: `src/fonts/` からシステムフォントとして自動配置
 - 追加パッケージ: `src/packages/` から各種ツールを個別インストール

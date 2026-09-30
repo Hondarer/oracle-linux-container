@@ -81,8 +81,8 @@ echo "Building container image: ${CONTAINER_NAME} (OL${OL_VERSION})..."
 # 既存のコンテナを停止します。
 source ./stop-pod.sh
 
-# 既存の古いイメージを削除します。
-podman rmi ${CONTAINER_NAME} 1>/dev/null 2>/dev/null || true
+# 既存の古いイメージを削除します。親イメージはビルドキャッシュとして保持します。
+podman rmi --no-prune ${CONTAINER_NAME} 1>/dev/null 2>/dev/null || true
 echo "Clean old container successfully."
 
 # イメージのビルドを実行します。

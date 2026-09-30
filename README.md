@@ -137,6 +137,7 @@ podman pull hondarer/oracle-linux-10-dev:latest
 - **openssl-devel**、**libssh-devel**、**libcurl-devel**
 - **binutils-devel**、**elfutils-devel**、**systemd-devel**、**libX11-devel**、**libXt-devel**
 - **readline-devel**、**libedit-devel**
+- **expat-devel**、**pcre2-devel**、**gettext-devel**、**zlib-devel** (OL10 は zlib-ng-compat-devel)
 - **glibc-static**、**libstdc++-static**
 
 ### ユーティリティ
@@ -152,7 +153,7 @@ podman pull hondarer/oracle-linux-10-dev:latest
 - **textlint** (v15.8.0)、**textlint-rule-preset-ja-technical-writing** (v12.0.2)、**textlint-rule-preset-ja-spacing** (v3.0.3)
 - **bubblewrap** (bwrap)
 - **ffmpeg** (RPM Fusion free)
-- **git**、**curl**、**wget**
+- **git** (v2.56.0、OL8/9/10 共通)、**curl**、**wget**
 - **pwsh** (v7.6.6、PowerShell)
 - **Podman**、**podman-compose**、Docker 互換の **docker** コマンド
 
@@ -160,6 +161,10 @@ podman pull hondarer/oracle-linux-10-dev:latest
 
 - **gh** (v2.101.0) — GitHub CLI
 - **glab** (v1.118.0) — GitLab CLI
+
+Git は公式ソースから `/usr/local` に導入しています。Bash 補完と man ページも 2.56.0 に揃え、通常のログインと `sudo git` の両方でこのバージョンを使用します。システム設定ファイルは `/etc/gitconfig`、ユーザー設定は従来どおり `~/.gitconfig` です。PCRE2 対応 (`git grep -P`) と gettext によるメッセージの国際化を有効にしています。公式配布には日本語メッセージの翻訳が含まれないため、既定の日本語ロケールでは Git のメッセージは英語になります。
+
+Git の更新時は `src/install-git.sh` のバージョン・ソースと man ページの SHA256、`.github/workflows/build-and-publish.yml` の事前ダウンロード設定、`tests/verify-git.sh` の期待バージョン、関連ドキュメント・ライセンス通知を更新して、各 OS のイメージを再ビルドします。`dnf update` は `/usr/local` の Git を更新しません。ビルド時は `src/packages/git-2.56.0.tar.xz` と `src/packages/git-manpages-2.56.0.tar.xz` をキャッシュとして利用でき、キャッシュにも SHA256 検証を適用します。
 
 ## クイックスタート
 

@@ -48,6 +48,17 @@
 - **URL**: https://www.python.org/
 - **説明**: Python プログラミング言語
 
+## リポジトリ操作ツール
+
+### Git
+
+- **バージョン**: 2.56.0 (OL8/9/10 共通)
+- **ライセンス**: GPL-2.0-only (一部の同梱コンポーネントは独自のライセンス)
+- **URL**: https://git-scm.com/
+- **ソース**: https://www.kernel.org/pub/software/scm/git/git-2.56.0.tar.xz
+- **同梱ライセンス**: `/usr/local/share/doc/git/COPYING`
+- **説明**: 公式ソースから導入する分散バージョン管理ツール。Bash 補完と公式 man ページも同版を使用
+
 ## Python パッケージ
 
 ### hjson

@@ -56,6 +56,16 @@ License: BSD 3-Clause License
 Copyright: Kitware, Inc.
 URL: https://cmake.org/
 
+Git 2.56.0 (OL8 / OL9 / OL10)
+License: GNU General Public License v2.0 (GPL-2.0-only), with separately
+         licensed bundled components as described in the source tree
+Copyright: Linus Torvalds, Junio C Hamano, and contributors
+URL: https://git-scm.com/
+Source: https://www.kernel.org/pub/software/scm/git/git-2.56.0.tar.xz
+License File: /usr/local/share/doc/git/COPYING
+Note: Built from official source into /usr/local with matching Bash completion
+      and man pages. The system configuration file remains /etc/gitconfig.
+
 ================================================================================
 DOCUMENTATION AND DIAGRAM TOOLS
 ================================================================================
