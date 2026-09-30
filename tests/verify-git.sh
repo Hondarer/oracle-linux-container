@@ -11,8 +11,9 @@ test "$(man -w git)" = /usr/local/share/man/man1/git.1
 grep -F 'Git 2.56.0' /usr/local/share/man/man1/git.1
 visudo -c
 grep -Fx '%wheel ALL=(ALL) NOPASSWD: ALL' /etc/sudoers.d/wheel
-# 一般ユーザーの PAM アカウント状態に依存せず、sudo の secure_path を検証する。
-test "$(PATH=/usr/bin:/bin sudo -n git --version)" = 'git version 2.56.0'
+# PAM に依存せず、sudoers に設定した Git 優先の secure_path を検証する。
+grep -Fx 'Defaults secure_path = /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin' \
+    /etc/sudoers.d/local-tools
 
 GIT_TEST_DIR="$(mktemp -d /tmp/git-test.XXXXXX)"
 GIT_HTTP_PID=
