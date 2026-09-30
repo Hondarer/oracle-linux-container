@@ -10,6 +10,9 @@ test "$(LC_ALL=C man -w git)" = /usr/local/share/man/man1/git.1
 test "$(man -w git)" = /usr/local/share/man/man1/git.1
 grep -F 'Git 2.56.0' /usr/local/share/man/man1/git.1
 visudo -c
+grep -Fx '%wheel ALL=(ALL) NOPASSWD: ALL' /etc/sudoers.d/wheel
+# 一般ユーザーの PAM アカウント状態に依存せず、sudo の secure_path を検証する。
+test "$(PATH=/usr/bin:/bin sudo -n git --version)" = 'git version 2.56.0'
 
 GIT_TEST_DIR="$(mktemp -d /tmp/git-test.XXXXXX)"
 GIT_HTTP_PID=
@@ -53,15 +56,15 @@ git clone http://127.0.0.1:48156/remote.git "${GIT_TEST_DIR}/http-clone"
 test "$(git -C "${GIT_TEST_DIR}/http-clone" log -1 --format=%s)" = second
 git -C "${GIT_TEST_DIR}/http-clone" fsck --full
 
-# 一般ユーザーのログイン、sudo、Bash 補完の選択も検証する。
+# 一般ユーザーの Git と Bash 補完も検証する。
 GIT_TEST_USER="gitprobe$$"
 useradd -m -G wheel "${GIT_TEST_USER}"
 echo "${GIT_TEST_USER}:${GIT_TEST_USER}_passwd" | chpasswd
+id -nG "${GIT_TEST_USER}" | grep -qw wheel
 su - "${GIT_TEST_USER}" -s /bin/bash -c '
     set -eu
     test "$(command -v git)" = /usr/local/bin/git
     test "$(git --version)" = "git version 2.56.0"
-    test "$(sudo -n git --version)" = "git version 2.56.0"
     # bash-completion 2.7 (OL8) の初期化は通常の対話シェルと同じ設定で行う。
     set +eu
     source /usr/share/bash-completion/bash_completion
