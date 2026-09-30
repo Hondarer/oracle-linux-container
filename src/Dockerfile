@@ -85,7 +85,7 @@ RUN dnf install -y \
         dotnet-sdk-10.0 \
         elfutils-devel \
         expect \
-        ffmpeg \
+        $(if [ "${OL_VERSION}" = "9" ]; then echo "ffmpeg-free"; else echo "ffmpeg"; fi) \
         glib-networking \
         glibc-langpack-ja \
         glibc-static \

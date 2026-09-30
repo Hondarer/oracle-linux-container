@@ -152,7 +152,7 @@ podman pull hondarer/oracle-linux-10-dev:latest
 - **hjson** (Human JSON パーサー)
 - **textlint** (v15.8.0)、**textlint-rule-preset-ja-technical-writing** (v12.0.2)、**textlint-rule-preset-ja-spacing** (v3.0.3)
 - **bubblewrap** (bwrap)
-- **ffmpeg** (RPM Fusion free)
+- **ffmpeg** (RPM Fusion free。OL9 は安定版 Oracle EPEL の **ffmpeg-free**)
 - **git** (v2.56.0、OL8/9/10 共通)、**curl**、**wget**
 - **pwsh** (v7.6.6、PowerShell)
 - **Podman**、**podman-compose**、Docker 互換の **docker** コマンド
