@@ -54,15 +54,9 @@ test "$(git -C "${GIT_TEST_DIR}/http-clone" log -1 --format=%s)" = second
 git -C "${GIT_TEST_DIR}/http-clone" fsck --full
 
 # 一般ユーザーのログイン、sudo、Bash 補完の選択も検証する。
-if [ -n "${HOST_USER:-}" ] && getent passwd "${HOST_USER}" >/dev/null 2>&1; then
-    # CI では entrypoint.sh が初期化した実際のログインユーザーを検証する。
-    GIT_TEST_USER=${HOST_USER}
-else
-    # entrypoint を経由しない単独実行では、通常ログイン可能なテストユーザーを作る。
-    GIT_TEST_USER="gitprobe$$"
-    useradd -m -G wheel "${GIT_TEST_USER}"
-    echo "${GIT_TEST_USER}:${GIT_TEST_USER}_passwd" | chpasswd
-fi
+GIT_TEST_USER="gitprobe$$"
+useradd -m -G wheel "${GIT_TEST_USER}"
+echo "${GIT_TEST_USER}:${GIT_TEST_USER}_passwd" | chpasswd
 su - "${GIT_TEST_USER}" -s /bin/bash -c '
     set -eu
     test "$(command -v git)" = /usr/local/bin/git
