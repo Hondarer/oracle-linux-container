@@ -345,7 +345,7 @@ jobs:
               ;;
             9)
               EXPECTED_JAVA=21
-              EXPECTED_PYTHON=3.9
+              EXPECTED_PYTHON=3.11
               EXPECTED_GCC=11
               ;;
             10)
@@ -385,11 +385,7 @@ jobs:
           podman exec $CONTAINER_ID clang-format --version | grep -F 'clang-format version 23.1.1'
           podman exec $CONTAINER_ID cloc --version | grep -Fx '2.10'
           podman exec $CONTAINER_ID editorconfig-checker --version | grep -F '3.7.0'
-          if [ "${{ matrix.ol_version }}" = "9" ]; then
-            podman exec $CONTAINER_ID yamllint --version | grep -F 'yamllint 1.37.1'
-          else
-            podman exec $CONTAINER_ID yamllint --version | grep -F 'yamllint 1.38.0'
-          fi
+          podman exec $CONTAINER_ID yamllint --version | grep -F 'yamllint 1.38.0'
           podman exec $CONTAINER_ID gh --version | head -1 | grep -F 'gh version 2.101.0'
           podman exec $CONTAINER_ID glab --version | grep -F '1.118.0'
 

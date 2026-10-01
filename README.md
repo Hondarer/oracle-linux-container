@@ -103,8 +103,10 @@ podman pull hondarer/oracle-linux-10-dev:latest
 | Node.js | 24 | 24 | 24 |
 | Java (OpenJDK) | 17 | 21 | 21 |
 | .NET SDK | 10 | 10 | 10 |
-| Python | 3.11 | 3.9 | 3.12 |
+| Python | 3.11 | 3.11 | 3.12 |
 | C/C++ (GCC) | 8 | 11 | 14 |
+
+OL9 は `/usr/local/bin` の `python`、`python3`、`pip`、`pip3` で開発用の Python 3.11 を優先します。OS 用の `/usr/bin/python3` は 3.9 を維持します。
 
 ### Node.js パッケージマネージャー支援
 
@@ -119,6 +121,10 @@ podman pull hondarer/oracle-linux-10-dev:latest
 - **Marp CLI** (v4.5.1)
 - **Mermaid CLI** (`mmdc`, v11.17.0)
 - **Widdershins** (v4.0.1)
+- **MkDocs** (v1.6.1)、**mkdocs-material** (v9.7.7)
+- **markdown-callouts** (v0.4.0)、**mkdocs-awesome-nav** (v3.3.0)
+- **MarkItDown** (`markitdown[all]`、全オプション依存を含めてグローバル導入、バージョン固定なし)
+- MkDocs 関連パッケージは既定の Python にグローバル導入します。**pymdown-extensions** と **watchdog** は推移的依存として導入します。
 - **Puppeteer** / **puppeteer-core** (v25.11.0)
 - **MiniSearch** (v7.2.0)
 - **@plantuml/core** (v1.2026.8)
@@ -147,7 +153,7 @@ podman pull hondarer/oracle-linux-10-dev:latest
 - **expect**、**nkf**、**cloc** (v2.10)
 - **editorconfig-checker** (v3.7.0)
 - **gcovr** (C/C++ カバレッジレポートツール)
-- **yamllint** (v1.38.0。Python 3.9 の OL9 は互換上限の v1.37.1、YAML 構文・スタイルチェッカー)
+- **yamllint** (v1.38.0、YAML 構文・スタイルチェッカー)
 - **pytest** / **pytest-cov** (Python テストフレームワーク・カバレッジ計測)
 - **hjson** (Human JSON パーサー)
 - **textlint** (v15.8.0)、**textlint-rule-preset-ja-technical-writing** (v12.0.2)、**textlint-rule-preset-ja-spacing** (v3.0.3)
@@ -513,7 +519,7 @@ systemctl --user status podman.socket
 - **OpenJDK 17/21**: GPL-2.0 with Classpath Exception
 - **Node.js 24**: MIT License
 - **.NET 10**: MIT License
-- **Python 3.9/3.11/3.12**: PSF License
+- **Python 3.11/3.12**: PSF License
 - **GCC 8/11/14**: GPL-3.0-or-later
 - **Doxygen**: GPL-2.0
 - **PlantUML**: GPL-3.0+

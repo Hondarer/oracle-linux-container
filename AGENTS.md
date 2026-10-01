@@ -27,7 +27,7 @@
 Dockerfile は `ARG OL_VERSION` により、OL8/OL9/OL10 をサポートします。
 
 1. Oracle Linux パッケージの更新と開発ツールの導入
-2. 開発環境 (Git 2.56.0、Node.js 24、Java 17/21、.NET 10、Python 3.9/3.11/3.12)
+2. 開発環境 (Git 2.56.0、Node.js 24、Java 17/21、.NET 10、Python 3.11/3.12)
 3. ドキュメント生成ツール (Doxygen、PlantUML、Pandoc 系)
 4. 日本語環境とフォント設定
 5. SSH サーバーと認証キー設定
@@ -109,11 +109,11 @@ ssh-keygen -R "[127.0.0.1]:40822"
 
 ### インストール済みツール
 
-- **言語ランタイム**: Node.js 24、Java 17(OL8)/21(OL9/10)、.NET 10、Python 3.11(OL8)/3.9(OL9)/3.12(OL10)
+- **言語ランタイム**: Node.js 24、Java 17(OL8)/21(OL9/10)、.NET 10、Python 3.11(OL8/9)/3.12(OL10)
 - **ビルドツール**: GCC、Make、CMake、automake、libtool、clang-format (LLVM 23.1.1)
 - **開発ライブラリ**: openssl-devel、libssh-devel、libcurl-devel、binutils-devel、elfutils-devel、readline-devel、libedit-devel
 - **ドキュメント**: Doxygen、doxybook2、PlantUML、Pandoc、Marp CLI、Mermaid CLI、Widdershins
-- **Python パッケージ (システム)**: pytest、pytest-cov、gcovr、hjson、yamllint、podman-compose
+- **Python パッケージ (システム)**: pytest、pytest-cov、gcovr、hjson、yamllint、podman-compose、mkdocs 1.6.1、mkdocs-material 9.7.7、markdown-callouts 0.4.0、mkdocs-awesome-nav 3.3.0、markitdown[all] (バージョン固定なし。pymdown-extensions と watchdog は推移的依存)
 - **ユーティリティ**: jq、tree、rsync、expect、cloc、time、editorconfig-checker、textlint (preset-ja-technical-writing、preset-ja-spacing)、pwsh (PowerShell)
 - **リポジトリ操作 CLI**: Git 2.56.0 (OL8/9/10 共通)、gh (GitHub CLI)、glab (GitLab CLI)
 

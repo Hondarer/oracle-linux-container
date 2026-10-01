@@ -185,6 +185,7 @@ RUN dnf install -y \
         elif [ "${OL_VERSION}" = "9" ]; then echo \
             "java-21-openjdk java-21-openjdk-devel" \
             "python3-pip" \
+            "python3.11-pip" \
             "python-unversioned-command" \
             "google-noto-sans-cjk-ttc-fonts"; \
         else echo \
@@ -201,7 +202,11 @@ RUN dnf install -y \
         update-alternatives --install /usr/bin/pip pip /usr/bin/pip3.11 2; \
     elif [ "${OL_VERSION}" = "9" ]; then \
         alternatives --set java $(alternatives --display java 2>/dev/null | grep -E "java-21-openjdk.*bin/java" | head -1 | awk '{print $1}') && \
-        update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1; \
+        # OS 用の /usr/bin/python3 (3.9) を保持し、開発用コマンドは 3.11 を優先します。
+        ln -s /usr/bin/python3.11 /usr/local/bin/python && \
+        ln -s /usr/bin/python3.11 /usr/local/bin/python3 && \
+        ln -s /usr/bin/pip3.11 /usr/local/bin/pip && \
+        ln -s /usr/bin/pip3.11 /usr/local/bin/pip3; \
     else \
         alternatives --install /usr/bin/python python /usr/bin/python3 1 && \
         alternatives --install /usr/bin/pip pip /usr/bin/pip3 1; \
@@ -242,15 +247,20 @@ RUN dnf install -y \
     test -x /usr/local/bin/mmdc && \
     test -x /usr/local/bin/widdershins && \
     test -x /usr/local/bin/textlint && \
-    YAMLLINT_VERSION="1.38.0" && \
-    if [ "${OL_VERSION}" = "9" ]; then YAMLLINT_VERSION="1.37.1"; fi && \
-    pip install --no-cache-dir \
+    # ドキュメント生成・変換の依存を、既定の Python へグローバル導入します。
+    # pymdown-extensions と watchdog は推移的依存として導入します。
+    python -m pip install --no-cache-dir \
         gcovr \
         hjson \
+        "markitdown[all]" \
+        mkdocs==1.6.1 \
+        mkdocs-material==9.7.7 \
+        markdown-callouts==0.4.0 \
+        mkdocs-awesome-nav==3.3.0 \
         podman-compose \
         pytest \
         pytest-cov \
-        "yamllint==${YAMLLINT_VERSION}" && \
+        yamllint==1.38.0 && \
     # ビルド時に有効化したリポジトリを既定で無効化
     if [ "${OL_VERSION}" = "8" ]; then \
         dnf config-manager --disable ol8_codeready_builder 2>/dev/null || true; \
