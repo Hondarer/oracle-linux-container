@@ -141,7 +141,6 @@ ssh-keygen -R "[127.0.0.1]:40822"
 - `src/fonts/`: 追加フォントファイル (任意)
 - `src/packages/`: 追加パッケージの事前ダウンロード (任意)
 - `src/container-release`: ビルド時刻の記録 (自動生成)
-- `docs/` に新しく作成する文書: `yymmdd-topic-title.md` 形式 (例: `261003-image-size-reduction-study.md`)。日付は作成日、topic/title は内容を表す英語の小文字・ハイフン区切り。付属 CSV も同じ stem を使用。既存の利用ガイドは今回の改名対象外。命名規則の自動確認は追加しない。
 
 ## エンコーディング規則
 
