@@ -301,6 +301,10 @@ jobs:
           OS_MAJOR=$(podman exec $CONTAINER_ID bash -c '. /etc/os-release; echo "${VERSION_ID%%.*}"')
           test "$OS_MAJOR" = "${{ matrix.ol_version }}"
 
+          echo "=== Image compaction integration test ==="
+          podman cp tests/verify-image-compaction.sh "$CONTAINER_ID:/tmp/verify-image-compaction.sh"
+          podman exec "$CONTAINER_ID" bash /tmp/verify-image-compaction.sh
+
           echo "=== Git 2.56.0 integration test ==="
           podman cp tests/verify-git.sh "$CONTAINER_ID:/tmp/verify-git.sh"
           podman exec "$CONTAINER_ID" bash /tmp/verify-git.sh

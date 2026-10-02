@@ -36,7 +36,8 @@ RUN echo "Listing users with UID >= 1000:"; \
 
 # パッケージのインストール
 # ベースイメージが最新である場合、dnf update -y はビルド時間のみを増加させるため実行しません。
-RUN dnf install -y \
+RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,readonly \
+    dnf install -y \
         oracle-epel-release-el${OL_VERSION} \
         dnf-plugins-core && \
     # リポジトリの有効化 (OL10 では oracle-epel-release-el10 により EPEL が自動的に有効化されます)
@@ -261,6 +262,7 @@ RUN dnf install -y \
         pytest \
         pytest-cov \
         yamllint==1.38.0 && \
+    python -B /tmp/compact-image.py base && \
     # ビルド時に有効化したリポジトリを既定で無効化
     if [ "${OL_VERSION}" = "8" ]; then \
         dnf config-manager --disable ol8_codeready_builder 2>/dev/null || true; \
@@ -297,6 +299,7 @@ RUN --mount=type=bind,source=fonts,target=/tmp/fonts,readonly \
 
 # 追加パッケージのインストール
 RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
+    --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,readonly \
     cd /tmp && \
     DOWNLOAD_MAX_ATTEMPTS=4 && \
     download_with_retry() { \
@@ -535,6 +538,8 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     test -x /usr/local/bin/chrome && \
     /usr/local/bin/chrome --version && \
     rm -f "/tmp/${CHROME_ARCHIVE}" && \
+    # 検証済みの言語リソースと、ソースを保持する Python キャッシュを整理
+    python -B /tmp/compact-image.py packages && \
     # clean up
     dnf clean all && \
     rm -f /var/log/dnf* /var/log/hawkey.log && \
@@ -568,7 +573,9 @@ RUN printf '%s\n' \
 # COPY によりインストーラー変更時にビルドキャッシュを無効化する。
 COPY install-git.sh /tmp/install-git.sh
 RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
+    --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,readonly \
     bash /tmp/install-git.sh "${OL_VERSION}" && \
+    python -B /tmp/compact-image.py git && \
     rm -f /tmp/install-git.sh
 
 # mandb

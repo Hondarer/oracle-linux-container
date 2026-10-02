@@ -52,6 +52,11 @@
   - [トラブルシューティング](./using-in-cicd/troubleshooting.md) - よくある問題と解決方法
   - [ベストプラクティス](./using-in-cicd/best-practices.md) - 推奨される設定とパターン
 
+## イメージサイズの調査
+
+- [サイズ削減のローカル試行](./261003-image-size-reduction-study.md)
+- [言語リソースの追加調査](./261003-image-language-resource-study.md)
+
 ## GitHub Actions ワークフロー
 
 実際に使用できる GitHub Actions ワークフローファイルは、プロジェクトルートの `.github/workflows/` ディレクトリに配置されています。

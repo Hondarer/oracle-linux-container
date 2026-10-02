@@ -132,6 +132,7 @@ ssh-keygen -R "[127.0.0.1]:40822"
 - 日本語マニュアルページ: `man-pages-ja-auto-installer.sh` で自動インストール
 - フォント: `src/fonts/` からシステムフォントとして自動配置
 - 追加パッケージ: `src/packages/` から各種ツールを個別インストール
+- サイズ削減: `src/compact-image.py` を各インストールと同じ RUN 内で実行。英語・日本語・ニュートラルを保持して検証済みの他言語リソースを整理し、Node.js ソースマップ、対応ソースのある Python バイトコード、Git デバッグ情報を削減する。Git のハードリンクは維持する。保持条件・動作は `tests/verify-image-compaction.sh` で確認する。
 
 ## ファイル配置規則
 
@@ -140,6 +141,7 @@ ssh-keygen -R "[127.0.0.1]:40822"
 - `src/fonts/`: 追加フォントファイル (任意)
 - `src/packages/`: 追加パッケージの事前ダウンロード (任意)
 - `src/container-release`: ビルド時刻の記録 (自動生成)
+- `docs/` に新しく作成する文書: `yymmdd-topic-title.md` 形式 (例: `261003-image-size-reduction-study.md`)。日付は作成日、topic/title は内容を表す英語の小文字・ハイフン区切り。付属 CSV も同じ stem を使用。既存の利用ガイドは今回の改名対象外。命名規則の自動確認は追加しない。
 
 ## エンコーディング規則
 
