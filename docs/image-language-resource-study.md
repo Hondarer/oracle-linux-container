@@ -8,7 +8,7 @@ OL10 の全 rootfs では、既出の gettext・Chrome 整理に加えて約42.6
 
 ## 測定対象
 
-[先のサイズ削減調査](261003-image-size-reduction-study.md)と同じ基準イメージを使用。
+[先のサイズ削減調査](image-size-reduction-study.md)と同じ基準イメージを使用。
 
 - OL9/10: コミット `d4a0999` の公開イメージに WSL 準備処理を適用したもの。
 - OL8: 2026-09-30 のローカルイメージに今回の Python パッケージを追加した再現環境。CI と完全同一ではない。
@@ -104,4 +104,4 @@ XML の「メモリ内の変換」は lxml で他言語の葉要素だけを除�
 
 検証済みの独立した言語リソースを `src/compact-image.py` に反映した。.NET の削除対象はメタデータ照合済みの12 culture の `*.resources.dll` に限定し、Lunr と数式読み上げも確認済みの言語識別子を列挙する。未知の共通リソースを既定で削除しない。各インストールと同じ RUN 内で処理し、`tests/verify-image-compaction.sh` を3 OSの CI に追加した。命名規則は AGENTS.md に記載し、命名の自動確認は追加していない。
 
-組み合わせた実装の実測は [サイズ削減調査の実装結果](261003-image-size-reduction-study.md#実装への反映) を参照。
+組み合わせた実装の実測は [サイズ削減調査の実装結果](image-size-reduction-study.md#実装への反映) を参照。

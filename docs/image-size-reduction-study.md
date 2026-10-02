@@ -89,7 +89,7 @@ OL9 はソースマップを残した組み合わせで2,052.595 MiBとなり、
 
 ## データ・再現手順
 
-- 詳細な実測値: [CSV](./261003-image-size-reduction-study.csv)。
+- 詳細な実測値: [CSV](./image-size-reduction-study.csv)。
 - 一時アーカイブ、対象ファイル一覧、ログ、スクリプト: `/tmp/oracle-size-study-20261003/`。
 - `cleanup.py`: 各施策の実装。`run-study.py`: 一時コンテナ・export・圧縮・機能確認。
 - `smoke.sh` / `extra-smoke.sh` / `run-extra.py`: 機能確認。`compress-study.py`: 圧縮方式比較。`verify-study.py`: アーカイブ整合性確認。
@@ -115,7 +115,7 @@ python3 /tmp/oracle-size-study-20261003/run-study.py 8 combined-final
 
 ## 言語リソースの追加調査
 
-.NET の翻訳 DLL、Babel、他言語の Inkscape チュートリアル・man・MkDocs 検索データ等も見つかった。OL10 では、gettext・Chrome の整理に追加して全 rootfs の gzip を約42.662 MiB減らせた。[追加調査の実測と保持条件](261003-image-language-resource-study.md)を参照。
+.NET の翻訳 DLL、Babel、他言語の Inkscape チュートリアル・man・MkDocs 検索データ等も見つかった。OL10 では、gettext・Chrome の整理に追加して全 rootfs の gzip を約42.662 MiB減らせた。[追加調査の実測と保持条件](image-language-resource-study.md)を参照。
 
 ## 実装への反映
 

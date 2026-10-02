@@ -54,8 +54,8 @@
 
 ## イメージサイズの調査
 
-- [サイズ削減のローカル試行](./261003-image-size-reduction-study.md)
-- [言語リソースの追加調査](./261003-image-language-resource-study.md)
+- [サイズ削減のローカル試行](./image-size-reduction-study.md)
+- [言語リソースの追加調査](./image-language-resource-study.md)
 
 ## GitHub Actions ワークフロー
 
