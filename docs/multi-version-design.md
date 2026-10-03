@@ -70,7 +70,7 @@ ARG OL_VERSION
 | EPEL | `oracle-epel-release-el8` | `oracle-epel-release-el9` | `oracle-epel-release-el10` |
 | リポジトリ | `ol8_codeready_builder`, `ol8_developer_EPEL` | `ol9_codeready_builder`, `ol9_developer_EPEL` | `ol10_codeready_builder` |
 | Node.js | module 24 | module 24 | NodeSource 24.x |
-| Java | OpenJDK 17 | OpenJDK 21 | OpenJDK 21 |
+| Java | OpenJDK 21 | OpenJDK 21 | OpenJDK 21 |
 | Python | 3.12 | 3.12 | 3.12 |
 | フォント | DejaVu + VLGothic | Google Noto Sans CJK TTC | Google Noto Sans CJK |
 | doxybook2 | `linux-el8-x64` | `linux-el9-x64` | `linux-el10-x64` |
@@ -168,7 +168,7 @@ examples/devcontainer/
 | パッケージ | OL8 | OL9 | OL10 |
 |-----------|-----|-----|------|
 | Node.js | module 24 | module 24 | NodeSource 24.x |
-| Java | 17 | 21 | 21 |
+| Java | 21 | 21 | 21 |
 | Python | 3.12 | 3.12 | 3.12 |
 | GCC | 8 | 11 | 14 |
 | Noto CJK | なし | TTC | あり |

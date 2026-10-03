@@ -170,8 +170,7 @@ RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,reado
         xkeyboard-config \
         # バージョン依存パッケージ
         $(if [ "${OL_VERSION}" = "8" ]; then echo \
-            "java-11-openjdk-headless" \
-            "java-17-openjdk java-17-openjdk-devel" \
+            "java-21-openjdk java-21-openjdk-devel" \
             "platform-python" \
             "python3-libs" \
             "python3.12-pip" \
@@ -194,15 +193,34 @@ RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,reado
             "python3-pip" \
             "google-noto-sans-cjk-fonts"; \
         fi) && \
+    # Development Tools の jna は OL8/OL9 では Java 21 を依存先にできず、Java 8 を追加する。
+    # 既定の JDK を 21 だけにするため、jna と 21 以外の OpenJDK を外す。
+    if [ "${OL_VERSION}" = "8" ] || [ "${OL_VERSION}" = "9" ]; then \
+        extra_jdk=""; \
+        for pkg in jna \
+            java-1.8.0-openjdk java-1.8.0-openjdk-headless \
+            java-11-openjdk java-11-openjdk-headless \
+            java-17-openjdk java-17-openjdk-headless java-17-openjdk-devel; do \
+            if rpm -q "$pkg" >/dev/null 2>&1; then \
+                extra_jdk="$extra_jdk $pkg"; \
+            fi; \
+        done; \
+        if [ -n "$extra_jdk" ]; then \
+            dnf remove -y $extra_jdk; \
+        fi; \
+    fi && \
+    if rpm -qa | grep -E '^java-(1\.8\.0|11|17)-openjdk'; then \
+        exit 1; \
+    fi && \
     # alternatives の設定
     if [ "${OL_VERSION}" = "8" ]; then \
-        alternatives --set java $(alternatives --display java 2>/dev/null | grep -E "java-17-openjdk.*bin/java" | head -1 | awk '{print $1}') && \
+        alternatives --set java $(alternatives --display java 2>/dev/null | grep -E '^/.*java-21-openjdk.*/bin/java( |$)' | head -1 | awk '{print $1}') && \
         alternatives --set python /usr/bin/python3.12 && \
         alternatives --set python3 /usr/bin/python3.12 && \
         update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1 && \
         update-alternatives --install /usr/bin/pip pip /usr/bin/pip3.12 2; \
     elif [ "${OL_VERSION}" = "9" ]; then \
-        alternatives --set java $(alternatives --display java 2>/dev/null | grep -E "java-21-openjdk.*bin/java" | head -1 | awk '{print $1}') && \
+        alternatives --set java $(alternatives --display java 2>/dev/null | grep -E '^/.*java-21-openjdk.*/bin/java( |$)' | head -1 | awk '{print $1}') && \
         # OS 用の /usr/bin/python3 (3.9) を保持し、開発用コマンドは 3.12 を優先します。
         ln -s /usr/bin/python3.12 /usr/local/bin/python && \
         ln -s /usr/bin/python3.12 /usr/local/bin/python3 && \
@@ -212,6 +230,7 @@ RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,reado
         alternatives --install /usr/bin/python python /usr/bin/python3 1 && \
         alternatives --install /usr/bin/pip pip /usr/bin/pip3 1; \
     fi && \
+    java --version 2>&1 | head -1 | grep -E '^openjdk 21([.[:space:]]|$)' && \
     python -c 'import sys; assert sys.version_info[:2] == (3, 12)' && \
     python3 -c 'import sys; assert sys.version_info[:2] == (3, 12)' && \
     if [ "${OL_VERSION}" = "9" ]; then \

@@ -31,7 +31,7 @@
 - **説明**: 高速でディスク効率の良い Node.js パッケージマネージャー
 
 ### OpenJDK (Java)
-- **バージョン**: 17 (OL8) / 21 (OL9/10)
+- **バージョン**: 21 (OL8 / OL9 / OL10)
 - **ライセンス**: GPLv2 with Classpath Exception
 - **URL**: https://openjdk.org/
 - **説明**: Java 開発キットとランタイム

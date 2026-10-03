@@ -26,7 +26,7 @@ jobs:
         HOST_USER: javadev
         HOST_UID: 1000
         HOST_GID: 1000
-        JAVA_HOME: /usr/lib/jvm/java-17-openjdk
+        JAVA_HOME: /usr/lib/jvm/java-21-openjdk
         MAVEN_OPTS: -Xmx1024m
 
     steps:

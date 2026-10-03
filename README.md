@@ -101,7 +101,7 @@ podman pull hondarer/oracle-linux-10-dev:latest
 | ツール | OL8 | OL9 | OL10 |
 |--------|-----|-----|------|
 | Node.js | 24 | 24 | 24 |
-| Java (OpenJDK) | 17 | 21 | 21 |
+| Java (OpenJDK) | 21 | 21 | 21 |
 | .NET SDK | 10 | 10 | 10 |
 | Python | 3.12 | 3.12 | 3.12 |
 | C/C++ (GCC) | 8 | 11 | 14 |
@@ -522,7 +522,7 @@ systemctl --user status podman.socket
 ### 主要コンポーネントのライセンス
 
 - **Oracle Linux 8/9/10**: GPL-2.0
-- **OpenJDK 17/21**: GPL-2.0 with Classpath Exception
+- **OpenJDK 21**: GPL-2.0 with Classpath Exception
 - **Node.js 24**: MIT License
 - **.NET 10**: MIT License
 - **Python 3.12**: PSF License

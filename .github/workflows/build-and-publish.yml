@@ -319,13 +319,8 @@ jobs:
           echo "=== Java version ==="
           podman exec $CONTAINER_ID java --version
 
-          echo "=== Java 11 version ==="
-          JAVA11=$(podman exec $CONTAINER_ID find /usr/lib/jvm -name 'java' -path '*/java-11*' -type f | head -1)
-          if [ -n "$JAVA11" ]; then
-            podman exec $CONTAINER_ID $JAVA11 --version
-          else
-            echo "Java 11 not found (skipped)"
-          fi
+          echo "=== Only OpenJDK 21 is installed ==="
+          podman exec $CONTAINER_ID bash -lc 'if rpm -qa | grep -E "^java-(1\\.8\\.0|11|17)-openjdk"; then exit 1; fi'
 
           echo "=== Python version ==="
           podman exec $CONTAINER_ID python --version
@@ -343,7 +338,7 @@ jobs:
 
           case "${{ matrix.ol_version }}" in
             8)
-              EXPECTED_JAVA=17
+              EXPECTED_JAVA=21
               EXPECTED_PYTHON=3.12
               EXPECTED_GCC=8
               ;;
