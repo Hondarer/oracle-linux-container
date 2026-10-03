@@ -103,10 +103,10 @@ podman pull hondarer/oracle-linux-10-dev:latest
 | Node.js | 24 | 24 | 24 |
 | Java (OpenJDK) | 17 | 21 | 21 |
 | .NET SDK | 10 | 10 | 10 |
-| Python | 3.11 | 3.11 | 3.12 |
+| Python | 3.12 | 3.12 | 3.12 |
 | C/C++ (GCC) | 8 | 11 | 14 |
 
-OL9 は `/usr/local/bin` の `python`、`python3`、`pip`、`pip3` で開発用の Python 3.11 を優先します。OS 用の `/usr/bin/python3` は 3.9 を維持します。
+OL9 は `/usr/local/bin` の `python`、`python3`、`pip`、`pip3` で開発用の Python 3.12 を優先します。OS 用の `/usr/bin/python3` は 3.9 を維持します。
 
 ### Node.js パッケージマネージャー支援
 
@@ -525,7 +525,7 @@ systemctl --user status podman.socket
 - **OpenJDK 17/21**: GPL-2.0 with Classpath Exception
 - **Node.js 24**: MIT License
 - **.NET 10**: MIT License
-- **Python 3.11/3.12**: PSF License
+- **Python 3.12**: PSF License
 - **GCC 8/11/14**: GPL-3.0-or-later
 - **Doxygen**: GPL-2.0
 - **PlantUML**: GPL-3.0+

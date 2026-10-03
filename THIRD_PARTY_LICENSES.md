@@ -43,7 +43,7 @@
 - **説明**: .NET 開発環境
 
 ### Python
-- **バージョン**: 3.11 (OL8) / 3.9 (OL9) / 3.12 (OL10)
+- **バージョン**: 3.12 (OL8 / OL9 / OL10)
 - **ライセンス**: PSF License (Python Software Foundation License)
 - **URL**: https://www.python.org/
 - **説明**: Python プログラミング言語
@@ -82,7 +82,7 @@
 - **説明**: pytest 向けカバレッジ計測プラグイン
 
 ### yamllint
-- **バージョン**: 1.38.0 (OL8/10) / 1.37.1 (OL9、Python 3.9 互換上限)
+- **バージョン**: 1.38.0
 - **ライセンス**: GPL-3.0-or-later
 - **URL**: https://github.com/adrienverge/yamllint
 - **説明**: YAML ファイルの構文・スタイルチェッカー

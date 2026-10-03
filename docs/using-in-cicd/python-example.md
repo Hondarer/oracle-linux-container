@@ -190,7 +190,7 @@ mypy を使用して静的型チェックを実行します。
 
 ```ini
 [mypy]
-python_version = 3.11
+python_version = 3.12
 warn_return_any = True
 warn_unused_configs = True
 disallow_untyped_defs = True

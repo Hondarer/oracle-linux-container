@@ -71,7 +71,7 @@ ARG OL_VERSION
 | リポジトリ | `ol8_codeready_builder`, `ol8_developer_EPEL` | `ol9_codeready_builder`, `ol9_developer_EPEL` | `ol10_codeready_builder` |
 | Node.js | module 24 | module 24 | NodeSource 24.x |
 | Java | OpenJDK 17 | OpenJDK 21 | OpenJDK 21 |
-| Python | 3.11 | 3.11 | 3.12 |
+| Python | 3.12 | 3.12 | 3.12 |
 | フォント | DejaVu + VLGothic | Google Noto Sans CJK TTC | Google Noto Sans CJK |
 | doxybook2 | `linux-el8-x64` | `linux-el9-x64` | `linux-el10-x64` |
 | OL8互換ライブラリ | あり | 不要 | 不要 |
@@ -80,7 +80,7 @@ ARG OL_VERSION
 
 **alternatives 設定**:
 
-Java と Python のコマンドはバージョンに応じて設定します。OL9 は `/usr/local/bin` の `python`、`python3`、`pip`、`pip3` を Python 3.11 に向け、OS 用の `/usr/bin/python3` (3.9) を保持します。
+Java と Python のコマンドはバージョンに応じて設定します。OL9 は `/usr/local/bin` の `python`、`python3`、`pip`、`pip3` を Python 3.12 に向け、OS 用の `/usr/bin/python3` (3.9) を保持します。
 
 **doxybook2**:
 
@@ -169,7 +169,7 @@ examples/devcontainer/
 |-----------|-----|-----|------|
 | Node.js | module 24 | module 24 | NodeSource 24.x |
 | Java | 17 | 21 | 21 |
-| Python | 3.11 | 3.11 | 3.12 |
+| Python | 3.12 | 3.12 | 3.12 |
 | GCC | 8 | 11 | 14 |
 | Noto CJK | なし | TTC | あり |
 | doxybook2 | el8 | el9 | el10 |

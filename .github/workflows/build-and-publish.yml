@@ -344,12 +344,12 @@ jobs:
           case "${{ matrix.ol_version }}" in
             8)
               EXPECTED_JAVA=17
-              EXPECTED_PYTHON=3.11
+              EXPECTED_PYTHON=3.12
               EXPECTED_GCC=8
               ;;
             9)
               EXPECTED_JAVA=21
-              EXPECTED_PYTHON=3.11
+              EXPECTED_PYTHON=3.12
               EXPECTED_GCC=11
               ;;
             10)
@@ -362,6 +362,10 @@ jobs:
           podman exec $CONTAINER_ID java --version 2>&1 | head -1 | grep -E "^openjdk ${EXPECTED_JAVA}([.[:space:]]|$)"
           test "$PYTHON_MINOR" = "$EXPECTED_PYTHON"
           test "$PYTHON3_MINOR" = "$EXPECTED_PYTHON"
+          if [ "${{ matrix.ol_version }}" = "9" ]; then
+            echo "=== OL9 OS Python remains 3.9 ==="
+            podman exec $CONTAINER_ID /usr/bin/python3 -c 'import sys; assert sys.version_info[:2] == (3, 9)'
+          fi
           podman exec $CONTAINER_ID python -m pip --version
 
           echo "=== pytest and coverage smoke test ==="
@@ -393,12 +397,9 @@ jobs:
           podman exec $CONTAINER_ID gh --version | head -1 | grep -F 'gh version 2.101.0'
           podman exec $CONTAINER_ID glab --version | grep -F '1.118.0'
 
-          echo "=== Python 3.11 version ==="
-          if podman exec $CONTAINER_ID which python3.11 > /dev/null 2>&1; then
-            podman exec $CONTAINER_ID python3.11 --version
-          else
-            echo "python3.11 not found (skipped)"
-          fi
+          echo "=== Python 3.12 version ==="
+          podman exec $CONTAINER_ID python3.12 --version
+          podman exec $CONTAINER_ID python3.12 --version | grep -E '^Python 3\.12\.'
 
           echo "=== OpenSSH version ==="
           podman exec $CONTAINER_ID ssh -V

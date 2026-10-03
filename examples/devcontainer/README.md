@@ -24,7 +24,7 @@ cp -r /path/to/oracle-linux-container/examples/devcontainer/ol8 .devcontainer
 
 ## 含まれる開発ツール
 
-- **言語ランタイム**: Node.js 24、Java 17(OL8)/21(OL9/10)、.NET 10、Python 3.11(OL8)/3.9(OL9)/3.12(OL10)
+- **言語ランタイム**: Node.js 24、Java 17(OL8)/21(OL9/10)、.NET 10、Python 3.12
 - **ビルドツール**: GCC、CMake、Make、automake
 - **ドキュメント**: Doxygen、PlantUML、Pandoc
 - **テスト**: Jest、JUnit、pytest、xUnit

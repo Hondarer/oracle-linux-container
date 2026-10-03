@@ -174,7 +174,7 @@ RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,reado
             "java-17-openjdk java-17-openjdk-devel" \
             "platform-python" \
             "python3-libs" \
-            "python3.11-pip" \
+            "python3.12-pip" \
             "llvm-compat-libs" \
             "libmodman" \
             "libsoup" \
@@ -186,7 +186,7 @@ RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,reado
         elif [ "${OL_VERSION}" = "9" ]; then echo \
             "java-21-openjdk java-21-openjdk-devel" \
             "python3-pip" \
-            "python3.11-pip" \
+            "python3.12-pip" \
             "python-unversioned-command" \
             "google-noto-sans-cjk-ttc-fonts"; \
         else echo \
@@ -197,20 +197,25 @@ RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,reado
     # alternatives の設定
     if [ "${OL_VERSION}" = "8" ]; then \
         alternatives --set java $(alternatives --display java 2>/dev/null | grep -E "java-17-openjdk.*bin/java" | head -1 | awk '{print $1}') && \
-        alternatives --set python /usr/bin/python3.11 && \
-        alternatives --set python3 /usr/bin/python3.11 && \
+        alternatives --set python /usr/bin/python3.12 && \
+        alternatives --set python3 /usr/bin/python3.12 && \
         update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1 && \
-        update-alternatives --install /usr/bin/pip pip /usr/bin/pip3.11 2; \
+        update-alternatives --install /usr/bin/pip pip /usr/bin/pip3.12 2; \
     elif [ "${OL_VERSION}" = "9" ]; then \
         alternatives --set java $(alternatives --display java 2>/dev/null | grep -E "java-21-openjdk.*bin/java" | head -1 | awk '{print $1}') && \
-        # OS 用の /usr/bin/python3 (3.9) を保持し、開発用コマンドは 3.11 を優先します。
-        ln -s /usr/bin/python3.11 /usr/local/bin/python && \
-        ln -s /usr/bin/python3.11 /usr/local/bin/python3 && \
-        ln -s /usr/bin/pip3.11 /usr/local/bin/pip && \
-        ln -s /usr/bin/pip3.11 /usr/local/bin/pip3; \
+        # OS 用の /usr/bin/python3 (3.9) を保持し、開発用コマンドは 3.12 を優先します。
+        ln -s /usr/bin/python3.12 /usr/local/bin/python && \
+        ln -s /usr/bin/python3.12 /usr/local/bin/python3 && \
+        ln -s /usr/bin/pip3.12 /usr/local/bin/pip && \
+        ln -s /usr/bin/pip3.12 /usr/local/bin/pip3; \
     else \
         alternatives --install /usr/bin/python python /usr/bin/python3 1 && \
         alternatives --install /usr/bin/pip pip /usr/bin/pip3 1; \
+    fi && \
+    python -c 'import sys; assert sys.version_info[:2] == (3, 12)' && \
+    python3 -c 'import sys; assert sys.version_info[:2] == (3, 12)' && \
+    if [ "${OL_VERSION}" = "9" ]; then \
+        /usr/bin/python3 -c 'import sys; assert sys.version_info[:2] == (3, 9)'; \
     fi && \
     PUPPETEER_SKIP_DOWNLOAD=true npm install --global --prefix /usr/local \
         @antfu/ni@30.5.0 \
