@@ -150,6 +150,7 @@ OL9 は `/usr/local/bin` の `python`、`python3`、`pip`、`pip3` で開発用�
 
 - **jq**、**tree**、**rsync**、**time**
 - **clang-format**、**git-clang-format** (LLVM 23.1.1)
+- **libclang** (v18.1.1、PyPI。Clang Python Bindings `clang.cindex` と同梱の libclang 共有ライブラリを既定の Python へ導入)
 - **expect**、**nkf**、**cloc** (v2.10)
 - **editorconfig-checker** (v3.7.0)
 - **gcovr** (C/C++ カバレッジレポートツール)

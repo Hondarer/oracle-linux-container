@@ -166,6 +166,14 @@ License: GPL-3.0-or-later
 Copyright: Adrien Vergé and contributors
 URL: https://github.com/adrienverge/yamllint
 
+libclang 18.1.1 (OL8 / OL9 / OL10)
+License: Apache License 2.0 with LLVM Exceptions
+Copyright: LLVM Contributors
+URL: https://github.com/sighingnow/libclang
+Source: https://pypi.org/project/libclang/18.1.1/
+Note: Python package providing Clang Python Bindings (import clang.cindex)
+      and a bundled libclang shared library, installed into the default Python.
+
 ================================================================================
 UTILITIES AND LIBRARIES
 ================================================================================
@@ -340,5 +348,5 @@ For a comprehensive and detailed list of all third-party components and their
 licenses, please refer to the THIRD_PARTY_LICENSES.md file in the project root.
 
 ================================================================================
-Last Updated: 2026-05-18
+Last Updated: 2026-10-25
 ================================================================================

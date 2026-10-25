@@ -272,11 +272,13 @@ RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,reado
     test -x /usr/local/bin/mmdc && \
     test -x /usr/local/bin/widdershins && \
     test -x /usr/local/bin/textlint && \
-    # ドキュメント生成・変換の依存を、既定の Python へグローバル導入します。
+    # ドキュメント生成・変換の依存と libclang を、既定の Python へグローバル導入します。
     # pymdown-extensions と watchdog は推移的依存として導入します。
+    # libclang は Clang Python Bindings (clang.cindex) と同梱の libclang.so を導入します。
     python -m pip install --no-cache-dir \
         gcovr \
         hjson \
+        libclang==18.1.1 \
         "markitdown[all]" \
         mkdocs==1.6.1 \
         mkdocs-material==9.7.7 \
@@ -286,6 +288,7 @@ RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,reado
         pytest \
         pytest-cov \
         yamllint==1.38.0 && \
+    python -c 'import clang.cindex; from importlib.metadata import version; assert version("libclang") == "18.1.1"; index = clang.cindex.Index.create(); tu = index.parse("probe.c", unsaved_files=[("probe.c", "int probe(void) { return 1; }\n")]); assert [c.spelling for c in tu.cursor.get_children()] == ["probe"]; assert not any(d.severity >= clang.cindex.Diagnostic.Error for d in tu.diagnostics)' && \
     python -B /tmp/compact-image.py base && \
     # ビルド時に有効化したリポジトリを既定で無効化
     if [ "${OL_VERSION}" = "8" ]; then \

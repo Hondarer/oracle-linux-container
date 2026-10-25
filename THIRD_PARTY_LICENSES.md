@@ -87,6 +87,12 @@
 - **URL**: https://github.com/adrienverge/yamllint
 - **説明**: YAML ファイルの構文・スタイルチェッカー
 
+### libclang
+- **バージョン**: 18.1.1
+- **ライセンス**: Apache License 2.0 with LLVM Exceptions
+- **URL**: https://github.com/sighingnow/libclang
+- **説明**: Clang Python Bindings (`clang.cindex`) と、同梱の libclang 共有ライブラリ。PyPI の `libclang` を既定の Python へ導入する
+
 ## ドキュメント生成ツール
 
 ### Doxygen
@@ -387,3 +393,4 @@
 - 2025-11-15: 初版作成 (実装に合わせてコンポーネントとライセンスを文書化)
 - 2026-09-06: pwsh (PowerShell) を追加
 - 2026-09-12: pytest / pytest-cov を追加
+- 2026-10-25: libclang 18.1.1 を追加
