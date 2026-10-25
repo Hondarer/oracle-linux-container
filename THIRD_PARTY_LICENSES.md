@@ -332,7 +332,7 @@
 - **説明**: `.editorconfig` 違反 (インデント、改行コード、末尾空白等) を検出するチェッカー
 
 ### gh (GitHub CLI)
-- **バージョン**: 2.101.0
+- **バージョン**: 2.103.2
 - **ライセンス**: MIT License
 - **URL**: https://github.com/cli/cli
 - **説明**: GitHub の公式 CLI。リポジトリ・PR・issue・workflow などをターミナルから操作
