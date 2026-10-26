@@ -108,6 +108,8 @@ podman pull hondarer/oracle-linux-10-dev:latest
 
 OL9 は `/usr/local/bin` の `python`、`python3`、`pip`、`pip3` で開発用の Python 3.12 を優先します。OS 用の `/usr/bin/python3` は 3.9 を維持します。
 
+eMudhra 証明書問題への対応として、OS の CA パッケージ、pip と新規 venv 用 wheel、certifi を更新し、Node.js は OS の証明書ストアを使用します。コンポーネント別の対策版・導入可否と、Chrome / .NET SDK 同梱ストアの対策は [対応状況](docs/emudhra-certificate-response.md) を参照してください。
+
 ### Node.js パッケージマネージャー支援
 
 - **@antfu/ni** (v30.5.0)
@@ -166,7 +168,7 @@ OL9 は `/usr/local/bin` の `python`、`python3`、`pip`、`pip3` で開発用�
 
 ### リポジトリ操作 CLI
 
-- **gh** (v2.101.0) — GitHub CLI
+- **gh** (v2.103.2) — GitHub CLI
 - **glab** (v1.118.0) — GitLab CLI
 
 Git は公式ソースから `/usr/local` に導入しています。Bash 補完と man ページも 2.56.0 に揃え、通常のログインと `sudo git` の両方でこのバージョンを使用します。システム設定ファイルは `/etc/gitconfig`、ユーザー設定は従来どおり `~/.gitconfig` です。PCRE2 対応 (`git grep -P`) と gettext によるメッセージの国際化を有効にしています。公式配布には日本語メッセージの翻訳が含まれないため、既定の日本語ロケールでは Git のメッセージは英語になります。

@@ -17,6 +17,9 @@ EXPOSE 22
 ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 ENV SHELL="/bin/bash"
 ENV PLANTUML_HOME="/usr/local/bin"
+# Node.js の同梱 CA に残る eMudhra の信頼を避け、更新済み OS ストアを使用する。
+# --use-system-ca は同梱 CA への追加なので、この用途では使用しない。
+ENV NODE_OPTIONS="--use-openssl-ca"
 
 # UID:1000 以上のユーザーとグループの削除 (nobody は除外)
 RUN echo "Listing users with UID >= 1000:"; \
@@ -36,7 +39,12 @@ RUN echo "Listing users with UID >= 1000:"; \
 
 # パッケージのインストール
 # ベースイメージが最新である場合、dnf update -y はビルド時間のみを増加させるため実行しません。
+COPY verify-ca-trust.py /usr/local/libexec/verify-ca-trust.py
+COPY ca_distrust.py /usr/local/libexec/ca_distrust.py
+COPY security/emudhra-roots.pem /usr/local/share/oracle-linux-dev-container/emudhra-roots.pem
 RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,readonly \
+    dnf --refresh install -y 'ca-certificates >= 2026.2.92_v9.0.319' && \
+    update-ca-trust extract && \
     dnf install -y \
         oracle-epel-release-el${OL_VERSION} \
         dnf-plugins-core && \
@@ -275,7 +283,18 @@ RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,reado
     # ドキュメント生成・変換の依存と libclang を、既定の Python へグローバル導入します。
     # pymdown-extensions と watchdog は推移的依存として導入します。
     # libclang は Clang Python Bindings (clang.cindex) と同梱の libclang.so を導入します。
+    # pip は独自の certifi を同梱するため、OS 更新とは別に対策版へ更新する。
+    # 更新済み OS ストアの curl と公開 SHA256 で bootstrap する。
+    # ensurepip の参照先にも配置し、新規 venv が古い pip を導入することを防ぐ。
+    PYTHON_WHEEL_DIR="$(python -c 'import sysconfig; print(sysconfig.get_config_var("WHEEL_PKG_DIR"))')" && \
+    case "${PYTHON_WHEEL_DIR}" in /usr/share/python3.12-wheels|/usr/share/python3-wheels) ;; *) exit 1 ;; esac && \
+    mkdir -p "${PYTHON_WHEEL_DIR}" && \
+    curl -fL 'https://files.pythonhosted.org/packages/3f/06/3e4420302363fbb71be3c7f35ce042f54bfca330e3e66b3a2e3c4cca579f/pip-26.2.2-py3-none-any.whl' \
+        -o "${PYTHON_WHEEL_DIR}/pip-26.2.2-py3-none-any.whl" && \
+    echo "fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70  ${PYTHON_WHEEL_DIR}/pip-26.2.2-py3-none-any.whl" | sha256sum -c - && \
+    python -m pip install --no-index --no-cache-dir --upgrade "${PYTHON_WHEEL_DIR}/pip-26.2.2-py3-none-any.whl" && \
     python -m pip install --no-cache-dir \
+        'certifi>=2026.10.19' \
         gcovr \
         hjson \
         libclang==18.1.1 \
@@ -289,6 +308,8 @@ RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,reado
         pytest-cov \
         yamllint==1.38.0 && \
     python -c 'import clang.cindex; from importlib.metadata import version; assert version("libclang") == "18.1.1"; index = clang.cindex.Index.create(); tu = index.parse("probe.c", unsaved_files=[("probe.c", "int probe(void) { return 1; }\n")]); assert [c.spelling for c in tu.cursor.get_children()] == ["probe"]; assert not any(d.severity >= clang.cindex.Diagnostic.Error for d in tu.diagnostics)' && \
+    python -B /usr/local/libexec/ca_distrust.py && \
+    python -B /usr/local/libexec/verify-ca-trust.py && \
     python -B /tmp/compact-image.py base && \
     # ビルド時に有効化したリポジトリを既定で無効化
     if [ "${OL_VERSION}" = "8" ]; then \
@@ -534,7 +555,7 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     cd /tmp && rm -rf "llvm-project-${LLVM_VER}.src" && \
     # gh (GitHub CLI)
     cd /tmp && \
-    GH_VER="2.101.0" && \
+    GH_VER="2.103.2" && \
     GH_RPM="gh_${GH_VER}_linux_amd64.rpm" && \
     download_required "gh ${GH_VER}" "/tmp/${GH_RPM}" "https://github.com/cli/cli/releases/download/v${GH_VER}/${GH_RPM}" "${GH_RPM}" && \
     dnf install -y "/tmp/${GH_RPM}" && \

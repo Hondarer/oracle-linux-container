@@ -118,9 +118,9 @@ jobs:
             "llvm-project-23.1.1.src.tar.xz" \
             "https://github.com/llvm/llvm-project/releases/download/llvmorg-23.1.1/llvm-project-23.1.1.src.tar.xz"
 
-          download_package "gh 2.101.0" \
-            "gh_2.101.0_linux_amd64.rpm" \
-            "https://github.com/cli/cli/releases/download/v2.101.0/gh_2.101.0_linux_amd64.rpm"
+          download_package "gh 2.103.2" \
+            "gh_2.103.2_linux_amd64.rpm" \
+            "https://github.com/cli/cli/releases/download/v2.103.2/gh_2.103.2_linux_amd64.rpm"
 
           download_package "glab 1.118.0" \
             "glab_1.118.0_linux_amd64.rpm" \
@@ -148,6 +148,7 @@ jobs:
     needs: prepare-packages
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         ol_version: ["8", "9", "10"]
     permissions:
@@ -301,6 +302,13 @@ jobs:
           OS_MAJOR=$(podman exec $CONTAINER_ID bash -c '. /etc/os-release; echo "${VERSION_ID%%.*}"')
           test "$OS_MAJOR" = "${{ matrix.ol_version }}"
 
+          echo "=== Certificate trust stores (eMudhra remediation) ==="
+          podman exec "$CONTAINER_ID" python -B /usr/local/libexec/verify-ca-trust.py
+          podman cp tests/verify-ca-clients.cjs "$CONTAINER_ID:/tmp/verify-ca-clients.cjs"
+          podman exec "$CONTAINER_ID" node /tmp/verify-ca-clients.cjs
+          podman cp tests/verify-dotnet-signature.sh "$CONTAINER_ID:/tmp/verify-dotnet-signature.sh"
+          podman exec "$CONTAINER_ID" bash /tmp/verify-dotnet-signature.sh
+
           echo "=== Image compaction integration test ==="
           podman cp tests/verify-image-compaction.sh "$CONTAINER_ID:/tmp/verify-image-compaction.sh"
           podman exec "$CONTAINER_ID" bash /tmp/verify-image-compaction.sh
@@ -389,7 +397,7 @@ jobs:
           podman exec $CONTAINER_ID cloc --version | grep -Fx '2.10'
           podman exec $CONTAINER_ID editorconfig-checker --version | grep -F '3.7.0'
           podman exec $CONTAINER_ID yamllint --version | grep -F 'yamllint 1.38.0'
-          podman exec $CONTAINER_ID gh --version | head -1 | grep -F 'gh version 2.101.0'
+          podman exec $CONTAINER_ID gh --version | head -1 | grep -F 'gh version 2.103.2'
           podman exec $CONTAINER_ID glab --version | grep -F '1.118.0'
 
           echo "=== Python 3.12 version ==="
