@@ -166,6 +166,8 @@ eMudhra 証明書問題への対応として、OS の CA パッケージ、pip �
 - **pwsh** (v7.6.6、PowerShell)
 - **Podman**、**podman-compose**、Docker 互換の **docker** コマンド
 
+意図しないホスト名の書き換えを防ぐため、`hostname` コマンドは含めていません。ホスト名の確認には `uname -n` を使用してください。
+
 ### リポジトリ操作 CLI
 
 - **gh** (v2.103.2) — GitHub CLI
