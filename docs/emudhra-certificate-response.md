@@ -36,6 +36,8 @@ Oracle の公開情報は [Errata 一覧](https://linux.oracle.com/ords/f?p=1105
 
 Node.js の `--use-system-ca` は同梱 CA に OS CA を追加する機能のため、古い同梱 CA を除外する用途には使いません。`--use-openssl-ca` により OS ストアへ切り替えます。この環境変数は npm や Node.js 製ドキュメントツールにも適用されます。
 
+GitHub Actions がジョブ コンテナーへ持ち込む公式ビルドの Node.js も、この環境変数を引き継ぎます。公式ビルドは OpenSSL の既定ディレクトリが `/etc/ssl` のため、OS ストアを `/etc/ssl/cert.pem` から読みます。OL9/10 では ca-certificates がこのファイルを配置しますが、OL8 には存在しないため、`src/Dockerfile` で `/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem` へのシンボリック リンクを作成します。`verify-ca-trust.py` はこのファイルの内容を検査し、CI は公式ビルドの Node.js で HTTPS 接続を確認します。
+
 アプリケーションが `NODE_OPTIONS` を上書きする場合は、この指定も維持してください。独自に指定した CA バンドルや Java truststore は今回の既定ストアの更新対象に含みません。
 
 pip は更新済み OS ストアを使用する curl で wheel を取得し、Python セキュリティチームが公開した SHA256 と照合してからローカルインストールします。OL8/9 の OS 用 Python とは別の `/usr/share/python3.12-wheels`、OL10 は `/usr/share/python3-wheels` に保存し、標準ライブラリの書き換えは行いません。

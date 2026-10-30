@@ -61,6 +61,10 @@ if (!(process.env.NODE_OPTIONS || '').split(/\s+/).includes('--use-openssl-ca') 
 console.log('Node.js ' + process.versions.node + ': OS CA store selected');
 """], check=True)
 
+# Official Node.js builds, including the one GitHub Actions brings into job
+# containers, use OPENSSLDIR=/etc/ssl and read /etc/ssl/cert.pem in this mode.
+check("/etc/ssl/cert.pem", pem_certificates(Path("/etc/ssl/cert.pem").read_text()))
+
 java_certs = subprocess.run(
     ["keytool", "-list", "-rfc", "-cacerts", "-storepass", "changeit"],
     check=True, capture_output=True, text=True)

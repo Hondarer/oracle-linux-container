@@ -45,6 +45,12 @@ COPY security/emudhra-roots.pem /usr/local/share/oracle-linux-dev-container/emud
 RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,readonly \
     dnf --refresh install -y 'ca-certificates >= 2026.2.92_v9.0.319' && \
     update-ca-trust extract && \
+    # 公式ビルドの Node.js (GitHub Actions がジョブ コンテナーへ持ち込むものを含む) は OPENSSLDIR が /etc/ssl のため、
+    # --use-openssl-ca では /etc/ssl/cert.pem を読む。OL9/10 は ca-certificates が配置するが、OL8 には存在しない。
+    # see: https://github.com/nodejs/node/blob/v24.21.0/deps/openssl/openssl_common.gypi
+    if [ ! -e /etc/ssl/cert.pem ]; then \
+        ln -s /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem /etc/ssl/cert.pem; \
+    fi && \
     dnf install -y \
         oracle-epel-release-el${OL_VERSION} \
         dnf-plugins-core && \

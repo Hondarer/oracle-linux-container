@@ -306,6 +306,17 @@ jobs:
           podman exec "$CONTAINER_ID" python -B /usr/local/libexec/verify-ca-trust.py
           podman cp tests/verify-ca-clients.cjs "$CONTAINER_ID:/tmp/verify-ca-clients.cjs"
           podman exec "$CONTAINER_ID" node /tmp/verify-ca-clients.cjs
+          # GitHub Actions は公式ビルドの Node.js をジョブ コンテナーへ持ち込み、イメージの NODE_OPTIONS のまま
+          # JavaScript アクションを実行するため、その構成でも OS ストアで接続できることを確認する。
+          NODE_DIST=https://nodejs.org/dist/latest-v24.x
+          curl -fsSL -o /tmp/node-SHASUMS256.txt "$NODE_DIST/SHASUMS256.txt"
+          NODE_TARBALL=$(awk '/ node-v[0-9.]+-linux-x64\.tar\.xz$/ {print $2}' /tmp/node-SHASUMS256.txt)
+          curl -fsSL -o "/tmp/$NODE_TARBALL" "$NODE_DIST/$NODE_TARBALL"
+          (cd /tmp && grep " $NODE_TARBALL\$" node-SHASUMS256.txt | sha256sum -c -)
+          tar -xJf "/tmp/$NODE_TARBALL" -C /tmp
+          podman cp "/tmp/${NODE_TARBALL%.tar.xz}/bin/node" "$CONTAINER_ID:/tmp/official-node"
+          podman cp tests/verify-official-node-tls.cjs "$CONTAINER_ID:/tmp/verify-official-node-tls.cjs"
+          podman exec "$CONTAINER_ID" /tmp/official-node /tmp/verify-official-node-tls.cjs
           podman cp tests/verify-dotnet-signature.sh "$CONTAINER_ID:/tmp/verify-dotnet-signature.sh"
           podman exec "$CONTAINER_ID" bash /tmp/verify-dotnet-signature.sh
 
