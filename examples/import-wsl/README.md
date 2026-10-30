@@ -3,6 +3,9 @@
 Oracle Linux 開発環境を WSL2 にインポートするための PowerShell スクリプトです。
 OL8、OL9、OL10 に対応しています。
 
+インポート後に WSL2 の仮想ディスク (`ext4.vhdx`) を圧縮するスクリプト `compact-wsl.ps1` も同梱しています。
+詳細は [仮想ディスクの圧縮](#仮想ディスクの圧縮) を参照してください。
+
 ## 概要
 
 このスクリプトは、GitHub Releases から取得した WSL2 用 rootfs (`tar.gz` または `tar`) を使用し、WSL2 ディストリビューションとしてインポートします。
@@ -255,6 +258,93 @@ Podman API socket を再度有効化する場合は、次のコマンドを実�
 systemctl --user enable --now podman.socket
 ```
 
+## 仮想ディスクの圧縮
+
+WSL2 のディストリビューションは、ファイルシステムを Windows 上の仮想ディスクファイル `ext4.vhdx` に保存します。
+このファイルはデータの書き込みに応じて大きくなりますが、Linux 側でファイルを削除しても自動的には小さくなりません。
+ビルドやパッケージの更新を繰り返すと、実際の使用量より大きな領域を Windows のドライブ上で占有し続けます。
+
+`compact-wsl.ps1` は、この未使用領域を解放して `ext4.vhdx` のサイズを縮小するスクリプトです。
+
+### 圧縮の仕組み
+
+スクリプトは次の 3 段階で処理します。
+
+1. **未使用ブロックの解放 (fstrim)**: ディストリビューション内で root として `fstrim -v /` を実行します。fstrim は、ファイルシステム上で使われていないブロックを仮想ディスクへ通知するコマンドです。通知を受けた仮想ディスクは該当ブロックを未割り当てとして扱い、以降はゼロとして読み出します。ゼロを書き込むゼロフィルと同じ効果を、実際の書き込みを行わずに得られます。
+2. **WSL2 の停止 (wsl --shutdown)**: `ext4.vhdx` を使用中のままでは圧縮できないため、WSL2 の仮想マシンを停止します。停止後、ファイルの使用が終わるまで最大 60 秒待機します。
+3. **仮想ディスクの圧縮 (diskpart)**: Windows 標準のディスク管理コマンド `diskpart` で `ext4.vhdx` を読み取り専用でアタッチし、`compact vdisk` で未割り当てブロックをファイルから取り除きます。完了後にデタッチします。
+
+`diskpart` が実行するコマンドは次のとおりです。
+
+```text
+select vdisk file="C:\Users\<ユーザー名>\AppData\Local\WSL\OracleLinux8-Dev\ext4.vhdx"
+attach vdisk readonly
+compact vdisk
+detach vdisk
+exit
+```
+
+圧縮対象の `ext4.vhdx` のパスは、WSL の登録情報 (レジストリの `HKCU\Software\Microsoft\Windows\CurrentVersion\Lxss`) から自動的に取得します。
+Hyper-V の `Optimize-VHD` コマンドレットでも同じ圧縮ができますが、Hyper-V 管理ツールが必要で Windows Home エディションでは使用できません。
+このスクリプトは、どのエディションでも利用できる `diskpart` を使用します。
+
+### 使用方法
+
+`diskpart` の実行には管理者権限が必要です。
+PowerShell を **管理者として実行** し、圧縮するディストリビューション名を指定します。
+
+```powershell
+# スクリプトをダウンロード
+Invoke-WebRequest `
+  -Uri "https://raw.githubusercontent.com/hondarer/oracle-linux-container/main/examples/import-wsl/compact-wsl.ps1" `
+  -OutFile ".\compact-wsl.ps1"
+
+# OL8 のディストリビューションを圧縮
+powershell -ExecutionPolicy Bypass -File .\compact-wsl.ps1 -WslDistroName "OracleLinux8-Dev"
+```
+
+実行すると、仮想ディスクのパス・処理前のサイズ・処理内容を表示し、`wsl --shutdown` を実行してよいか確認します。
+`y` を入力すると処理を開始し、終了時に処理前後のディスク上サイズと削減量を表示します。
+
+```text
+  処理前のディスク上サイズ : 18.42 GB
+  処理後のディスク上サイズ : 9.87 GB
+  削減量                   : 8.55 GB
+```
+
+上記の数値は表示形式を示す例です。削減量は、削除したファイルの量や仮想ディスク内の断片化の状況によって変わります。
+
+### compact-wsl.ps1 のパラメータ
+
+| パラメータ | 説明 |
+|------------|------|
+| `-WslDistroName` | 圧縮するディストリビューション名 (必須)。`wsl --list --verbose` で確認できます。 |
+| `-SkipTrim` | fstrim を実行せずに、停止と圧縮だけを行います。直前に手動で fstrim を実行済みの場合に使用します。 |
+| `-Force` | `wsl --shutdown` 前の確認を省略します。タスクスケジューラーなどから無人で実行する場合に使用します。 |
+
+### 手動で実行する場合
+
+スクリプトを使わずに同じ処理を行う手順です。
+
+```powershell
+# 1. 未使用ブロックを解放 (通常の PowerShell でも実行可)
+wsl -d OracleLinux8-Dev -u root -- fstrim -v /
+
+# 2. WSL2 を停止
+wsl --shutdown
+
+# 3. 管理者の PowerShell で diskpart を起動し、前述のコマンドを入力
+diskpart
+```
+
+### 圧縮時の注意事項
+
+- `wsl --shutdown` は、圧縮対象以外も含めて実行中のすべての WSL2 ディストリビューションを停止します。VS Code の WSL 接続や Docker Desktop など、WSL2 を利用するアプリケーションも停止するため、作業中のデータを保存してから実行してください。
+- 圧縮中に `ext4.vhdx` を使用すると失敗します。完了するまで `wsl` コマンドや WSL2 を利用するアプリケーションを起動しないでください。
+- `compact vdisk` は読み取り専用でアタッチして実行するため、ファイルシステムの内容は変更しません。ただし、重要なデータがある場合は、事前に [データのバックアップ方法](#データのバックアップ方法) に従ってエクスポートしておくことを推奨します。
+- スパース VHD (`wsl --manage <ディストリビューション名> --set-sparse true` で設定) が有効な場合は、fstrim の時点で Windows 側の領域が解放されるため、スクリプトは `diskpart` による圧縮を省略します。スパースファイルはファイルサイズの表示が変わらないため、スクリプトはディスク上の実サイズで処理前後を比較します。
+- 圧縮後のファイルサイズは、ディストリビューション内の使用量 (`df -h /` の Used) より大きくなる場合があります。仮想ディスク内でデータが分散して配置されていると、ブロック単位でしか解放できないためです。
+
 ## トラブルシューティング
 
 ### WSL2 が利用できない
@@ -327,6 +417,7 @@ Remove-Item -Recurse -Force "$env:TEMP\wsl-import-*"
 
 - **PowerShell**
 - **wsl.exe**: WSL2 管理コマンド
+- **diskpart.exe**: ディスク管理コマンド (`compact-wsl.ps1` による仮想ディスクの圧縮で使用)
 
 ### WSL2 インポート形式
 

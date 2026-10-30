@@ -468,6 +468,9 @@ wsl -d OracleLinux8-Dev
 
 詳細は [examples/import-wsl/README.md](examples/import-wsl/README.md) を参照してください。
 
+使用を続けて大きくなった仮想ディスク (`ext4.vhdx`) は、`examples/import-wsl/compact-wsl.ps1` で圧縮できます。
+詳細は [仮想ディスクの圧縮](examples/import-wsl/README.md#仮想ディスクの圧縮) を参照してください。
+
 ### WSL で Podman を利用する
 
 WSL 用 rootfs には rootless Podman、Docker 互換の `docker` コマンド、`podman-compose` が含まれます。
