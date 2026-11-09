@@ -139,6 +139,7 @@ eMudhra 証明書問題への対応として、OS の CA パッケージ、pip �
 
 - **Make**、**CMake**、**automake**、**libtool**
 - **pkg-config**、**cmake**
+- **Perl モジュール** (IPC::Cmd、Time::Piece、FindBin)
 
 ### 開発ライブラリ
 

@@ -110,7 +110,7 @@ ssh-keygen -R "[127.0.0.1]:40822"
 ### インストール済みツール
 
 - **言語ランタイム**: Node.js 24、Java 21、.NET 10、Python 3.12
-- **ビルドツール**: GCC、Make、CMake、automake、libtool、clang-format (LLVM 23.1.1)
+- **ビルドツール**: GCC、Make、CMake、automake、libtool、clang-format (LLVM 23.1.1)、Perl モジュール (IPC::Cmd、Time::Piece、FindBin)
 - **開発ライブラリ**: openssl-devel、libssh-devel、libcurl-devel、binutils-devel、elfutils-devel、readline-devel、libedit-devel
 - **ドキュメント**: Doxygen、doxybook2、PlantUML、Pandoc、Marp CLI、Mermaid CLI、Widdershins
 - **Python パッケージ (システム)**: pytest、pytest-cov、gcovr、hjson、yamllint、libclang 18.1.1、podman-compose、mkdocs 1.6.1、mkdocs-material 9.7.7、markdown-callouts 0.4.0、mkdocs-awesome-nav 3.3.0、markitdown[all] (バージョン固定なし。pymdown-extensions と watchdog は推移的依存)

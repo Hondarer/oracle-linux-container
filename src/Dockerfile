@@ -158,12 +158,14 @@ RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,reado
         perl-Env \
         perl-Errno \
         perl-IO \
+        perl-IPC-Cmd \
         perl-MIME-Base64 \
         perl-PathTools \
         perl-Scalar-List-Utils \
         perl-Socket \
         perl-Storable \
         perl-Sys-Syslog \
+        perl-Time-Piece \
         perl-Unicode-Normalize \
         perl-interpreter \
         perl-libs \
@@ -201,10 +203,12 @@ RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,reado
             "python3-pip" \
             "python3.12-pip" \
             "python-unversioned-command" \
+            "perl-FindBin" \
             "google-noto-sans-cjk-ttc-fonts"; \
         else echo \
             "java-21-openjdk java-21-openjdk-devel" \
             "python3-pip" \
+            "perl-FindBin" \
             "google-noto-sans-cjk-fonts"; \
         fi) && \
     # Development Tools の jna は OL8/OL9 では Java 21 を依存先にできず、Java 8 を追加する。
