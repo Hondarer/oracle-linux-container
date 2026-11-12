@@ -106,9 +106,9 @@ jobs:
             "https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v3.7.0/ec-linux-amd64.tar.gz"
 
           download_package "doxygen" \
-            "doxygen-1.18.0.src.tar.gz" \
-            "https://github.com/doxygen/doxygen/releases/download/Release_1_18_0/doxygen-1.18.0.src.tar.gz" \
-            "https://doxygen.nl/files/doxygen-1.18.0.src.tar.gz"
+            "doxygen-1.17.0.src.tar.gz" \
+            "https://github.com/doxygen/doxygen/releases/download/Release_1_17_0/doxygen-1.17.0.src.tar.gz" \
+            "https://doxygen.nl/files/doxygen-1.17.0.src.tar.gz"
 
           download_package "flex 2.6.3 (OL8 Doxygen build dependency)" \
             "flex-2.6.3.tar.gz" \
@@ -446,7 +446,7 @@ jobs:
           '
 
           echo "=== Doxygen version ==="
-          podman exec $CONTAINER_ID doxygen --version | grep -Fx '1.18.0'
+          podman exec $CONTAINER_ID doxygen --version | grep -Fx '1.17.0'
 
           echo "=== Doxygen smoke test ==="
           podman exec $CONTAINER_ID bash -lc '

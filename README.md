@@ -117,7 +117,7 @@ eMudhra 証明書問題への対応として、OS の CA パッケージ、pip �
 
 ### ドキュメント・図版生成
 
-- **Doxygen** (v1.18.0) + doxybook2 (v1.6.1)
+- **Doxygen** (v1.17.0) + doxybook2 (v1.6.1)
 - **PlantUML** (v1.2026.8)
 - **Pandoc** (v3.11) + pandoc-crossref (v0.3.25a)
 - **Marp CLI** (v4.5.1)
@@ -134,6 +134,13 @@ eMudhra 証明書問題への対応として、OS の CA パッケージ、pip �
 - **minimist** (v1.2.8)
 - **Chrome for Testing** (v153.0.8010.36)
 - **Inkscape** (v1.4.4)
+
+> [!WARNING]
+> Doxygen は 1.17.0 に固定しています。最新版へ更新するときも 1.18.0 にしないでください。
+>
+> Doxygen 1.18.0 には、再帰呼び出しのない C 関数が自身の `References` と `Referenced by` に表示され、コールグラフにも自己ループが描かれる回帰があります ([doxygen/doxygen#12385](https://github.com/doxygen/doxygen/issues/12385))。
+> この不具合は [doxygen/doxygen#12304](https://github.com/doxygen/doxygen/pull/12304) で修正済みです。ただし、修正は 1.19.0 開発版の `master` に入っているだけで、リリース版にはまだ含まれていません (Issue には `fixed but not released` ラベルが付いています)。
+> 1.19.0 以降がリリースされたら、この制約は解消されます。その時点で最新版へ更新してください。
 
 ### テスト・ビルドツール
 

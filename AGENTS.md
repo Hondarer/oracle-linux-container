@@ -129,10 +129,18 @@ ssh-keygen -R "[127.0.0.1]:40822"
 - Git: `src/install-git.sh` で公式ソースから `/usr/local` に導入。`NO_RUST=YesPlease`、`USE_LIBPCRE2=YesPlease`、`sysconfdir=/etc` を指定し、同版の Bash 補完・man ページを配置。sudo の `secure_path` でも `/usr/local/bin` を優先します。
 - Git 更新時はインストーラーのバージョン・SHA256、GitHub Actions の事前ダウンロード設定、`tests/verify-git.sh` の期待バージョン、関連ドキュメント・ライセンス通知を揃えて更新し、3 OS の一時コンテナ内で `bash tests/verify-git.sh` を root として実行します。`dnf update` ではソース導入した Git は更新されません。
 - `build-pod.sh` は `podman rmi --no-prune` により親イメージを保持し、再ビルドでキャッシュを利用します。Git インストーラーの変更は Dockerfile の `COPY` によりキャッシュへ反映されます。
+- Doxygen: 公式ソースから 1.17.0 をビルドします (下記 admonition を参照)。更新時は Dockerfile、GitHub Actions の事前ダウンロード設定とバージョン検証、README、THIRD_PARTY_LICENSES.md、`src/NOTICE` を揃えて更新します。
 - 日本語マニュアルページ: `man-pages-ja-auto-installer.sh` で自動インストール
 - フォント: `src/fonts/` からシステムフォントとして自動配置
 - 追加パッケージ: `src/packages/` から各種ツールを個別インストール
 - サイズ削減: `src/compact-image.py` を各インストールと同じ RUN 内で実行。英語・日本語・ニュートラルを保持して検証済みの他言語リソースを整理し、Node.js ソースマップ、対応ソースのある Python バイトコード、Git デバッグ情報を削減する。Git のハードリンクは維持する。保持条件・動作は `tests/verify-image-compaction.sh` で確認する。
+
+> [!WARNING]
+> ツールを最新版へ更新するときも、Doxygen を 1.18.0 にしないでください。
+>
+> Doxygen 1.18.0 には、再帰呼び出しのない C 関数が自身の `References` と `Referenced by` に表示され、コールグラフにも自己ループが描かれる回帰があります ([doxygen/doxygen#12385](https://github.com/doxygen/doxygen/issues/12385))。
+> 修正 ([doxygen/doxygen#12304](https://github.com/doxygen/doxygen/pull/12304)) は 1.19.0 開発版の `master` に入っていますが、まだリリースされていません。
+> 1.19.0 以降がリリースされたらこの制約は解消されるため、その版へ更新してください。この admonition と README の同じ注記も、そのとき削除してください。
 
 ## ファイル配置規則
 

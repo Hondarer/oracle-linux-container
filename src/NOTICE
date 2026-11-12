@@ -70,11 +70,11 @@ Note: Built from official source into /usr/local with matching Bash completion
 DOCUMENTATION AND DIAGRAM TOOLS
 ================================================================================
 
-Doxygen 1.18.0
+Doxygen 1.17.0
 License: GNU General Public License v2.0 (GPL-2.0)
 Copyright: Dimitri van Heesch
 URL: https://www.doxygen.nl/
-Source: https://doxygen.nl/files/doxygen-1.18.0.src.tar.gz
+Source: https://doxygen.nl/files/doxygen-1.17.0.src.tar.gz
 
 doxybook2 1.6.1
 License: MIT License

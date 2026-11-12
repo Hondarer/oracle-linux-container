@@ -514,7 +514,7 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     tar xzf "${EC_TARBALL_DL}" && \
     install -m 0755 ./bin/ec-linux-amd64 /usr/local/bin/editorconfig-checker && \
     rm -rf /tmp/bin && \
-    # Doxygen 1.18.0 の scanner は OL8 標準の flex 2.6.1 では生成できないため、ビルド時だけ 2.6.3 を使用する。
+    # OL8 標準の flex 2.6.1 では Doxygen の scanner を生成できないことがあるため、ビルド時だけ 2.6.3 を使用する。
     DOXYGEN_FLEX_ARG="" && \
     if [ "${OL_VERSION}" = "8" ]; then \
         cd /tmp && \
@@ -527,10 +527,12 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
         DOXYGEN_FLEX_ARG="-DFLEX_EXECUTABLE=/tmp/flex-2.6.3-install/bin/flex"; \
     fi && \
     # doxygen
+    # 1.18.0 は C 関数を自己参照と誤判定する回帰があるため使用しない (doxygen/doxygen#12385)。
+    # 1.19.0 以降がリリースされるまで 1.17.0 に固定する。
     cd /tmp && \
-    download_required "doxygen" "/tmp/doxygen-1.18.0.src.tar.gz" "https://doxygen.nl/files/doxygen-1.18.0.src.tar.gz" "doxygen-1.18.0.src.tar.gz" "https://github.com/doxygen/doxygen/releases/download/Release_1_18_0/doxygen-1.18.0.src.tar.gz" && \
-    tar xfz doxygen-1.18.0.src.tar.gz && \
-    cd doxygen-1.18.0 && \
+    download_required "doxygen" "/tmp/doxygen-1.17.0.src.tar.gz" "https://doxygen.nl/files/doxygen-1.17.0.src.tar.gz" "doxygen-1.17.0.src.tar.gz" "https://github.com/doxygen/doxygen/releases/download/Release_1_17_0/doxygen-1.17.0.src.tar.gz" && \
+    tar xfz doxygen-1.17.0.src.tar.gz && \
+    cd doxygen-1.17.0 && \
     mkdir build && \
     cd build && \
     cmake -G "Unix Makefiles" \
@@ -543,7 +545,7 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     make -j1 && \
     make install && \
     cd /tmp && \
-    rm -rf doxygen-1.18.0 flex-2.6.3 flex-2.6.3-install && \
+    rm -rf doxygen-1.17.0 flex-2.6.3 flex-2.6.3-install && \
     # clang-format (LLVM 23.1.1 ソースビルド)
     LLVM_VER="23.1.1" && \
     LLVM_TARBALL="llvm-project-${LLVM_VER}.src.tar.xz" && \
