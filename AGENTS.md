@@ -130,6 +130,7 @@ ssh-keygen -R "[127.0.0.1]:40822"
 - Git 更新時はインストーラーのバージョン・SHA256、GitHub Actions の事前ダウンロード設定、`tests/verify-git.sh` の期待バージョン、関連ドキュメント・ライセンス通知を揃えて更新し、3 OS の一時コンテナ内で `bash tests/verify-git.sh` を root として実行します。`dnf update` ではソース導入した Git は更新されません。
 - `build-pod.sh` は `podman rmi --no-prune` により親イメージを保持し、再ビルドでキャッシュを利用します。Git インストーラーの変更は Dockerfile の `COPY` によりキャッシュへ反映されます。
 - Doxygen: 公式ソースから 1.17.0 をビルドします (下記 admonition を参照)。更新時は Dockerfile、GitHub Actions の事前ダウンロード設定とバージョン検証、README、THIRD_PARTY_LICENSES.md、`src/NOTICE` を揃えて更新します。
+- dnf のリトライ: ネットワークを使う dnf 操作は、`src/dnf-retry.sh` を bind mount した `dnf_retry` 関数経由で実行します。ミラー同期ずれ (古い `repomd.xml` の参照先が 404) などの一時的な失敗に備え、失敗時は `dnf clean metadata` 後に間隔を空けて最大 4 回試行します。パッケージ名の誤りなどの恒久的な失敗も、失敗確定まで約 3 分余計にかかります。
 - 日本語マニュアルページ: `man-pages-ja-auto-installer.sh` で自動インストール
 - フォント: `src/fonts/` からシステムフォントとして自動配置
 - 追加パッケージ: `src/packages/` から各種ツールを個別インストール

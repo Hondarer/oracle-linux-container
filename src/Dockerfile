@@ -43,7 +43,10 @@ COPY verify-ca-trust.py /usr/local/libexec/verify-ca-trust.py
 COPY ca_distrust.py /usr/local/libexec/ca_distrust.py
 COPY security/emudhra-roots.pem /usr/local/share/oracle-linux-dev-container/emudhra-roots.pem
 RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,readonly \
-    dnf --refresh install -y 'ca-certificates >= 2026.2.92_v9.0.319' && \
+    --mount=type=bind,source=dnf-retry.sh,target=/tmp/dnf-retry.sh,readonly \
+    # ミラー同期ずれなどの一時的な失敗に備え、ネットワークを使う dnf 操作はリトライする。
+    dnf_retry() { bash /tmp/dnf-retry.sh "$@"; } && \
+    dnf_retry --refresh install -y 'ca-certificates >= 2026.2.92_v9.0.319' && \
     update-ca-trust extract && \
     # 公式ビルドの Node.js (GitHub Actions がジョブ コンテナーへ持ち込むものを含む) は OPENSSLDIR が /etc/ssl のため、
     # --use-openssl-ca では /etc/ssl/cert.pem を読む。OL9/10 は ca-certificates が配置するが、OL8 には存在しない。
@@ -51,7 +54,7 @@ RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,reado
     if [ ! -e /etc/ssl/cert.pem ]; then \
         ln -s /etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem /etc/ssl/cert.pem; \
     fi && \
-    dnf install -y \
+    dnf_retry install -y \
         oracle-epel-release-el${OL_VERSION} \
         dnf-plugins-core && \
     # リポジトリの有効化 (OL10 では oracle-epel-release-el10 により EPEL が自動的に有効化されます)
@@ -63,15 +66,15 @@ RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,reado
     if [ "${OL_VERSION}" = "10" ]; then \
         rpm -Uvh --nodeps "https://download1.rpmfusion.org/free/el/rpmfusion-free-release-${OL_VERSION}.noarch.rpm"; \
     else \
-        dnf install -y "https://download1.rpmfusion.org/free/el/rpmfusion-free-release-${OL_VERSION}.noarch.rpm"; \
+        dnf_retry install -y "https://download1.rpmfusion.org/free/el/rpmfusion-free-release-${OL_VERSION}.noarch.rpm"; \
     fi && \
-    dnf group install -y 'Development Tools' && \
+    dnf_retry group install -y 'Development Tools' && \
     if [ "${OL_VERSION}" = "8" ]; then \
-        dnf module install -y container-tools; \
+        dnf_retry module install -y container-tools; \
     else \
-        dnf install -y podman; \
+        dnf_retry install -y podman; \
     fi && \
-    dnf install -y fuse-overlayfs podman-docker shadow-utils slirp4netns && \
+    dnf_retry install -y fuse-overlayfs podman-docker shadow-utils slirp4netns && \
     test -x /usr/bin/newuidmap && \
     test -x /usr/bin/newgidmap && \
     chmod u+s /usr/bin/newuidmap /usr/bin/newgidmap && \
@@ -79,11 +82,11 @@ RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,reado
     # Node.js 24: OL8/OL9 はモジュールを有効化し、OL10 は NodeSource リポジトリを使用します。
     # (OL10 は RHEL 10 ベースであり、DNF モジュールシステムが廃止されているため利用できません)
     if [ "${OL_VERSION}" = "8" ] || [ "${OL_VERSION}" = "9" ]; then \
-        dnf module -y enable nodejs:24; \
+        dnf_retry module -y enable nodejs:24; \
     else \
         curl -fsSL https://rpm.nodesource.com/setup_24.x | bash -; \
     fi && \
-    dnf install -y \
+    dnf_retry install -y \
         adwaita-cursor-theme \
         adwaita-icon-theme \
         at-spi2-atk \
@@ -224,7 +227,7 @@ RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,reado
             fi; \
         done; \
         if [ -n "$extra_jdk" ]; then \
-            dnf remove -y $extra_jdk; \
+            dnf_retry remove -y $extra_jdk; \
         fi; \
     fi && \
     if rpm -qa | grep -E '^java-(1\.8\.0|11|17)-openjdk'; then \
@@ -358,6 +361,8 @@ RUN --mount=type=bind,source=fonts,target=/tmp/fonts,readonly \
 # 追加パッケージのインストール
 RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,readonly \
+    --mount=type=bind,source=dnf-retry.sh,target=/tmp/dnf-retry.sh,readonly \
+    dnf_retry() { bash /tmp/dnf-retry.sh "$@"; } && \
     cd /tmp && \
     DOWNLOAD_MAX_ATTEMPTS=4 && \
     download_with_retry() { \
@@ -570,19 +575,19 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     GH_VER="2.103.2" && \
     GH_RPM="gh_${GH_VER}_linux_amd64.rpm" && \
     download_required "gh ${GH_VER}" "/tmp/${GH_RPM}" "https://github.com/cli/cli/releases/download/v${GH_VER}/${GH_RPM}" "${GH_RPM}" && \
-    dnf install -y "/tmp/${GH_RPM}" && \
+    dnf_retry install -y "/tmp/${GH_RPM}" && \
     rm -f "/tmp/${GH_RPM}" && \
     # glab (GitLab CLI)
     GLAB_VER="1.118.0" && \
     GLAB_RPM="glab_${GLAB_VER}_linux_amd64.rpm" && \
     download_required "glab ${GLAB_VER}" "/tmp/${GLAB_RPM}" "https://gitlab.com/gitlab-org/cli/-/releases/v${GLAB_VER}/downloads/${GLAB_RPM}" "${GLAB_RPM}" && \
-    dnf install -y "/tmp/${GLAB_RPM}" && \
+    dnf_retry install -y "/tmp/${GLAB_RPM}" && \
     rm -f "/tmp/${GLAB_RPM}" && \
     # pwsh (PowerShell)
     PWSH_VER="7.6.6" && \
     PWSH_RPM="powershell-${PWSH_VER}-1.rh.x86_64.rpm" && \
     download_required "pwsh ${PWSH_VER}" "/tmp/${PWSH_RPM}" "https://github.com/PowerShell/PowerShell/releases/download/v${PWSH_VER}/${PWSH_RPM}" "${PWSH_RPM}" && \
-    dnf install -y "/tmp/${PWSH_RPM}" && \
+    dnf_retry install -y "/tmp/${PWSH_RPM}" && \
     rm -f "/tmp/${PWSH_RPM}" && \
     test -x /usr/bin/pwsh && \
     pwsh --version && \
