@@ -52,4 +52,4 @@ cp -r /path/to/oracle-linux-container/examples/devcontainer/ol8 .devcontainer
 - ポート転送の設定
 - 追加パッケージのインストール
 
-詳細なドキュメントは [docs-src/using-in-vscode/](../../docs-src/using-in-vscode/) を参照してください。
+詳細なドキュメントは [docs/using-in-vscode/](../../docs/using-in-vscode/) を参照してください。

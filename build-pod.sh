@@ -65,9 +65,9 @@ BASE_TREE="https://github.com/${GITHUB_REPOSITORY}/tree/main"
 sed \
     -e "s|](\./\([^)]*\)/)|](${BASE_TREE}/\1/)|g" \
     -e "s|](\./\([^)]*\))|](${BASE_BLOB}/\1)|g" \
-    -e "s|](docs-src/\([^)]*\)/)|](${BASE_TREE}/docs-src/\1/)|g" \
-    -e "s|](docs-src/)|](${BASE_TREE}/docs-src/)|g" \
-    -e "s|](docs-src/\([^)]*\))|](${BASE_BLOB}/docs-src/\1)|g" \
+    -e "s|](docs/\([^)]*\)/)|](${BASE_TREE}/docs/\1/)|g" \
+    -e "s|](docs/)|](${BASE_TREE}/docs/)|g" \
+    -e "s|](docs/\([^)]*\))|](${BASE_BLOB}/docs/\1)|g" \
     -e "s|](examples/\([^)]*\)/)|](${BASE_TREE}/examples/\1/)|g" \
     -e "s|](examples/\([^)]*\))|](${BASE_BLOB}/examples/\1)|g" \
     -e "s|](CLAUDE\.md)|](${BASE_BLOB}/CLAUDE.md)|g" \

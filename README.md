@@ -48,7 +48,7 @@ cp -r examples/devcontainer/ol8 /your/project/.devcontainer
 ```
 
 VS Code で `Dev Containers: Reopen in Container` を実行すると、開発ツールが事前設定された環境が起動します。
-詳細は [examples/devcontainer/](examples/devcontainer/) および [docs-src/using-in-vscode/](docs-src/using-in-vscode/) を参照してください。
+詳細は [examples/devcontainer/](examples/devcontainer/) および [docs/using-in-vscode/](docs/using-in-vscode/) を参照してください。
 
 ### 🪟 WSL2 ディストリビューションとして利用（Windows）
 
@@ -58,7 +58,7 @@ GitHub Releases から取得した WSL 用 rootfs (`tar.gz`) を、Windows 標�
 ### ⚙️ CI/CD での利用
 
 GitHub Actions 等のビルド・テスト環境としても利用できます。
-詳細は [docs-src/using-in-cicd/](docs-src/using-in-cicd/) を参照してください。
+詳細は [docs/using-in-cicd/](docs/using-in-cicd/) を参照してください。
 
 ---
 
@@ -512,11 +512,11 @@ systemctl --user status podman.socket
 
 ### プロジェクトドキュメント
 
-- [docs-src/](docs-src/) - 追加ドキュメント
-  - [コンテナイメージ公開ガイド (GitHub / Docker Hub)](docs-src/publishing-to-github.md) - イメージの公開方法
-  - [VS Code Dev Container として使用する](docs-src/using-in-vscode/) - Dev Containers 拡張機能を使用した開発環境のセットアップ
-  - [CI/CD でのコンテナイメージ利用ガイド](docs-src/using-in-cicd/) - 他のプロジェクトでの利用方法
-    - 言語別サンプル: [C/C++](docs-src/using-in-cicd/cpp-example.md)、[Node.js](docs-src/using-in-cicd/nodejs-example.md)、[Java](docs-src/using-in-cicd/java-example.md)、[Python](docs-src/using-in-cicd/python-example.md)、[.NET](docs-src/using-in-cicd/dotnet-example.md)
+- [docs/](docs/) - 追加ドキュメント
+  - [コンテナイメージ公開ガイド (GitHub / Docker Hub)](docs/publishing-to-github.md) - イメージの公開方法
+  - [VS Code Dev Container として使用する](docs/using-in-vscode/) - Dev Containers 拡張機能を使用した開発環境のセットアップ
+  - [CI/CD でのコンテナイメージ利用ガイド](docs/using-in-cicd/) - 他のプロジェクトでの利用方法
+    - 言語別サンプル: [C/C++](docs/using-in-cicd/cpp-example.md)、[Node.js](docs/using-in-cicd/nodejs-example.md)、[Java](docs/using-in-cicd/java-example.md)、[Python](docs/using-in-cicd/python-example.md)、[.NET](docs/using-in-cicd/dotnet-example.md)
 - [examples/devcontainer/](examples/devcontainer/) - Dev Container サンプル設定ファイル (プロジェクトへコピーして利用)
 - [CLAUDE.md](CLAUDE.md) - Claude Code を使用する際の詳細ガイド
 
