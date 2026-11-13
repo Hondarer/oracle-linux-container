@@ -135,12 +135,16 @@ eMudhra 証明書問題への対応として、OS の CA パッケージ、pip �
 - **Chrome for Testing** (v153.0.8010.36)
 - **Inkscape** (v1.4.4)
 
+<!-- dockerhub:exclude:start -->
+
 > [!WARNING]
 > Doxygen は 1.17.0 に固定しています。最新版へ更新するときも 1.18.0 にしないでください。
 >
 > Doxygen 1.18.0 には、再帰呼び出しのない C 関数が自身の `References` と `Referenced by` に表示され、コールグラフにも自己ループが描かれる回帰があります ([doxygen/doxygen#12385](https://github.com/doxygen/doxygen/issues/12385))。
 > この不具合は [doxygen/doxygen#12304](https://github.com/doxygen/doxygen/pull/12304) で修正済みです。ただし、修正は 1.19.0 開発版の `master` に入っているだけで、リリース版にはまだ含まれていません (Issue には `fixed but not released` ラベルが付いています)。
 > 1.19.0 以降がリリースされたら、この制約は解消されます。その時点で最新版へ更新してください。
+
+<!-- dockerhub:exclude:end -->
 
 ### テスト・ビルドツール
 
@@ -183,7 +187,11 @@ eMudhra 証明書問題への対応として、OS の CA パッケージ、pip �
 
 Git は公式ソースから `/usr/local` に導入しています。Bash 補完と man ページも 2.56.0 に揃え、通常のログインと `sudo git` の両方でこのバージョンを使用します。システム設定ファイルは `/etc/gitconfig`、ユーザー設定は従来どおり `~/.gitconfig` です。PCRE2 対応 (`git grep -P`) と gettext によるメッセージの国際化を有効にしています。公式配布には日本語メッセージの翻訳が含まれないため、既定の日本語ロケールでは Git のメッセージは英語になります。
 
+<!-- dockerhub:exclude:start -->
+
 Git の更新時は `src/install-git.sh` のバージョン・ソースと man ページの SHA256、`.github/workflows/build-and-publish.yml` の事前ダウンロード設定、`tests/verify-git.sh` の期待バージョン、関連ドキュメント・ライセンス通知を更新して、各 OS のイメージを再ビルドします。`dnf update` は `/usr/local` の Git を更新しません。ビルド時は `src/packages/git-2.56.0.tar.xz` と `src/packages/git-manpages-2.56.0.tar.xz` をキャッシュとして利用でき、キャッシュにも SHA256 検証を適用します。
+
+<!-- dockerhub:exclude:end -->
 
 ## クイックスタート
 
@@ -350,6 +358,8 @@ Chrome for Testing はブラウザ自動化・テスト専用です。信頼で�
 
 `src/fonts/` にフォントファイルを配置すると、システムフォントとして利用可能になります。
 
+<!-- dockerhub:exclude:start -->
+
 ## ディレクトリ構成
 
 ```text
@@ -380,6 +390,8 @@ Chrome for Testing はブラウザ自動化・テスト専用です。信頼で�
 |-- CLAUDE.md             # Claude Code 用ガイド
 \-- README.md             # このファイル
 ```
+
+<!-- dockerhub:exclude:end -->
 
 ## イメージサイズの整理
 

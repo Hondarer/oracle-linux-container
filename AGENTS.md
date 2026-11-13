@@ -150,6 +150,7 @@ ssh-keygen -R "[127.0.0.1]:40822"
 - `src/fonts/`: 追加フォントファイル (任意)
 - `src/packages/`: 追加パッケージの事前ダウンロード (任意)
 - `src/container-release`: ビルド時刻の記録 (自動生成)
+- `.github/scripts/make-dockerhub-readme.py`: README から Docker Hub の description を生成します。Docker Hub の上限は 25,000 バイトです。README のうち保守者向けの部分 (更新手順、リポジトリ構成、バージョン固定の注記など) は `<!-- dockerhub:exclude:start -->` と `<!-- dockerhub:exclude:end -->` で囲み、Docker Hub 向けから外します。上限を超えると末尾の節が外れ、CI に警告が出ます。
 
 ## エンコーディング規則
 

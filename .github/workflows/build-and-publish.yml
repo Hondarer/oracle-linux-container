@@ -631,8 +631,10 @@ jobs:
       - name: Update Docker Hub description
         if: github.event_name != 'pull_request' && steps.dockerhub-check.outputs.available == 'true'
         run: |
-          # リンク変換済みの src/README.md を Docker Hub の description 用にコピー
-          cp src/README.md /tmp/dockerhub-readme.md
+          # リンク変換済みの src/README.md から、Docker Hub の上限 (25,000 バイト) 内の description を生成
+          python3 .github/scripts/make-dockerhub-readme.py \
+            src/README.md /tmp/dockerhub-readme.md \
+            "https://github.com/${{ github.repository }}/blob/main/README.md"
 
       - name: Push Docker Hub description
         if: github.event_name != 'pull_request' && steps.dockerhub-check.outputs.available == 'true'
