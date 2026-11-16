@@ -175,6 +175,7 @@ RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,reado
         perl-threads \
         perl-threads-shared \
         readline-devel \
+        ripgrep \
         rsync \
         sudo \
         sysstat \

@@ -299,6 +299,12 @@
 - **URL**: https://rsync.samba.org/
 - **説明**: ファイル同期ツール
 
+### ripgrep
+- **ライセンス**: Unlicense OR MIT
+- **URL**: https://github.com/BurntSushi/ripgrep
+- **パッケージ提供元**: Oracle EPEL の `ripgrep` (OL8/9/10。コマンドは `rg`)
+- **説明**: gitignore を考慮してディレクトリを再帰検索する行指向の検索ツール。RPM には依存クレートのライセンスも同梱される
+
 ### expect
 - **ライセンス**: Public Domain
 - **URL**: https://core.tcl-lang.org/expect/
