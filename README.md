@@ -7,7 +7,7 @@ Oracle Linux 8、9、10 のマルチバージョンに対応しています。
 ## 特徴
 
 - **ポータブル設計**: ビルド時にユーザー情報に依存せず、どの環境でも利用可能
-- **豊富な開発ツール**: Node.js、Java、.NET、Python、C/C++ 開発環境
+- **豊富な開発ツール**: Node.js、Java、.NET、Python、Go、C/C++ 開発環境
 - **ドキュメント生成**: Doxygen、PlantUML、Pandoc による文書作成支援
 - **日本語対応**: 日本語ロケール、フォント、マニュアルページを完備
 - **セキュア**: SSH キー認証、適切な権限管理
@@ -104,9 +104,18 @@ podman pull hondarer/oracle-linux-10-dev:latest
 | Java (OpenJDK) | 21 | 21 | 21 |
 | .NET SDK | 10 | 10 | 10 |
 | Python | 3.12 | 3.12 | 3.12 |
+| Go | 1.27.4 | 1.27.4 | 1.27.4 |
 | C/C++ (GCC) | 8 | 11 | 14 |
 
 OL9 は `/usr/local/bin` の `python`、`python3`、`pip`、`pip3` で開発用の Python 3.12 を優先します。OS 用の `/usr/bin/python3` は 3.9 を維持します。
+
+Go は公式バイナリを `/usr/local/go` に導入し、3 OS でバージョンを揃えています。`go` と `gofmt` は `/usr/local/bin` から実行でき、`go install` の導入先 `~/go/bin` はログインシェルの `PATH` に含まれます。`/usr/local/go/go.env` で `GOTOOLCHAIN=local` を既定にしているため、`go.mod` がより新しい Go を要求しても別のツールチェーンは自動ダウンロードされず、エラーになります。自動取得が必要な場合は、`GOTOOLCHAIN=auto` を環境変数か `go env -w` で指定してください。イメージサイズを抑えるため、Go 自身のテスト (`*_test.go`、`testdata`、`test/`) は除去しています。利用者のコードの `go test` や `-race` には影響しませんが、`go test std` は実行できません。
+
+<!-- dockerhub:exclude:start -->
+
+Go の更新時は `src/install-go.sh` のバージョン・SHA256、`.github/workflows/build-and-publish.yml` の事前ダウンロード設定、`tests/verify-go.sh` の期待バージョン、Dockerfile のコメント、関連ドキュメント・ライセンス通知を更新して、各 OS のイメージを再ビルドします。ビルド時は `src/packages/go1.27.4.linux-amd64.tar.gz` をキャッシュとして利用でき、キャッシュにも SHA256 検証を適用します。
+
+<!-- dockerhub:exclude:end -->
 
 eMudhra 証明書問題への対応として、OS の CA パッケージ、pip と新規 venv 用 wheel、certifi を更新し、Node.js は OS の証明書ストアを使用します。コンポーネント別の対策版・導入可否と、Chrome / .NET SDK 同梱ストアの対策は [対応状況](docs/emudhra-certificate-response.md) を参照してください。
 
@@ -269,6 +278,7 @@ node --version
 java --version
 dotnet --version
 python --version
+go version
 gcc --version
 ```
 

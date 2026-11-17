@@ -644,6 +644,13 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     python -B /tmp/compact-image.py git && \
     rm -f /tmp/install-git.sh
 
+# Go 1.27.4 (OL8/9/10 共通の公式バイナリ、テスト類を除去、GOTOOLCHAIN=local)
+# Git のソースビルドを再利用できるよう、Git より後のレイヤーに置く。
+COPY install-go.sh /tmp/install-go.sh
+RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
+    bash /tmp/install-go.sh && \
+    rm -f /tmp/install-go.sh
+
 # mandb
 RUN echo "Processing manual pages with mandb..."; \
     mandb > /dev/null 2>&1

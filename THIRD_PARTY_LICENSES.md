@@ -48,6 +48,14 @@
 - **URL**: https://www.python.org/
 - **説明**: Python プログラミング言語
 
+### Go
+- **バージョン**: 1.27.4 (OL8 / OL9 / OL10)
+- **ライセンス**: BSD 3-Clause License
+- **URL**: https://go.dev/
+- **配布元**: https://go.dev/dl/go1.27.4.linux-amd64.tar.gz
+- **同梱ライセンス**: `/usr/local/go/LICENSE`
+- **説明**: 公式バイナリから導入する Go ツールチェーン。Go 自身のテスト類は除去
+
 ## リポジトリ操作ツール
 
 ### Git

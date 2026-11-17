@@ -4,7 +4,7 @@
 
 ## 概要
 
-このプロジェクトは、Oracle Linux (8/9/10) ベースのポータブルな開発用コンテナを Podman で構築・管理するためのシステムです。コンテナには開発ツール (Node.js、Java、.NET、Python)、ドキュメント生成ツール (Doxygen、PlantUML、Pandoc)、日本語マニュアルページが含まれます。
+このプロジェクトは、Oracle Linux (8/9/10) ベースのポータブルな開発用コンテナを Podman で構築・管理するためのシステムです。コンテナには開発ツール (Node.js、Java、.NET、Python、Go)、ドキュメント生成ツール (Doxygen、PlantUML、Pandoc)、日本語マニュアルページが含まれます。
 
 ## アーキテクチャ
 
@@ -27,7 +27,7 @@
 Dockerfile は `ARG OL_VERSION` により、OL8/OL9/OL10 をサポートします。
 
 1. Oracle Linux パッケージの更新と開発ツールの導入
-2. 開発環境 (Git 2.56.0、Node.js 24、Java 21、.NET 10、Python 3.12)
+2. 開発環境 (Git 2.56.0、Node.js 24、Java 21、.NET 10、Python 3.12、Go 1.27.4)
 3. ドキュメント生成ツール (Doxygen、PlantUML、Pandoc 系)
 4. 日本語環境とフォント設定
 5. SSH サーバーと認証キー設定
@@ -109,7 +109,7 @@ ssh-keygen -R "[127.0.0.1]:40822"
 
 ### インストール済みツール
 
-- **言語ランタイム**: Node.js 24、Java 21、.NET 10、Python 3.12
+- **言語ランタイム**: Node.js 24、Java 21、.NET 10、Python 3.12、Go 1.27.4 (OL8/9/10 共通)
 - **ビルドツール**: GCC、Make、CMake、automake、libtool、clang-format (LLVM 23.1.1)、Perl モジュール (IPC::Cmd、Time::Piece、FindBin)
 - **開発ライブラリ**: openssl-devel、libssh-devel、libcurl-devel、binutils-devel、elfutils-devel、readline-devel、libedit-devel
 - **ドキュメント**: Doxygen、doxybook2、PlantUML、Pandoc、Marp CLI、Mermaid CLI、Widdershins
@@ -123,12 +123,15 @@ ssh-keygen -R "[127.0.0.1]:40822"
 - **Python**: pip (システムとユーザー両方利用可能)
 - **Java**: OpenJDK 21 が既定値
 - **.NET**: SDK 10
+- **Go**: 公式バイナリ 1.27.4 (`/usr/local/go`、`GOTOOLCHAIN=local`)
 
 ### カスタムインストール処理
 
 - Git: `src/install-git.sh` で公式ソースから `/usr/local` に導入。`NO_RUST=YesPlease`、`USE_LIBPCRE2=YesPlease`、`sysconfdir=/etc` を指定し、同版の Bash 補完・man ページを配置。sudo の `secure_path` でも `/usr/local/bin` を優先します。
 - Git 更新時はインストーラーのバージョン・SHA256、GitHub Actions の事前ダウンロード設定、`tests/verify-git.sh` の期待バージョン、関連ドキュメント・ライセンス通知を揃えて更新し、3 OS の一時コンテナ内で `bash tests/verify-git.sh` を root として実行します。`dnf update` ではソース導入した Git は更新されません。
 - `build-pod.sh` は `podman rmi --no-prune` により親イメージを保持し、再ビルドでキャッシュを利用します。Git インストーラーの変更は Dockerfile の `COPY` によりキャッシュへ反映されます。
+- Go: `src/install-go.sh` で公式バイナリを `/usr/local/go` に導入し、`go`・`gofmt` を `/usr/local/bin` にリンクします。`$GOROOT/go.env` の `GOTOOLCHAIN` を `local` に変更し、別ツールチェーンの自動ダウンロードを止めます (環境変数と `go env -w` で上書き可能)。WSL rootfs の 2 GiB 上限に備え、Go 自身の `*_test.go`、`testdata`、`test/` を除去します。Git の再ビルドを避けるため、Dockerfile では Git より後のレイヤーに置きます。
+- Go 更新時はインストーラーのバージョン・SHA256、GitHub Actions の事前ダウンロード設定、`tests/verify-go.sh` の期待バージョン、Dockerfile のコメント、関連ドキュメント・ライセンス通知を揃えて更新し、3 OS の一時コンテナ内で `bash tests/verify-go.sh` を root として実行します。
 - Doxygen: 公式ソースから 1.17.0 をビルドします (下記 admonition を参照)。更新時は Dockerfile、GitHub Actions の事前ダウンロード設定とバージョン検証、README、THIRD_PARTY_LICENSES.md、`src/NOTICE` を揃えて更新します。
 - dnf のリトライ: ネットワークを使う dnf 操作は、`src/dnf-retry.sh` を bind mount した `dnf_retry` 関数経由で実行します。ミラー同期ずれ (古い `repomd.xml` の参照先が 404) などの一時的な失敗に備え、失敗時は `dnf clean metadata` 後に間隔を空けて最大 4 回試行します。パッケージ名の誤りなどの恒久的な失敗も、失敗確定まで約 3 分余計にかかります。
 - 日本語マニュアルページ: `man-pages-ja-auto-installer.sh` で自動インストール

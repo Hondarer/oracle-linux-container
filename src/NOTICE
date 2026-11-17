@@ -46,6 +46,15 @@ License: Python Software Foundation License (PSF)
 Copyright: Python Software Foundation
 URL: https://www.python.org/
 
+Go 1.27.4 (OL8 / OL9 / OL10)
+License: BSD 3-Clause License
+Copyright: The Go Authors
+URL: https://go.dev/
+Source: https://go.dev/dl/go1.27.4.linux-amd64.tar.gz
+License File: /usr/local/go/LICENSE
+Note: Official binary distribution installed into /usr/local/go. The
+      toolchain's own tests are removed and GOTOOLCHAIN defaults to local.
+
 GCC (GNU Compiler Collection)
 License: GNU General Public License v3.0 (GPL-3.0)
 Copyright: Free Software Foundation, Inc.

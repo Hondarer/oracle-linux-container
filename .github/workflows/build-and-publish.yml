@@ -71,6 +71,11 @@ jobs:
             "https://www.kernel.org/pub/software/scm/git/git-manpages-2.56.0.tar.xz"
           echo "1f62a7fabaa36a0469c4d51fe247d12e7e246b890d2b8b49aec91df610f417c7  src/packages/git-manpages-2.56.0.tar.xz" | sha256sum -c -
 
+          download_package "Go 1.27.4" \
+            "go1.27.4.linux-amd64.tar.gz" \
+            "https://go.dev/dl/go1.27.4.linux-amd64.tar.gz"
+          echo "7226736c2339719cda28fbf3a54d71aa63bcefe376e98cef00034268dab24840  src/packages/go1.27.4.linux-amd64.tar.gz" | sha256sum -c -
+
           download_package "man-pages-ja" \
             "man-pages-ja-20260115.tar.gz" \
             "https://github.com/linux-jm/manual/releases/download/v20260115/man-pages-ja-20260115.tar.gz"
@@ -327,6 +332,10 @@ jobs:
           echo "=== Git 2.56.0 integration test ==="
           podman cp tests/verify-git.sh "$CONTAINER_ID:/tmp/verify-git.sh"
           podman exec "$CONTAINER_ID" bash /tmp/verify-git.sh
+
+          echo "=== Go 1.27.4 integration test ==="
+          podman cp tests/verify-go.sh "$CONTAINER_ID:/tmp/verify-go.sh"
+          podman exec "$CONTAINER_ID" bash /tmp/verify-go.sh
 
           echo "=== Node.js version ==="
           podman exec $CONTAINER_ID node --version
