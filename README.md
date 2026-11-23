@@ -171,7 +171,7 @@ eMudhra 証明書問題への対応として、OS の CA パッケージ、pip �
 
 ### ユーティリティ
 
-- **jq**、**tree**、**rsync**、**time**、**ripgrep** (`rg`、Oracle EPEL)
+- **jq**、**tree**、**rsync**、**time**、**ripgrep** (`rg`、v16.0.0、OL8/9/10 共通)
 - **clang-format**、**git-clang-format** (LLVM 23.1.1)
 - **libclang** (v18.1.1、PyPI。Clang Python Bindings `clang.cindex` と同梱の libclang 共有ライブラリを既定の Python へ導入)
 - **expect**、**nkf**、**cloc** (v2.10)

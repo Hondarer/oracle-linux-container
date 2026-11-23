@@ -114,7 +114,7 @@ ssh-keygen -R "[127.0.0.1]:40822"
 - **開発ライブラリ**: openssl-devel、libssh-devel、libcurl-devel、binutils-devel、elfutils-devel、readline-devel、libedit-devel
 - **ドキュメント**: Doxygen、doxybook2、PlantUML、Pandoc、Marp CLI、Mermaid CLI、Widdershins
 - **Python パッケージ (システム)**: pytest、pytest-cov、gcovr、hjson、yamllint、libclang 18.1.1、podman-compose、mkdocs 1.6.1、mkdocs-material 9.7.7、markdown-callouts 0.4.0、mkdocs-awesome-nav 3.3.0、markitdown[all] (バージョン固定なし。pymdown-extensions と watchdog は推移的依存)
-- **ユーティリティ**: jq、tree、rsync、ripgrep (`rg`、Oracle EPEL)、expect、cloc、time、editorconfig-checker、textlint (preset-ja-technical-writing、preset-ja-spacing)、pwsh (PowerShell)
+- **ユーティリティ**: jq、tree、rsync、ripgrep (`rg`、v16.0.0)、expect、cloc、time、editorconfig-checker、textlint (preset-ja-technical-writing、preset-ja-spacing)、pwsh (PowerShell)
 - **リポジトリ操作 CLI**: Git 2.56.0 (OL8/9/10 共通)、gh (GitHub CLI)、glab (GitLab CLI)
 
 ### パッケージ管理

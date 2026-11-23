@@ -202,13 +202,12 @@ License: GNU General Public License v2.0 (GPL-2.0)
 Copyright: Steve Baker
 URL: http://mama.indstate.edu/users/ice/tree/
 
-ripgrep
+ripgrep 16.0.0
 License: Unlicense OR MIT License
 Copyright: Andrew Gallant
 URL: https://github.com/BurntSushi/ripgrep
-Package Source: Oracle EPEL ripgrep (OL8 / OL9 / OL10)
+Source: https://github.com/BurntSushi/ripgrep/releases/tag/16.0.0
 Command: rg
-Note: The RPM also ships licenses for vendored crates.
 
 expect
 License: Public Domain

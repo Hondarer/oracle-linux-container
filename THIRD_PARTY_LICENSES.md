@@ -307,11 +307,11 @@
 - **URL**: https://rsync.samba.org/
 - **説明**: ファイル同期ツール
 
-### ripgrep
+### ripgrep (v16.0.0)
 - **ライセンス**: Unlicense OR MIT
 - **URL**: https://github.com/BurntSushi/ripgrep
-- **パッケージ提供元**: Oracle EPEL の `ripgrep` (OL8/9/10。コマンドは `rg`)
-- **説明**: gitignore を考慮してディレクトリを再帰検索する行指向の検索ツール。RPM には依存クレートのライセンスも同梱される
+- **ソース**: https://github.com/BurntSushi/ripgrep/releases/tag/16.0.0 (`ripgrep-16.0.0-x86_64-unknown-linux-musl.tar.gz`)
+- **説明**: gitignore を考慮してディレクトリを再帰検索する行指向の検索ツール (OL8/9/10 共通。コマンドは `rg`、PCRE2 対応)
 
 ### expect
 - **ライセンス**: Public Domain

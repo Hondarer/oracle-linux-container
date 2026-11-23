@@ -110,6 +110,11 @@ jobs:
             "ec-linux-amd64-v3.7.0.tar.gz" \
             "https://github.com/editorconfig-checker/editorconfig-checker/releases/download/v3.7.0/ec-linux-amd64.tar.gz"
 
+          download_package "ripgrep 16.0.0" \
+            "ripgrep-16.0.0-x86_64-unknown-linux-musl.tar.gz" \
+            "https://github.com/BurntSushi/ripgrep/releases/download/16.0.0/ripgrep-16.0.0-x86_64-unknown-linux-musl.tar.gz"
+          echo "54268ab4643c00a290a29b0086066d64b3f56236dd805ec64629a86f9bd29fd0  src/packages/ripgrep-16.0.0-x86_64-unknown-linux-musl.tar.gz" | sha256sum -c -
+
           download_package "doxygen" \
             "doxygen-1.17.0.src.tar.gz" \
             "https://github.com/doxygen/doxygen/releases/download/Release_1_17_0/doxygen-1.17.0.src.tar.gz" \
@@ -416,6 +421,8 @@ jobs:
           podman exec $CONTAINER_ID clang-format --version | grep -F 'clang-format version 23.1.1'
           podman exec $CONTAINER_ID cloc --version | grep -Fx '2.10'
           podman exec $CONTAINER_ID editorconfig-checker --version | grep -F '3.7.0'
+          podman exec $CONTAINER_ID rg --version | grep -Eq '^ripgrep 16\.0\.0( |$)'
+          podman exec $CONTAINER_ID bash -lc 'test "$(command -v rg)" = /usr/local/bin/rg && ! rpm -q ripgrep >/dev/null 2>&1 && printf "foo123\n" | rg -P "(?<=foo)\d+" | grep -Fx "foo123"'
           podman exec $CONTAINER_ID yamllint --version | grep -F 'yamllint 1.38.0'
           podman exec $CONTAINER_ID gh --version | head -1 | grep -F 'gh version 2.103.2'
           podman exec $CONTAINER_ID glab --version | grep -F '1.118.0'

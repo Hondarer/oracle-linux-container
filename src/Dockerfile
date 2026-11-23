@@ -175,7 +175,6 @@ RUN --mount=type=bind,source=compact-image.py,target=/tmp/compact-image.py,reado
         perl-threads \
         perl-threads-shared \
         readline-devel \
-        ripgrep \
         rsync \
         sudo \
         sysstat \
@@ -520,6 +519,22 @@ RUN --mount=type=bind,source=packages,target=/tmp/packages,readonly \
     tar xzf "${EC_TARBALL_DL}" && \
     install -m 0755 ./bin/ec-linux-amd64 /usr/local/bin/editorconfig-checker && \
     rm -rf /tmp/bin && \
+    # ripgrep (rg) - 公式 musl 静的バイナリ (OL8/9/10 共通、必要ファイルのみ配置して容量増を抑える)
+    RG_VER="16.0.0" && \
+    RG_SHA256="54268ab4643c00a290a29b0086066d64b3f56236dd805ec64629a86f9bd29fd0" && \
+    RG_DIR="ripgrep-${RG_VER}-x86_64-unknown-linux-musl" && \
+    RG_TARBALL="${RG_DIR}.tar.gz" && \
+    cd /tmp && \
+    download_required "ripgrep ${RG_VER}" "/tmp/${RG_TARBALL}" "https://github.com/BurntSushi/ripgrep/releases/download/${RG_VER}/${RG_TARBALL}" "${RG_TARBALL}" && \
+    echo "${RG_SHA256}  /tmp/${RG_TARBALL}" | sha256sum -c - && \
+    tar xzf "${RG_TARBALL}" && \
+    gzip -9n "${RG_DIR}/doc/rg.1" && \
+    install -d /usr/local/bin /usr/local/share/man/man1 && \
+    install -m 0755 "${RG_DIR}/rg" /usr/local/bin/rg && \
+    install -m 0644 "${RG_DIR}/doc/rg.1.gz" /usr/local/share/man/man1/rg.1.gz && \
+    install -D -m 0644 "${RG_DIR}/complete/rg.bash" /usr/local/share/bash-completion/completions/rg && \
+    rm -rf "${RG_DIR}" "/tmp/${RG_TARBALL}" && \
+    /usr/local/bin/rg --version | grep -Eq "^ripgrep ${RG_VER}( |$)" && \
     # OL8 標準の flex 2.6.1 では Doxygen の scanner を生成できないことがあるため、ビルド時だけ 2.6.3 を使用する。
     DOXYGEN_FLEX_ARG="" && \
     if [ "${OL_VERSION}" = "8" ]; then \
